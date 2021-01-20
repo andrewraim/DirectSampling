@@ -6,9 +6,11 @@
 double d_dscnorm_unnormalized(int x, double sigma);
 int r_dscnorm(double sigma);
 
+//' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector d_dscnorm_unnormalized(const Rcpp::IntegerVector& x, double sigma);
 
+//' @export
 // [[Rcpp::export]]
 Rcpp::IntegerVector r_dscnorm(unsigned int n, double sigma);
 

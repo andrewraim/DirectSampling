@@ -5,6 +5,8 @@
 #include "WeightFunction.h"
 #include "BaseDistribution.h"
 
+//' @export
+// [[Rcpp::export]]
 Rcpp::NumericVector direct_sampler(unsigned int n, const WeightFunction& w,
 	const BaseDistribution& g, double tol, unsigned int N,
 	const std::string& fill_method);
