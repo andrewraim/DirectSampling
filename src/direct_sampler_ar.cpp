@@ -1,9 +1,9 @@
-#include "direct-sampler-ar.h"
+#include "direct_sampler_ar.h"
 #include "Stepdown.h"
 
 /*
 * Note: This implementation is not complete. The calculation of M needs to
-* be coded with the correct expression.
+* be coded with the corrected expression.
 */
 
 Rcpp::NumericVector direct_sampler_ar(unsigned int n, const WeightFunction& w,

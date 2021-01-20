@@ -1,7 +1,10 @@
-#include <queue>
 #include "Stepdown.h"
-#include "util.h"
 #include <math.h>
+#include <queue>
+#include "util.h"
+#include "functionals.h"
+#include "bisection.h"
+#include "find_interval.h"
 
 /*
 * A predicate which is used to locate log_L

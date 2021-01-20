@@ -1,0 +1,1 @@
+C++ functions seem to no longer be exported once I put the headers in `inst/include`

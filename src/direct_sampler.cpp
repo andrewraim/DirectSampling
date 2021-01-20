@@ -1,4 +1,4 @@
-#include "direct-sampler.h"
+#include "direct_sampler.h"
 #include "Stepdown.h"
 
 Rcpp::NumericVector direct_sampler(unsigned int n, const WeightFunction& w,
