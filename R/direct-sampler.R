@@ -1,4 +1,5 @@
 # Basic direct sampler, without any of the customizations we proposed
+#' @export
 direct_sampler_basic = function(n, w_obj, g_obj, N = 100, max_iter = 10000)
 {
 	# Maximum weight c obtained from the mode of the LogNormal distn.
@@ -33,6 +34,7 @@ direct_sampler_basic = function(n, w_obj, g_obj, N = 100, max_iter = 10000)
 	list(x = x, tries = tries)
 }
 
+#' @export
 direct_sampler = function(n, w, g, tol = 1e-8, N = 100,
 	fill_method = "small_rects")
 {
