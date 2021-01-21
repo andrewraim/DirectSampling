@@ -3,6 +3,8 @@
 
 #include <Rcpp.h>
 
+//' @export
+// [[Rcpp::export]]
 int find_interval(double x, const Rcpp::NumericVector& cutpoints);
 
 #endif

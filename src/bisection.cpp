@@ -1,4 +1,5 @@
 #include "bisection.h"
+#include <Rcpp.h>
 
 double bisection(double x_lo, double x_hi,
 	const Predicate& pred,

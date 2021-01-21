@@ -1,6 +1,7 @@
-#include <Rcpp.h>
-#include "DGeomBaseDistribution.h"
 #include "LognormalWeightFunction.h"
+#include "NormalWeightFunction.h"
+#include "DGeomBaseDistribution.h"
+#include "LaplaceBaseDistribution.h"
 #include "direct_sampler.h"
 
 // [[Rcpp::export]]

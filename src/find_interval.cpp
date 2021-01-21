@@ -30,8 +30,6 @@ private:
 // of adjacent intervals [c_0,c_1), [c_1,c_2) ..., [c_{k},c_{k+1}). Return
 // the index i such that x is in [c_i,c_{i+1}); or return -1 if x < c_0
 // or k+1 if x > c_{k+1}
-//' @export
-// [[Rcpp::export]]
 int find_interval(double x, const Rcpp::NumericVector& cutpoints)
 {
 	unsigned int N = cutpoints.size();
@@ -49,3 +47,4 @@ int find_interval(double x, const Rcpp::NumericVector& cutpoints)
 	double out = bisection(0, k, pred, mid, dist, 1);
 	return int(out);
 }
+

@@ -1,3 +1,5 @@
+#' DirectSampling
+#' 
 #' @name DirectSampling-package
 #' @useDynLib DirectSampling, .registration = TRUE
 #' @import Rcpp 

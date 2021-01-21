@@ -33,8 +33,6 @@ double q_laplace(double q, double mu, double lambda)
 	}
 }
 
-//' @export
-// [[Rcpp::export]]
 Rcpp::NumericVector d_laplace(const Rcpp::NumericVector& x, double mu, double lambda, bool take_log)
 {
 	unsigned int n = x.size();
@@ -46,8 +44,6 @@ Rcpp::NumericVector d_laplace(const Rcpp::NumericVector& x, double mu, double la
 	return out;
 }
 
-//' @export
-// [[Rcpp::export]]
 Rcpp::NumericVector p_laplace(const Rcpp::NumericVector& x, double mu, double lambda)
 {
 	unsigned int n = x.size();
@@ -59,8 +55,6 @@ Rcpp::NumericVector p_laplace(const Rcpp::NumericVector& x, double mu, double la
 	return out;
 }
 
-//' @export
-// [[Rcpp::export]]
 Rcpp::NumericVector r_laplace(unsigned int n, double mu, double lambda)
 {
 	Rcpp::NumericVector out(n);
@@ -71,8 +65,6 @@ Rcpp::NumericVector r_laplace(unsigned int n, double mu, double lambda)
 	return out;
 }
 
-//' @export
-// [[Rcpp::export]]
 Rcpp::NumericVector q_laplace(const Rcpp::NumericVector& x, double mu, double lambda)
 {
 	unsigned int n = x.size();

@@ -9,6 +9,8 @@ Rcpp::NumericVector direct_sampler_ar(unsigned int n, const WeightFunction& w,
 	const BaseDistribution& g, double tol, unsigned int N_init,
 	unsigned int max_rejections, const std::string& fill_method)
 {
+	Rcpp::stop("direct_sampler_ar needs to be updated");
+
 	// Use our Stepdown approximation to draw from p(u)
 	Stepdown step(w, g, tol, N_init, fill_method);
 	const Rcpp::NumericVector& v = step.draw(n);
@@ -25,8 +27,7 @@ Rcpp::NumericVector direct_sampler_ar(unsigned int n, const WeightFunction& w,
 			double u_proposal = step.draw_one();
 			double log_p_val = step.log_p(log(u_proposal));
 			double log_h_val = step.density(u_proposal, true, false);
-			// double M = step.get_max_jump();
-			Rcpp::stop("direct_sampler_ar needs to be updated");
+			// TBD: M needs to be computed correctly
 			double M = 0;
 			double log_ratio = log_p_val - log_h_val - log(M);
 			if (log(v) < log_ratio) {

@@ -3,8 +3,6 @@
 
 // Try to make this version as fast as possible. E.g. avoid
 // calling the one above.
-//' @export
-// [[Rcpp::export]]
 Rcpp::IntegerVector rcateg_mat(const Rcpp::NumericMatrix& P)
 {
 	unsigned int n = P.rows();
@@ -26,8 +24,6 @@ Rcpp::IntegerVector rcateg_mat(const Rcpp::NumericMatrix& P)
 	return z;
 }
 
-//' @export
-// [[Rcpp::export]]
 Rcpp::IntegerVector rcateg_logp(unsigned int n, const Rcpp::NumericVector& logprob)
 {
 	const Rcpp::IntegerVector& idx_sort = order(logprob, true);
@@ -80,8 +76,6 @@ unsigned int rcateg(const Rcpp::NumericVector& p)
 	return (u < 1)*Rcpp::sum(u > cp) + (u >= 1)*(k-1);
 }
 
-//' @export
-// [[Rcpp::export]]
 Rcpp::IntegerVector rcateg(unsigned int n, const Rcpp::NumericVector& p)
 {
 	unsigned int k = p.size();

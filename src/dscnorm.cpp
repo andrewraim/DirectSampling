@@ -1,4 +1,4 @@
-#include <Rcpp.h>
+#include "dscnorm.h"
 #include "dgeom.h"
 
 double d_dscnorm_unnormalized(int x, double sigma)
@@ -26,8 +26,6 @@ int r_dscnorm(double sigma)
 	return y;
 }
 
-//' @export
-// [[Rcpp::export]]
 Rcpp::NumericVector d_dscnorm_unnormalized(const Rcpp::IntegerVector& x, double sigma)
 {
 	unsigned n = x.size();
@@ -40,8 +38,6 @@ Rcpp::NumericVector d_dscnorm_unnormalized(const Rcpp::IntegerVector& x, double 
 	return out;
 }
 
-//' @export
-// [[Rcpp::export]]
 Rcpp::IntegerVector r_dscnorm(unsigned int n, double sigma)
 {
 	Rcpp::IntegerVector out(n);
