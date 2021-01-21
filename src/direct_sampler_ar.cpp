@@ -5,7 +5,6 @@
 * Note: This implementation is not complete. The calculation of M needs to
 * be coded with the corrected expression.
 */
-
 Rcpp::NumericVector direct_sampler_ar(unsigned int n, const WeightFunction& w,
 	const BaseDistribution& g, double tol, unsigned int N_init,
 	unsigned int max_rejections, const std::string& fill_method)

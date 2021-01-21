@@ -38,6 +38,7 @@ Rcpp::NumericVector cumsum(const Rcpp::NumericVector& x)
 }
 
 // Currently assumes both roots are real
+//' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector quadratic_roots(double A, double B, double C)
 {
@@ -58,6 +59,7 @@ Rcpp::IntegerVector order(const Rcpp::NumericVector& x, bool decrease)
 // Uses the method from
 // https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Summation/subtraction
 // for stable calculation on the log scale.
+//' @export
 // [[Rcpp::export]]
 double logsumprobs(const Rcpp::NumericVector& logprob)
 {

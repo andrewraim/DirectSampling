@@ -1,10 +1,7 @@
 #' @name DirectSampling-package
 #' @useDynLib DirectSampling, .registration = TRUE
-#' @import Rcpp
-#' @import stats
+#' @import Rcpp 
+#' @importFrom R6 R6Class
+#' @importFrom datastructures fibonacci_heap
 #' @docType package
 NULL
-
-
-library(R6)
-library(datastructures)

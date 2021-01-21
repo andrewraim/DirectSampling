@@ -43,6 +43,8 @@ double q_dgeom(double q, double p)
 	return  x_neg*(x_neg < 0) + x_pos*(x_pos >= 0);
 }
 
+//' @export
+// [[Rcpp::export]]
 Rcpp::NumericVector d_dgeom(const Rcpp::NumericVector& x, double p, bool take_log = false)
 {
 	unsigned int n = x.size();
@@ -55,6 +57,8 @@ Rcpp::NumericVector d_dgeom(const Rcpp::NumericVector& x, double p, bool take_lo
 	return out;
 }
 
+//' @export
+// [[Rcpp::export]]
 Rcpp::NumericVector p_dgeom(const Rcpp::NumericVector& x, double p)
 {
 	unsigned int n = x.size();
@@ -67,6 +71,8 @@ Rcpp::NumericVector p_dgeom(const Rcpp::NumericVector& x, double p)
 	return out;
 }
 
+//' @export
+// [[Rcpp::export]]
 Rcpp::NumericVector r_dgeom(unsigned int n, double p)
 {
 	Rcpp::NumericVector out(n);
@@ -76,6 +82,8 @@ Rcpp::NumericVector r_dgeom(unsigned int n, double p)
 	return out;
 }
 
+//' @export
+// [[Rcpp::export]]
 Rcpp::NumericVector q_dgeom(const Rcpp::NumericVector& q, double p)
 {
 	unsigned int n = q.size();
@@ -87,4 +95,3 @@ Rcpp::NumericVector q_dgeom(const Rcpp::NumericVector& q, double p)
 
 	return out;
 }
-
