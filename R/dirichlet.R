@@ -1,3 +1,4 @@
+#' @export
 rdirichlet = function(n, alpha)
 {
 	k = length(alpha)
@@ -9,6 +10,7 @@ rdirichlet = function(n, alpha)
 	return(x / S)
 }
 
+#' @export
 ddirichlet = function(x, alpha, log = FALSE)
 {
 	n = nrow(x)
@@ -22,3 +24,4 @@ ddirichlet = function(x, alpha, log = FALSE)
 
 	if (log) { return(logf) } else { return(exp(logf))}
 }
+

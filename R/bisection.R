@@ -6,6 +6,7 @@
 # tol: Stop when dist(x_lo,x_hi) < tol
 # Watch out for numerical overflow. eventually mid(x,y) will no longer be
 # strictly between x and y
+#' @export
 bisection = function(x_lo, x_hi, pred, mid, dist, tol)
 {
 	x = mid(x_lo, x_hi)
@@ -24,3 +25,4 @@ bisection = function(x_lo, x_hi, pred, mid, dist, tol)
 
 	return(x)
 }
+

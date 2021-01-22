@@ -27,6 +27,7 @@ print.interval = function(intvl)
 
 # This R6 class represents a step function approximation to the non-increasing
 # Pr(A_u) for u in [0,1].
+#' @export
 Stepdown = R6Class("Stepdown",
 	lock_objects = FALSE,
 	lock_class = FALSE,
@@ -291,3 +292,4 @@ Stepdown$set("private", "update", function()
 })
 
 Stepdown$lock()
+
