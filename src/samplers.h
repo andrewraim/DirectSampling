@@ -7,7 +7,7 @@
 // [[Rcpp::export]]
 Rcpp::NumericVector direct_sampler_lognormal_normal(unsigned int n, double z,
 	double mu, double sigma2, double tau, double tol,
-	unsigned int N, const std::string& fill_method)
+	unsigned int N, const std::string& fill_method);
 
 //' @export
 // [[Rcpp::export]]

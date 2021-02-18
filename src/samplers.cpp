@@ -1,3 +1,4 @@
+#include "samplers.h"
 #include "direct_sampler.h"
 #include "LognormalWeightFunction.h"
 #include "NormalWeightFunction.h"
