@@ -1,11 +1,6 @@
-#include "LognormalWeightFunction.h"
-#include "NormalWeightFunction.h"
-#include "DGeomBaseDistribution.h"
-#include "DscNormBaseDistribution.h"
-#include "LaplaceBaseDistribution.h"
+#include "samplers.h"
 #include "direct_sampler.h"
 
-// [[Rcpp::export]]
 Rcpp::NumericVector direct_sampler_lognormal_dscnorm(unsigned int n, double z,
 	double mu, double sigma2, double tau, double tol,
 	unsigned int N, const std::string& fill_method)
@@ -15,7 +10,15 @@ Rcpp::NumericVector direct_sampler_lognormal_dscnorm(unsigned int n, double z,
 	return direct_sampler(n, w, g, tol, N, fill_method);
 }
 
-// [[Rcpp::export]]
+Rcpp::NumericVector direct_sampler_lognormal_laplace(unsigned int n, double z,
+	double mu, double sigma2, double lambda, double tol,
+	unsigned int N, const std::string& fill_method)
+{
+	LognormalWeightFunction w(z, mu, sigma2);
+	LaplaceBaseDistribution g(lambda);
+	return direct_sampler(n, w, g, tol, N, fill_method);
+}
+
 Rcpp::NumericVector direct_sampler_lognormal_dgeom(unsigned int n, double z,
 	double mu, double sigma2, double rho, double tol,
 	unsigned int N, const std::string& fill_method)
@@ -25,7 +28,6 @@ Rcpp::NumericVector direct_sampler_lognormal_dgeom(unsigned int n, double z,
 	return direct_sampler(n, w, g, tol, N, fill_method);
 }
 
-// [[Rcpp::export]]
 Rcpp::NumericVector direct_sampler_normal_laplace(unsigned int n, double z,
 	double mu, double sigma2, double lambda, double tol,
 	unsigned int N, const std::string& fill_method)
@@ -34,4 +36,3 @@ Rcpp::NumericVector direct_sampler_normal_laplace(unsigned int n, double z,
 	LaplaceBaseDistribution g(lambda);
 	return direct_sampler(n, w, g, tol, N, fill_method);
 }
-

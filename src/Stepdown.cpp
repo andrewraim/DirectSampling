@@ -37,7 +37,7 @@ public:
 	}
 	bool operator()(double log_u) const {
 		double log_prob = _step.log_p(log_u);
-		return isinf(log_prob);
+		return std::isinf(log_prob);
 	}
 private:
 	const Stepdown& _step;
@@ -130,7 +130,7 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	// First, make sure the widest possible A_u intersects with [x_lo, x_hi]. If it
 	// doesn't, the rest of the algorithm won't work, so bail out.
 	double log_prob_max = log_p(-INFINITY);
-	if (isinf(log_prob_max)) {
+	if (std::isinf(log_prob_max)) {
 		Rcpp::stop("Could not find any u such that P(X in A_u) > 0");
 	}
 
@@ -382,7 +382,7 @@ void Stepdown::update()
 		// This version tries to be more precise and do more work on the log-scale
 		for (unsigned int i = 0; i < N+1; i++) {
 			double log_h_cur = _log_h_vals(i);
-			double log_h_next = _log_h_vals(i+1);
+			// double log_h_next = _log_h_vals(i+1);
 			double log_x_cur = _log_x_vals(i);
 			double log_x_next = _log_x_vals(i+1);
 			areas(i) = exp(log_x_next + log_h_cur) - exp(log_x_cur + log_h_cur);

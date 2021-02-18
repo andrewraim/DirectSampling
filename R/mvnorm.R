@@ -1,4 +1,5 @@
 # Draw from MVN by specifying a covariance matrix
+#' @export
 rmvnorm = function(n, mu, Sigma)
 {
 	k = length(mu)
@@ -9,6 +10,7 @@ rmvnorm = function(n, mu, Sigma)
 }
 
 # Draw from MVN by specifying a precision matrix
+#' @export
 rmvnorm_prec = function(n, mu, Omega)
 {
 	k = length(mu)
@@ -23,6 +25,7 @@ rmvnorm_prec = function(n, mu, Omega)
 }
 
 # MVN density specified by covariance matrix
+#' @export
 dmvnorm = function(x, mu, Sigma, log = FALSE)
 {
 	n = nrow(x)
@@ -40,6 +43,7 @@ dmvnorm = function(x, mu, Sigma, log = FALSE)
 }
 
 # MVN density specified by precision matrix
+#' @export
 dmvnorm_prec = function(x, mu, Omega, log = FALSE)
 {
 	n = nrow(x)
