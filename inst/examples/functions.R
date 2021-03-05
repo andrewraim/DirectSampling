@@ -72,6 +72,42 @@ get_normal_weight = function(z, mu, sigma2)
 	return(ret)
 }
 
+get_normal_base = function(sigma)
+{
+	# Evaluate the function
+	density = function(x, log = FALSE) {
+		dnorm(x, 0, sigma, log)
+	}
+
+	# Compute Pr(x1 < X <= x2) probability where X ~ N(0, sigma2)
+	pr_interval = function(x1, x2) {
+		pnorm(x2, 0, sigma) - pnorm(x1, 0, sigma)
+	}
+
+	# Quantile function of Normal truncated to [x_min, x_max]
+	# As with dgeom, infinite x is handled before returning.
+	q_truncated = function(p, x_min = -Inf, x_max = Inf) {
+		p_min = pnorm(x_min, 0, sigma)
+		p_max = pnorm(x_max, 0, sigma)
+		x = qnorm((p_max - p_min)*p + p_min, 0, sigma)
+		max(x_min, min(x, x_max))
+	}
+
+	r_truncated = function(n, x_min = -Inf, x_max = Inf) {
+		u = runif(n)
+		x = numeric(n)
+		for (i in 1:n) {
+			x[i] = q_truncated(u[i], x_min, x_max)
+		}
+		return(x)
+	}
+
+	ret = list(pr_interval = pr_interval, q_truncated = q_truncated,
+		r_truncated = r_truncated, density = density)
+	class(ret) = "base"
+	return(ret)
+}
+
 get_dgeom_base = function(rho)
 {
 	# Evaluate the function
