@@ -194,7 +194,7 @@ summary.my_fit = function(object, ...)
 
 print.my_fit = function(x, ...)
 {
-	cat("Summary of fit for msmix stick-breaking model\n")
+	cat("Summary of fit\n")
 	print(summary(x))
 
 	cat("----\n")

@@ -155,7 +155,7 @@ get_dscnorm_base = function(tau, tol = 1e-10)
 		d_dscnorm(x, tau, tol = tol, take_log = log)
 	}
 
-	# Compute Pr(x1 < X <= x2) probability where X ~ DGeom(tau)
+	# Compute Pr(x1 < X <= x2) probability where X ~ DscNorm(tau)
 	pr_interval = function(x1, x2) {
 		p_dscnorm(x2, tau, tol) - p_dscnorm(x1, tau, tol)
 	}

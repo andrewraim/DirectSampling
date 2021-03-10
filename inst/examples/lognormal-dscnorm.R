@@ -1,6 +1,7 @@
 library(DirectSampling)
 
-# Examples of direct sampling with DscNorm and Lognormal
+# Examples of direct sampling with a Discrete Normal base distribution and a
+# Lognormal weight function.
 source("functions.R")
 set.seed(1234)
 
@@ -51,3 +52,4 @@ g_obj = get_dscnorm_base(tau)
 gg = make_plot_discrete(n, w_obj, g_obj) +
 	ggtitle(get_label(z, mu, sigma2, tau))
 ggsave("example5f_draws.pdf", gg, width = 4, height = 3)
+
