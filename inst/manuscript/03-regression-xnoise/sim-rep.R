@@ -32,7 +32,7 @@ res1 = list()
 res2 = list()
 
 for (s in 1:N_sim) {
-	logger("*** Simulation %d ***\n", s)
+	logger("*** Rep %d ***\n", s)
 
 	# Draw new responses and additive noise
 	y_true = rlnorm(n, mu_true, sqrt(sigma2_true))
@@ -48,11 +48,11 @@ for (s in 1:N_sim) {
 	}
 	X_tilde = X_true + xi_x_true
 
-	# Fit the full sampler
+	logger("Fitting noisy obs\n")
 	init = get_init(n = n, d = d)
 	fit1_out = my_sampler(y_tilde, X_tilde, rho_y, lambda_x, init, prior, control)
 
-	# Fit observations as if there were no added noise
+	logger("Fitting noiseless obs\n")
 	init = get_init(xi_y = rep(0,n), xi_x = matrix(0,n,d), n = n, d = d)
 	fixed = get_fixed(xi_y = TRUE, xi_x = TRUE)
 	fit2_out = my_sampler(y_true, X_true, rho_y = rep(1,n),
@@ -61,6 +61,3 @@ for (s in 1:N_sim) {
 	res1[[s]] = fit1_out
 	res2[[s]] = fit2_out
 }
-
-save.image("results.Rdata")
-

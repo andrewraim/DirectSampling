@@ -46,7 +46,7 @@ for (idx_sigma in seq_along(sigma_levels)) {
 	fprintf(ff, "N_direct_y = %d\n", N_direct_y)
 	fprintf(ff, "N_direct_x = %d\n", N_direct_x)
 	fprintf(ff, "report_period = %d\n\n", report_period)
-	fprintf(ff, "source(\"../sim.R\", chdir = TRUE)\n")
+	fprintf(ff, "source(\"../sim-rep.R\", chdir = TRUE)\n")
 	fprintf(ff, "save.image(\"results.Rdata\")\n")
 	close(ff)
 }

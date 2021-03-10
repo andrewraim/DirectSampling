@@ -10,13 +10,13 @@ output:
 
 # Requirements
 
-This code requires R with the DirectSampling package. Additionally, the
-following R packages are used.
+This folder contains code to replicate the results in the manuscript "Direct
+Sampling in Bayesian Regression Models with Additive Disclosure Avoidance
+Noise". It assumes you have installed R and the DirectSampling package. In
+addition to the prerequisites needed for the DirectSampling package, the
+following R packages are needed.
 
-- Rcpp
-- R6
 - ggplot2
-- datastructures
 - Matrix
 - dplyr
 - gridExtra
@@ -56,11 +56,11 @@ Code for Section 5.1 of the manuscript.
 3. Several scripts are provided to generate the simulation directory structure
    carry a run of the simulation, and post-process the results.
 
-   a. `setup.R`: Generate directory structure for the simulation.
-   b. `sim.R`: Run one setting of the simulation whose results are shown in
+   a. `sim-setup.R`: Generate directory structure for the simulation.
+   b. `sim-rep.R`: Run one setting of the simulation whose results are shown in
       Fig 6.
-   c. `analyze.R`: analyze results from simulation. It assumes that results are
-      laid out in the directory structure specified by `setup.R`.
+   c. `sim-analyze.R`: analyze results from simulation. It assumes that results
+      are laid out in the directory structure specified by `setup.R`.
 
 ## `03-regression-xnoise/`
 Code for Section 5.2 of the manuscript.
@@ -74,12 +74,11 @@ Code for Section 5.2 of the manuscript.
 3. Several scripts are provided to generate the simulation directory structure
    carry a run of the simulation, and post-process the results.
 
-   a. `setup.R`: Generate directory structure for the simulation.
-   b. `sim.R`: Run one setting of the simulation whose results are shown in
+   a. `sim-setup.R`: Generate directory structure for the simulation.
+   b. `sim-rep.R`: Run one setting of the simulation whose results are shown in
       Fig 9.
-   c. `analyze.R`: analyze results from simulation. It assumes that results are
-      laid out in the directory structure specified by `setup.R`.
-
+   c. `sim-analyze.R`: analyze results from simulation. It assumes that results
+      are laid out in the directory structure specified by `setup.R`.
 
 ## `shared/`
 Code used in several places throughout the other folders.

@@ -36,7 +36,7 @@ for (idx_sigma in seq_along(sigma_levels)) {
 	fprintf(ff, "mcmc_reps = %d\n", mcmc_reps)
 	fprintf(ff, "mcmc_burn = %d\n", mcmc_burn)
 	fprintf(ff, "report_period = %d\n\n", report_period)
-	fprintf(ff, "source(\"../sim.R\", chdir = TRUE)\n")
+	fprintf(ff, "source(\"../sim-rep.R\", chdir = TRUE)\n")
 	fprintf(ff, "save.image(\"results.Rdata\")\n")
 	close(ff)
 }
