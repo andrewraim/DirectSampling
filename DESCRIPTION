@@ -5,7 +5,9 @@ Version: 0.0.1
 Author: Andrew Raim <andrew.raim@gmail.com>
 Maintainer: Andrew Raim <andrew.raim@gmail.com>
 URL: https://github.com/andrewraim/direct-sampling
-Description: TBD
+Description: Implementation of direct sampling as described in the
+	manuscript Direct Sampling in Bayesian Regression Models with Additive
+	Disclosure Avoidance Noise.
 License: GPL-2 | GPL-3
 LazyLoad: yes
 Depends: stats, Rcpp, R6, datastructures
