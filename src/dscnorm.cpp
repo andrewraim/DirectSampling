@@ -2,15 +2,6 @@
 #include "dgeom.h"
 #include "find_interval.h"
 
-/*
-* It's not clear whether the normalizing constant or CDF of dscnorm have
-* closed form expressions, so we will truncate and treat it as a discrete
-* dsitribution with finite support. The truncation will be based on the
-* quantiles of the continuous normal distribuition.
-* 
-* The following returns an x so that [-x, x] should contain 1-tol mass
-* of the distribution.
-*/
 int hi_dscnorm(double sigma, double tol)
 {
 	return ceil(R::qnorm(tol/2.0, 0, sigma, false, false));

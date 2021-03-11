@@ -78,14 +78,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // q_dgeom
-Rcpp::NumericVector q_dgeom(const Rcpp::NumericVector& x, double p);
-RcppExport SEXP _DirectSampling_q_dgeom(SEXP xSEXP, SEXP pSEXP) {
+Rcpp::NumericVector q_dgeom(const Rcpp::NumericVector& q, double p);
+RcppExport SEXP _DirectSampling_q_dgeom(SEXP qSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type q(qSEXP);
     Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(q_dgeom(x, p));
+    rcpp_result_gen = Rcpp::wrap(q_dgeom(q, p));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -207,15 +207,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // q_laplace
-Rcpp::NumericVector q_laplace(const Rcpp::NumericVector& x, double mu, double lambda);
-RcppExport SEXP _DirectSampling_q_laplace(SEXP xSEXP, SEXP muSEXP, SEXP lambdaSEXP) {
+Rcpp::NumericVector q_laplace(const Rcpp::NumericVector& q, double mu, double lambda);
+RcppExport SEXP _DirectSampling_q_laplace(SEXP qSEXP, SEXP muSEXP, SEXP lambdaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type q(qSEXP);
     Rcpp::traits::input_parameter< double >::type mu(muSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(q_laplace(x, mu, lambda));
+    rcpp_result_gen = Rcpp::wrap(q_laplace(q, mu, lambda));
     return rcpp_result_gen;
 END_RCPP
 }

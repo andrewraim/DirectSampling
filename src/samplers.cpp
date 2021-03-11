@@ -51,4 +51,3 @@ Rcpp::NumericVector direct_sampler_normal_laplace(unsigned int n, double z,
 	LaplaceBaseDistribution g(lambda);
 	return direct_sampler(n, w, g, tol, N, fill_method);
 }
-

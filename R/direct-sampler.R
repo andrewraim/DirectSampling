@@ -1,9 +1,49 @@
-# Basic direct sampler, without any of the customizations we proposed
+#' Direct Sampler
+#' 
+#' Basic and customized versions of the direct sampler.
+#' 
+#' @param n Number of draws to generate.
+#' @param w An weight function object.
+#' @param g An base distribution object.
+#' @param N Number of knots to use in approximation for \eqn{p(u)}.
+#' @param max_iter Maximum number of accept/reject attempts to try for each draw.
+#' @param tol Tolerance for step function approximation in customized sampler.
+#' @param fill_method Knot selection method for customized sampler. See
+#' \link{Step}.
+#' 
+#' @details
+#' The object \code{w} represents a unimodal weight function. It is
+#' expected to contain several members:
+#' \itemize{
+#' \item \code{log_c}: the logarithm of the value c, which is the mode of the
+#' weight function.
+#' \item \code{roots(log_a)}: return the roots of the equation
+#' \eqn{\log w(x) - \rm{log_a} = 0}.
+#' \item \code{eval(x, log = TRUE)}: evaluate the function. Return the value
+#' on the log-scale if \code{log = TRUE}.
+#' }
+#' 
+#' The object \code{g} represents a base distribution. It is
+#' expected to contain two member functions:
+#' \itemize{
+#' \item \code{pr_interval(x1, x2)}: Return Pr(x1 < X <= x2) under
+#' distribution g.
+#' \item \code{r_truncated(n, x1, x2)}: Take n draws from distribution g
+#' truncated to the interval (x1, x2].
+#' }
+#' 
+#' @name DirectSampler
+NULL
+
+#' @name DirectSampler
 #' @export
-direct_sampler_basic = function(n, w_obj, g_obj, N = 100, max_iter = 10000)
+direct_sampler_basic = function(n, w, g, N = 100, max_iter = 10000)
 {
+	stopifnot(class(w) == "weight")
+	stopifnot(class(g) == "base")
+
 	# Maximum weight c obtained from the mode of the LogNormal distn.
-	log_c = w_obj$log_c
+	log_c = w$log_c
 
 	# Set up approximation for the marginal distn of u
 	knots = 0:N / N
@@ -11,8 +51,8 @@ direct_sampler_basic = function(n, w_obj, g_obj, N = 100, max_iter = 10000)
 	for (k in 1:length(qq)) {
 		# Pr(A_{k/N})
 		u = knots[k]
-		endpoints = w_obj$roots(log_c + log(u))
-		qq[k] =  g_obj$pr_interval(endpoints[1], endpoints[2])
+		endpoints = w$roots(log_c + log(u))
+		qq[k] =  g$pr_interval(endpoints[1], endpoints[2])
 	}
 
 	# Draw from approximation to marginal distn of u
@@ -25,8 +65,8 @@ direct_sampler_basic = function(n, w_obj, g_obj, N = 100, max_iter = 10000)
 	for (i in 1:n) {
 		while (is.na(x[i]) && tries[i] < max_iter) {
 			tries[i] = tries[i] + 1
-			x_proposal = g_obj$r_truncated(1)
-			accept = w_obj$eval(x_proposal, log = TRUE) > log_c + log(u[i])
+			x_proposal = g$r_truncated(1)
+			accept = w$eval(x_proposal, log = TRUE) > log_c + log(u[i])
 			if (accept) { x[i] = x_proposal }
 		}
 	}
@@ -34,6 +74,7 @@ direct_sampler_basic = function(n, w_obj, g_obj, N = 100, max_iter = 10000)
 	list(x = x, tries = tries)
 }
 
+#' @name DirectSampler
 #' @export
 direct_sampler = function(n, w, g, tol = 1e-8, N = 100,
 	fill_method = "small_rects")

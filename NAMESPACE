@@ -2,9 +2,6 @@
 
 export(Stepdown)
 export(bisection)
-export(d_dgeom)
-export(d_dscnorm)
-export(d_laplace)
 export(ddirichlet)
 export(dinvgamma)
 export(direct_sampler)

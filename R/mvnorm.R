@@ -1,4 +1,20 @@
-# Draw from MVN by specifying a covariance matrix
+#' Multivariate Normal Distribution
+#' 
+#' Density and drawing functions for Multivariate Normal distribution on
+#' \eqn{\mathbb{R}^k}, parameterized either by the covariance or precision
+#' matrix.
+#' 
+#' @param n Number of draws to generate.
+#' @param x An n-by-k matrix whose rows are points to evaluate.
+#' @param mu k-dimensional vector representing the mean.
+#' @param Sigma k-by-k covariance matrix.
+#' @param Omega k-by-k precision matrix.
+#' @param log If \code{TRUE}, return the log-density.
+#' 
+#' @name MVN
+NULL
+
+#' @name MVN
 #' @export
 rmvnorm = function(n, mu, Sigma)
 {
@@ -9,7 +25,7 @@ rmvnorm = function(n, mu, Sigma)
 	A %*% Z + mu
 }
 
-# Draw from MVN by specifying a precision matrix
+#' @name MVN
 #' @export
 rmvnorm_prec = function(n, mu, Omega)
 {
@@ -24,7 +40,7 @@ rmvnorm_prec = function(n, mu, Omega)
 	Ainv %*% Z + mu
 }
 
-# MVN density specified by covariance matrix
+#' @name MVN
 #' @export
 dmvnorm = function(x, mu, Sigma, log = FALSE)
 {
@@ -42,7 +58,7 @@ dmvnorm = function(x, mu, Sigma, log = FALSE)
 	if (log) { return(logf) } else { return(exp(logf))}
 }
 
-# MVN density specified by precision matrix
+#' @name MVN
 #' @export
 dmvnorm_prec = function(x, mu, Omega, log = FALSE)
 {

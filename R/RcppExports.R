@@ -16,96 +16,221 @@ rcateg_logp <- function(n, logprob) {
     .Call(`_DirectSampling_rcateg_logp`, n, logprob)
 }
 
-#' @export
+#' Double Geometric Distribution
+#' 
+#' Functions for the Double Geometric distribution.
+#' 
+#' @param n Number of draws to generate.
+#' @param x A vector of points to evaluate.
+#' @param q A vector of probabilities to evaluate.
+#' @param p probability parameter.
+#' @param take_log If \code{TRUE} return the log-density.
+#' 
+#' @details
+#' Here we assume Double Geometric distribution with density
+#' \deqn{
+#' f(x) = \frac{\rho}{2 - \rho} (1 - \rho)^{|x|}, \quad x \in \mathbb{Z}.
+#' }
+#' 
+#' @name DGeom
 d_dgeom <- function(x, p, take_log) {
     .Call(`_DirectSampling_d_dgeom`, x, p, take_log)
 }
 
+#' @name DGeom
 #' @export
 p_dgeom <- function(x, p) {
     .Call(`_DirectSampling_p_dgeom`, x, p)
 }
 
+#' @name DGeom
 #' @export
 r_dgeom <- function(n, p) {
     .Call(`_DirectSampling_r_dgeom`, n, p)
 }
 
+#' @name DGeom
 #' @export
-q_dgeom <- function(x, p) {
-    .Call(`_DirectSampling_q_dgeom`, x, p)
+q_dgeom <- function(q, p) {
+    .Call(`_DirectSampling_q_dgeom`, q, p)
 }
 
+#' @name DscNorm
 #' @export
 hi_dscnorm <- function(sigma, tol) {
     .Call(`_DirectSampling_hi_dscnorm`, sigma, tol)
 }
 
-#' @export
-d_dscnorm <- function(x, sigma, tol = 1e-10, take_log = FALSE, normalize = TRUE) {
+#' Discrete Normal Distribution
+#' 
+#' Functions for the Discrete Normal distribution with mean zero.
+#' 
+#' @param n Number of draws to generate.
+#' @param x A vector of points to evaluate.
+#' @param q A vector of probabilities to evaluate.
+#' @param sigma standard deviation parameter.
+#' @param take_log If \code{TRUE} return the log-density.
+#' @param tol Tolerance to truncate to a finite support (see details).
+#' @param normalize If \code{TRUE}, normalize the density (approximately).
+#' 
+#' @details
+#' Here we assume Discrete Normal distribution with density
+#' \deqn{
+#' f(x) \propto exp( -x^2 / (2 \sigma^2) ), \quad x \in \mathbb{Z}.
+#' }
+#' 
+#' The function \code{hi_dscnorm} returns an \eqn{x} so that \eqn{[-x, x]}
+#' contains \code{1 - tol} mass of the distribution. This is used to truncate
+#' the distribution to have finite support for the simple implementation here.
+#'
+#' @references
+#' Clement L. Canonne, Gautam Kamath, Thomas Steinke (2021), The Discrete
+#' Gaussian for Differential Privacy. <https://arxiv.org/abs/2004.00010>.
+#'
+#' @name DscNorm
+d_dscnorm <- function(x, sigma, tol, take_log, normalize) {
     .Call(`_DirectSampling_d_dscnorm`, x, sigma, tol, take_log, normalize)
 }
 
+#' @name DscNorm
 #' @export
-p_dscnorm <- function(x, sigma, tol = 1e-10) {
+p_dscnorm <- function(x, sigma, tol) {
     .Call(`_DirectSampling_p_dscnorm`, x, sigma, tol)
 }
 
+#' @name DscNorm
 #' @export
 r_dscnorm <- function(n, sigma) {
     .Call(`_DirectSampling_r_dscnorm`, n, sigma)
 }
 
+#' @name DscNorm
 #' @export
-q_dscnorm <- function(q, sigma, tol = 1e-10) {
+q_dscnorm <- function(q, sigma, tol) {
     .Call(`_DirectSampling_q_dscnorm`, q, sigma, tol)
 }
 
+#' Find Interval
+#' 
+#' @param x A number 
+#' @param cutpoints A sorted vector
+#' 
+#' @details
+#' Elements of cutpoints represent endpoints
+#' of adjacent intervals \eqn{[c_0,c_1)}, \eqn{[c_1,c_2)} ...,
+#' \eqn{[c_{k},c_{k+1})}. Return the index \code{i} such that \code{x} is in 
+#' \eqn{[c_i,c_{i+1})}; or return \code{-1} if \eqn{x < c_0}
+#' or \code{k+1} if \eqn{x > c_{k+1}}
+#'
 #' @export
 find_interval <- function(x, cutpoints) {
     .Call(`_DirectSampling_find_interval`, x, cutpoints)
 }
 
-#' @export
+#' Laplace Distribution
+#' 
+#' Functions for the Laplace distribution.
+#' 
+#' @param n Number of draws to generate.
+#' @param x A vector of points to evaluate.
+#' @param q A vector of probabilities to evaluate.
+#' @param mu Location parameter.
+#' @param lambda Scale parameter.
+#' @param take_log If \code{TRUE} return the log-density.
+#' 
+#' @details
+#' Here we assume Laplace distribution with density
+#' \deqn{
+#' f(x) = \frac{1}{2\lambda} e^{-|x| / \lambda}.
+#' }
+#' 
+#' @name Laplace
 d_laplace <- function(x, mu, lambda, take_log) {
     .Call(`_DirectSampling_d_laplace`, x, mu, lambda, take_log)
 }
 
+#' @name Laplace
 #' @export
 p_laplace <- function(x, mu, lambda) {
     .Call(`_DirectSampling_p_laplace`, x, mu, lambda)
 }
 
+#' @name Laplace
 #' @export
 r_laplace <- function(n, mu, lambda) {
     .Call(`_DirectSampling_r_laplace`, n, mu, lambda)
 }
 
+#' @name Laplace
 #' @export
-q_laplace <- function(x, mu, lambda) {
-    .Call(`_DirectSampling_q_laplace`, x, mu, lambda)
+q_laplace <- function(q, mu, lambda) {
+    .Call(`_DirectSampling_q_laplace`, q, mu, lambda)
 }
 
+#' Specific Direct Samplers
+#' 
+#' Functions for the Discrete Normal distribution with mean zero.
+#' 
+#' @param n Number of draws to generate.
+#' @param z A vector of points to evaluate.
+#' @param mu Mean parameter for weight function.
+#' @param sigma2 standard deviation parameter for weight function.
+#' @param tau Standard deviation parameter for base distribution.
+#' @param lambda Scale parameter for base distribution.
+#' @param rho Probability parameter for base distribution.
+#' @param tol Tolerance for step function approximation in customized sampler.
+#' @param N Number of knots to use in approximation for \eqn{p(u)}.
+#' @param fill_method Knot selection method for customized direct sampler.
+#' Can be either \code{equal_steps} or \code{small_rects}.
+#' 
+#' @details
+#' Implementations for the following direct samplers are provided:
+#' \itemize{
+#' \item \code{direct_sampler_lognormal_normal}: Lognormal weight function
+#' \eqn{w(x \mid \mu, \sigma^2)} and Normal base distribution
+#' \eqn{g(x \mid 0, \tau^2)}.
+#' 
+#' \item \code{direct_sampler_lognormal_dscnorm}: Lognormal weight function
+#' \eqn{w(x \mid \mu, \sigma^2)} and Discrete Normal base distribution
+#' \eqn{g(x \mid 0, \tau^2)}.
+#' 
+#' \item \code{direct_sampler_lognormal_laplace}: Lognormal weight function
+#' \eqn{w(x \mid \mu, \sigma^2)} and Laplace base distribution
+#' \eqn{g(x \mid 0, \lambda)}.
+#' 
+#' \item \code{direct_sampler_lognormal_dgeom}: Lognormal weight function
+#' \eqn{w(x \mid \mu, \sigma^2)} and Double Geometric base distribution
+#' \eqn{g(x \mid \rho)}.
+#' 
+#' \item \code{direct_sampler_normal_laplace}: Normal weight function
+#' \eqn{w(x \mid \mu, \sigma^2)} and Laplace base distribution
+#' \eqn{g(x \mid 0, \lambda)}.
+#' }
+#' @name SpecificDirectSamplers
 #' @export
 direct_sampler_lognormal_normal <- function(n, z, mu, sigma2, tau, tol, N, fill_method) {
     .Call(`_DirectSampling_direct_sampler_lognormal_normal`, n, z, mu, sigma2, tau, tol, N, fill_method)
 }
 
+#' @name SpecificDirectSamplers
 #' @export
 direct_sampler_lognormal_dscnorm <- function(n, z, mu, sigma2, tau, tol, N, fill_method) {
     .Call(`_DirectSampling_direct_sampler_lognormal_dscnorm`, n, z, mu, sigma2, tau, tol, N, fill_method)
 }
 
+#' @name SpecificDirectSamplers
 #' @export
 direct_sampler_lognormal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method) {
     .Call(`_DirectSampling_direct_sampler_lognormal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method)
 }
 
+#' @name SpecificDirectSamplers
 #' @export
 direct_sampler_lognormal_dgeom <- function(n, z, mu, sigma2, rho, tol, N, fill_method) {
     .Call(`_DirectSampling_direct_sampler_lognormal_dgeom`, n, z, mu, sigma2, rho, tol, N, fill_method)
 }
 
+#' @name SpecificDirectSamplers
 #' @export
 direct_sampler_normal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method) {
     .Call(`_DirectSampling_direct_sampler_normal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method)

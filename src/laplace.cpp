@@ -65,12 +65,12 @@ Rcpp::NumericVector r_laplace(unsigned int n, double mu, double lambda)
 	return out;
 }
 
-Rcpp::NumericVector q_laplace(const Rcpp::NumericVector& x, double mu, double lambda)
+Rcpp::NumericVector q_laplace(const Rcpp::NumericVector& q, double mu, double lambda)
 {
-	unsigned int n = x.size();
+	unsigned int n = q.size();
 	Rcpp::NumericVector out(n);
 	for (unsigned int i = 0; i < n; i++) {
-		out(i) = q_laplace(x(i), mu, lambda);
+		out(i) = q_laplace(q(i), mu, lambda);
 	}
 
 	return out;

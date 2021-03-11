@@ -34,6 +34,6 @@ R> devtools::install_github("andrewraim/DirectSampling")
 
 Package documentation is currently between minimal and nonexistent. However,
 the folder `inst/manuscript` contains replication materials for the manuscript
-which demonstrate the package. This folder includes a README describing the
-contents.
+which demonstrate use of the package. This folder includes a README describing
+the contents.
 

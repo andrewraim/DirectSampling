@@ -1,3 +1,23 @@
+#' Dirichlet Distribution
+#' 
+#' Density and drawing function for Dirichlet distribution on the \eqn{k}
+#' dimensional probability simplex.
+#' 
+#' @param n Number of draws to generate
+#' @param x An n-by-k matrix whose rows are points to evaluate.
+#' @param alpha k-dimensional vector of intensity parameters.
+#' @param log If \code{TRUE} return the log-density.
+#' 
+#' @details
+#' Here we assume Dirichlet distribution with density
+#' \deqn{
+#' f(x) = \frac{x_1^{\alpha_1-1} \cdots x_k^{\alpha_k-1}}{B(\bm{\alpha})}.
+#' }
+#' 
+#' @name Dirichlet
+NULL
+
+#' @name Dirichlet
 #' @export
 rdirichlet = function(n, alpha)
 {
@@ -10,6 +30,7 @@ rdirichlet = function(n, alpha)
 	return(x / S)
 }
 
+#' @name Dirichlet
 #' @export
 ddirichlet = function(x, alpha, log = FALSE)
 {
@@ -24,4 +45,3 @@ ddirichlet = function(x, alpha, log = FALSE)
 
 	if (log) { return(logf) } else { return(exp(logf))}
 }
-
