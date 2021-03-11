@@ -13,11 +13,11 @@ public:
 	virtual double pr_interval(double x1, double x2) const = 0;
 
 	// Return the p quantile of this distribution after truncating to interval
-	// [x_min, x_max].
+	// (x_min, x_max).
 	virtual double q_truncated(double p, double x_min, double x_max) const = 0;
 
 	// Take a draw from this distribution after truncating to interval
-	// [x_min, x_max].
+	// (x_min, x_max).
 	double r_truncated(double x_min, double x_max) const {
 		double u = R::runif(0, 1);
 		return q_truncated(u, x_min, x_max);

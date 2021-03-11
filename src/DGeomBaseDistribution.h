@@ -15,14 +15,19 @@ public:
 	double density(double x, bool take_log = false) const {
 		return d_dgeom(x, _rho, take_log);
 	}
-	// Compute Pr(x1 < X <= x2) probability where X ~ DGeom(rho)
+	// Compute Pr(x1 < X < x2) probability where X ~ DGeom(rho)
+	// This calculation should exclude endpoints if they are integers
 	double pr_interval(double x1, double x2) const {
-		return p_dgeom(x2, _rho) - p_dgeom(x1, _rho);
+		double a = floor(x1 + 1);
+		double b = ceil(x2 - 1);
+		return p_dgeom(b, _rho) - p_dgeom(a - 1, _rho);
 	}
-	// Quantile function of DGeom truncated to [x_min, x_max]
+	// Quantile function of DGeom truncated to (x_min, x_max)
 	double q_truncated(double p, double x_min, double x_max) const {
-		double p_min = p_dgeom(ceil(x_min) - 1, _rho);
-		double p_max = p_dgeom(floor(x_max), _rho);
+		double a = floor(x_min + 1);
+		double b = ceil(x_max - 1);
+		double p_min = p_dgeom(a - 1, _rho);
+		double p_max = p_dgeom(b, _rho);
 		double x = q_dgeom((p_max - p_min)*p + p_min, _rho);
 		return std::max(ceil(x_min), std::min(x, floor(x_max)));
 	}

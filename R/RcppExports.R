@@ -33,6 +33,7 @@ rcateg_logp <- function(n, logprob) {
 #' }
 #' 
 #' @name DGeom
+#' @export
 d_dgeom <- function(x, p, take_log) {
     .Call(`_DirectSampling_d_dgeom`, x, p, take_log)
 }
@@ -68,7 +69,7 @@ hi_dscnorm <- function(sigma, tol) {
 #' @param n Number of draws to generate.
 #' @param x A vector of points to evaluate.
 #' @param q A vector of probabilities to evaluate.
-#' @param sigma standard deviation parameter.
+#' @param sigma Standard deviation parameter.
 #' @param take_log If \code{TRUE} return the log-density.
 #' @param tol Tolerance to truncate to a finite support (see details).
 #' @param normalize If \code{TRUE}, normalize the density (approximately).
@@ -88,6 +89,7 @@ hi_dscnorm <- function(sigma, tol) {
 #' Gaussian for Differential Privacy. <https://arxiv.org/abs/2004.00010>.
 #'
 #' @name DscNorm
+#' @export
 d_dscnorm <- function(x, sigma, tol, take_log, normalize) {
     .Call(`_DirectSampling_d_dscnorm`, x, sigma, tol, take_log, normalize)
 }
@@ -145,6 +147,7 @@ find_interval <- function(x, cutpoints) {
 #' }
 #' 
 #' @name Laplace
+#' @export
 d_laplace <- function(x, mu, lambda, take_log) {
     .Call(`_DirectSampling_d_laplace`, x, mu, lambda, take_log)
 }

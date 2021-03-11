@@ -41,6 +41,7 @@ int q_dscnorm(double q, double sigma, double tol);
 //' Gaussian for Differential Privacy. <https://arxiv.org/abs/2004.00010>.
 //'
 //' @name DscNorm
+//' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector d_dscnorm(const Rcpp::NumericVector& x, double sigma,
 	double tol, bool take_log, bool normalize);

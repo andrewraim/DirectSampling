@@ -115,20 +115,25 @@ get_dgeom_base = function(rho)
 		d_dgeom(x, rho, log)
 	}
 
-	# Compute Pr(x1 < X <= x2) probability where X ~ DGeom(rho)
+	# Compute Pr(x1 < X < x2) probability where X ~ DGeom(rho)
+	# This calculation should exclude endpoints if they are integers
 	pr_interval = function(x1, x2) {
-		p_dgeom(x2, rho) - p_dgeom(x1, rho)
+		a = floor(x1 + 1)
+		b = ceiling(x2 - 1)
+		p_dgeom(b, rho) - p_dgeom(a - 1, rho)
 	}
 
-	# Quantile function of DGeom truncated to [x_min, x_max]
+	# Quantile function of DGeom truncated to (x_min, x_max)
 	#
 	# The intermediate result x can be infinite; for example, suppose
 	# x_min and x_max are both large enough so that Pr(x >= x_min) and
 	# Pr(x >= x_max) are numerically equal to 1. Then we return
 	# q_dgeom(1, rho) = Inf.
 	q_truncated = function(p, x_min = -Inf, x_max = Inf) {
-		p_min = p_dgeom(ceiling(x_min) - 1, rho)
-		p_max = p_dgeom(floor(x_max), rho)
+		a = floor(x_min + 1)
+		b = ceiling(x_max - 1)
+		p_min = p_dgeom(a - 1, rho)
+		p_max = p_dgeom(b, rho)
 		x = q_dgeom((p_max - p_min)*p + p_min, rho)
 		max(ceiling(x_min), min(x, floor(x_max)))
 	}
@@ -156,14 +161,19 @@ get_dscnorm_base = function(tau, tol = 1e-10)
 	}
 
 	# Compute Pr(x1 < X <= x2) probability where X ~ DscNorm(tau)
+	# This calculation should exclude endpoints if they are integers
 	pr_interval = function(x1, x2) {
-		p_dscnorm(x2, tau, tol) - p_dscnorm(x1, tau, tol)
+		a = floor(x1 + 1)
+		b = ceiling(x2 - 1)
+		p_dscnorm(b, tau, tol) - p_dscnorm(a - 1, tau, tol)
 	}
 
-	# Quantile function of DscNorm truncated to [x_min, x_max]
+	# Quantile function of DscNorm truncated to (x_min, x_max)
 	q_truncated = function(p, x_min = -Inf, x_max = Inf) {
-		p_min = p_dscnorm(ceiling(x_min) - 1, tau, tol)
-		p_max = p_dscnorm(floor(x_max), tau, tol)
+		a = floor(x_min + 1)
+		b = ceiling(x_max - 1)
+		p_min = p_dscnorm(a - 1, tau, tol)
+		p_max = p_dscnorm(b, tau, tol)
 		x = q_dscnorm((p_max - p_min)*p + p_min, tau, tol)
 		max(ceiling(x_min), min(x, floor(x_max)))
 	}
@@ -190,12 +200,12 @@ get_laplace_base = function(lambda)
 		d_laplace(x, 0, lambda, log)
 	}
 
-	# Compute Pr(x1 < X <= x2) probability where X ~ Laplace(0, lambda)
+	# Compute Pr(x1 < X < x2) probability where X ~ Laplace(0, lambda)
 	pr_interval = function(x1, x2) {
 		p_laplace(x2, 0, lambda) - p_laplace(x1, 0, lambda)
 	}
 
-	# Quantile function of Laplace truncated to [x_min, x_max]
+	# Quantile function of Laplace truncated to (x_min, x_max)
 	# As with dgeom, infinite x is handled before returning.
 	q_truncated = function(p, x_min = -Inf, x_max = Inf) {
 		p_min = p_laplace(x_min, 0, lambda)

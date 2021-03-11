@@ -20,7 +20,7 @@ r_dscnorm(n, sigma)
 q_dscnorm(q, sigma, tol)
 }
 \arguments{
-\item{sigma}{standard deviation parameter.}
+\item{sigma}{Standard deviation parameter.}
 
 \item{tol}{Tolerance to truncate to a finite support (see details).}
 

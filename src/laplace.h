@@ -26,6 +26,7 @@ double q_laplace(double q, double mu, double lambda);
 //' }
 //' 
 //' @name Laplace
+//' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector d_laplace(const Rcpp::NumericVector& x, double mu, double lambda, bool take_log);
 

@@ -14,11 +14,11 @@ public:
 	double density(double x, bool take_log = false) const {
 		return R::dnorm(x, 0, _sigma, take_log);
 	}
-	// Compute Pr(x1 < X <= x2) probability where X ~ N(0, sigma2)
+	// Compute Pr(x1 < X < x2) probability where X ~ N(0, sigma2)
 	double pr_interval(double x1, double x2) const {
 		return R::pnorm(x2, 0, _sigma, true, false) - R::pnorm(x1, 0, _sigma, true, false);
 	}
-	// Quantile function of N truncated to [x_min, x_max]
+	// Quantile function of N truncated to (x_min, x_max)
 	double q_truncated(double p, double x_min, double x_max) const {
 		double p_min = R::pnorm(x_min, 0, _sigma, true, false);
 		double p_max = R::pnorm(x_max, 0, _sigma, true, false);

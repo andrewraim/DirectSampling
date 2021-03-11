@@ -25,6 +25,7 @@ double q_dgeom(double q, double p);
 //' }
 //' 
 //' @name DGeom
+//' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector d_dgeom(const Rcpp::NumericVector& x, double p, bool take_log);
 
