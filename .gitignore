@@ -4,5 +4,5 @@
 .Ruserdata
 src/*.so
 src/*.o
-RcppExports.R
-RcppExports.cpp
+#RcppExports.R
+#RcppExports.cpp
