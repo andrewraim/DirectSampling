@@ -37,26 +37,8 @@ Rcpp::NumericVector cumsum(const Rcpp::NumericVector& x)
 	return out;
 }
 
-Rcpp::NumericVector quadratic_roots(double A, double B, double C)
-{
-	return Rcpp::NumericVector::create(
-		(-B + sqrt(B*B - 4*A*C)) / (2*A),
-		(-B - sqrt(B*B - 4*A*C)) / (2*A)
-	);
-}
-
 Rcpp::IntegerVector order(const Rcpp::NumericVector& x, bool decrease)
 {
 	Rcpp::NumericVector sorted = clone(x).sort(decrease);
 	return Rcpp::match(sorted, x);
-}
-
-double logsumprobs(const Rcpp::NumericVector& logprob)
-{
-	unsigned int k = logprob.size();
-	const Rcpp::IntegerVector& idx = Rcpp::seq_len(k-1);
-	const Rcpp::NumericVector& a = logprob[idx];
-	const Rcpp::NumericVector& b = Rcpp::rep(logprob(0), idx.length());
-	double s = Rcpp::sum(Rcpp::exp(a - b));
-	return logprob(0) + log1p(s);
 }

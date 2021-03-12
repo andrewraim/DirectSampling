@@ -1,32 +1,41 @@
-# This is used in the heap implementation of init_small_rects.
-# It represents an interval [x,y] with function values h(x) and h(y).
-# We save width = y-x and height = log[ h(x) / h(y) ].
-get_interval = function(log_x, log_y, log_h_x, log_h_y)
-{
-	# Consider changing these to have a "log_" prefix
-	width = exp(log_y) - exp(log_x)
-	height = exp(log_h_x) - exp(log_h_y)
-	priority = log(height) + log(width)
-	ret = list(log_x = log_x, log_y = log_y, log_h_x = log_h_x,
-		log_h_y = log_h_y, width = width, height = height,
-		priority = priority)
-	class(ret) = "interval"
-	return(ret)
-}
-
-print.interval = function(intvl)
-{
-	printf("log_x: %g\n", intvl$log_x)
-	printf("log_y: %g\n", intvl$log_y)
-	printf("log_h_x: %g\n", intvl$log_h_x)
-	printf("log_h_y: %g\n", intvl$log_h_y)
-	printf("width: %g\n", intvl$width)
-	printf("height: %g\n", intvl$height)
-	printf("priority: %g\n", intvl$priority)
-}
-
-# This R6 class represents a step function approximation to the non-increasing
-# Pr(A_u) for u in [0,1].
+#' @title Stepdown class
+#' 
+#' @param w An object representing a weight function (see details).
+#' @param g An object representing a base distribution (see details).
+#' @param tol A small positive number used in search for \eqn{u_L} and \eqn{u_H}.
+#' @param N Number of knot points will be N+1.
+#' @param method Either \code{equal_steps} or \code{small_rects} (see details).
+#' @param log_u A value of u given at the log-scale.
+#' @param p A probability to evaluate.
+#' @param n Number of draws to generate.
+#' @param x A vector of points to evaluate.
+#' @param log If \code{TRUE}, return value on the log-scale.
+#' @param normalize If \code{TRUE}, normalize the result to be a density value.
+#' 
+#' @details
+#' This R6 class represents a step function approximation to the non-increasing
+#' function \eqn{\rm{Pr}(A_u)} for \eqn{u \in [0,1]}.
+#' 
+#' The object \code{w} represents a unimodal weight function. It is
+#' expected to contain several members:
+#' \itemize{
+#' \item \code{log_c}: the logarithm of the value c, which is the mode of the
+#' weight function.
+#' \item \code{roots(log_a)}: return the roots of the equation
+#' \eqn{\log w(x) - \rm{log_a} = 0}.
+#' \item \code{eval(x, log = TRUE)}: evaluate the function. Return the value
+#' on the log-scale if \code{log = TRUE}.
+#' }
+#' 
+#' The object \code{g} represents a base distribution. It is
+#' expected to contain two member functions:
+#' \itemize{
+#' \item \code{pr_interval(x1, x2)}: Return \eqn{\rm{Pr}(x1 < X < x2)} under
+#' distribution g.
+#' \item \code{r_truncated(n, x1, x2)}: Take n draws from distribution g
+#' truncated to the open interval \eqn{(x1, x2)}.
+#' }
+#' 
 #' @export
 Stepdown = R6Class("Stepdown",
 	lock_objects = FALSE,
@@ -39,29 +48,124 @@ Stepdown = R6Class("Stepdown",
 		log_p = NULL
 	),
 	public = list(
-		initialize = function(w, g, tol, N, method) {
-			stopifnot(class(w) == "weight")
-			stopifnot(class(g) == "base")
-			private$tol = tol
-			private$N = N
-			private$setup(w, g, tol, N, method)
-		},
-		get_cum_probs = function() {
-			private$cum_probs
-		},
-		get_norm_const = function() {
-			private$norm_const
-		},
-		get_log_x_vals = function() {
-			private$log_x_vals
-		},
-		get_log_h_vals = function() {
-			private$log_h_vals
-		},
-		get_log_p = function(log_u) {
-			private$log_p(log_u)
+
+	# Note: I couldn't immediately figure out how to get Roxygen working with
+	# R6 for functions defined outside of this block using the "set"
+	# approach. The added support for R6 in Roxygen seems to be a fairly new
+	# development, and support for "set" may be added soon (or is already done
+	# and I missed it).
+
+	#' @description Construct the step function
+	initialize = function(w, g, tol, N, method) {
+		stopifnot(class(w) == "weight")
+		stopifnot(class(g) == "base")
+		private$tol = tol
+		private$N = N
+		private$setup(w, g, tol, N, method)
+	},
+
+	#' @description Get cumulative probabilities after normalizing
+	#' the step function to a discrete distribution.
+	get_cum_probs = function() {
+		private$cum_probs
+	},
+
+	#' @description The constant used to normalize the step function
+	#' to a discrete distribution.
+	get_norm_const = function() {
+		private$norm_const
+	},
+
+	#' @description The knot values on which the approximation is based,
+	#' returned on the log-scale.
+	get_log_x_vals = function() {
+		private$log_x_vals
+	},
+
+	#' @description Values of the approximation evaluated at the points
+	#' returned by \code{get_log_x_vals}, given at the log-scale.
+	get_log_h_vals = function() {
+		private$log_h_vals
+	},
+
+	#' @description Evaluate the function \eqn{\rm{Pr}(A_u)} on a given
+	#' point u (to be provided on the log-scale). The result is returned
+	#' on the log-scale.
+	get_log_p = function(log_u) {
+		private$log_p(log_u)
+	},
+
+	#' @description Update step function by adding a knot at the point u
+	#' (given on the log-scale).
+	add = function(log_u)
+	{
+		# This is not very efficient; we should be able to do better in C++.
+		log_h_val = private$log_p(log_u)
+		private$log_x_vals = sort(c(private$log_x_vals, log_u))
+		private$log_h_vals = sort(c(private$log_h_vals, log_h_val), decreasing = TRUE)
+		private$update()
+	},
+
+	#' @description Quantiles of the distribution based on the step function.
+	q = function(p)
+	{
+		n = length(p)
+		out = numeric(n)
+		cum_probs_ext = c(0, private$cum_probs)
+		for (i in 1:n) {
+			j1 = findInterval(p[i], cum_probs_ext, rightmost.closed = TRUE)
+			j2 = j1 + 1
+			x1 = exp(private$log_x_vals[j1])
+			x2 = exp(private$log_x_vals[j2])
+			cp1 = cum_probs_ext[j1]
+			cp2 = cum_probs_ext[j2]
+			out[i] = x1 + (x2 - x1) * (p - cp1) / (cp2 - cp1)
 		}
-	)
+		return(out)
+	},
+
+	#' @description Draw from the distribution based on the step function.
+	r = function(n)
+	{
+		u = runif(n)
+		out = numeric(n)
+		for (i in 1:n) {
+			out[i] = self$q(u[i])
+		}
+		return(out)
+	},
+
+	#' @description Density of the distribution based on the step function.
+	d = function(x, log = FALSE, normalize = TRUE)
+	{
+		n = length(x)
+		out = numeric(n)
+		for (i in 1:n) {
+			# Get the idx such that x_vals[idx] <= x < x_vals[idx+1]
+			idx = findInterval(log(x[i]), private$log_x_vals)
+			out[i] = private$log_h_vals[idx]
+		}
+		if (normalize) { out = out - private$norm_const }
+		if (log) { return(out) } else { return(exp(out)) }
+	},
+
+	#' @description CDF of the distribution based on the step function.
+	p = function(x)
+	{
+		n = length(x)
+		out = numeric(n)
+		for (i in 1:n) {
+			# Get the idx such that x_vals[idx] <= x < x_vals[idx+1]
+			j1 = findInterval(log(x[i]), private$log_x_vals)
+			j2 = j1 + 1
+			x1 = exp(private$log_x_vals[j1])
+			x2 = exp(private$log_x_vals[j2])
+			cp1 = private$cum_probs[j1]
+			cp2 = private$cum_probs[j2]
+			out[i] = cp1 + (x[i] - x1) / (x2 - x1) * (cp2 - cp1)
+		}
+		return(out)
+	})
 )
 
 # Build a stepdown function
@@ -190,75 +294,6 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U,
 	private$log_h_vals = sort(log_h_vals[seq_len(iter)], decreasing = TRUE)
 })
 
-Stepdown$set("public", "q", function(p)
-{
-	n = length(p)
-	out = numeric(n)
-	cum_probs_ext = c(0, private$cum_probs)
-
-	for (i in 1:n) {
-		j1 = findInterval(p[i], cum_probs_ext, rightmost.closed = TRUE)
-		j2 = j1 + 1
-		x1 = exp(private$log_x_vals[j1])
-		x2 = exp(private$log_x_vals[j2])
-		cp1 = cum_probs_ext[j1]
-		cp2 = cum_probs_ext[j2]
-		out[i] = x1 + (x2 - x1) * (p - cp1) / (cp2 - cp1)
-	}
-
-	return(out)
-})
-
-Stepdown$set("public", "r", function(n)
-{
-	u = runif(n)
-	out = numeric(n)
-	for (i in 1:n) {
-		out[i] = self$q(u[i])
-	}
-	return(out)
-})
-
-Stepdown$set("public", "d", function(x, log = FALSE, normalize = TRUE)
-{
-	n = length(x)
-	out = numeric(n)
-	for (i in 1:n) {
-		# Get the idx such that x_vals[idx] <= x < x_vals[idx+1]
-		idx = findInterval(log(x[i]), private$log_x_vals)
-		out[i] = private$log_h_vals[idx]
-	}
-	if (normalize) { out = out - private$norm_const }
-	if (log) { return(out) } else { return(exp(out)) }
-})
-
-Stepdown$set("public", "p", function(x)
-{
-	n = length(x)
-	out = numeric(n)
-	for (i in 1:n) {
-		# Get the idx such that x_vals[idx] <= x < x_vals[idx+1]
-		j1 = findInterval(log(x[i]), private$log_x_vals)
-		j2 = j1 + 1
-		x1 = exp(private$log_x_vals[j1])
-		x2 = exp(private$log_x_vals[j2])
-		cp1 = private$cum_probs[j1]
-		cp2 = private$cum_probs[j2]
-		out[i] = cp1 + (x[i] - x1) / (x2 - x1) * (cp2 - cp1)
-	}
-	return(out)
-})
-
-Stepdown$set("public", "add", function(log_u)
-{
-	# Update step function with new log_u and log_p values.
-	# This is not very efficient; we will do better in C++.
-	log_h_val = private$log_p(log_u)
-	private$log_x_vals = sort(c(private$log_x_vals, log_u))
-	private$log_h_vals = sort(c(private$log_h_vals, log_h_val), decreasing = TRUE)
-	private$update()
-})
-
 Stepdown$set("private", "update", function()
 {
 	N = length(private$log_x_vals) - 2
@@ -293,3 +328,30 @@ Stepdown$set("private", "update", function()
 
 Stepdown$lock()
 
+
+# This is used in the heap implementation of init_small_rects.
+# It represents an interval [x,y] with function values h(x) and h(y).
+# We save width = y-x and height = log[ h(x) / h(y) ].
+get_interval = function(log_x, log_y, log_h_x, log_h_y)
+{
+	# Consider changing these to have a "log_" prefix
+	width = exp(log_y) - exp(log_x)
+	height = exp(log_h_x) - exp(log_h_y)
+	priority = log(height) + log(width)
+	ret = list(log_x = log_x, log_y = log_y, log_h_x = log_h_x,
+		log_h_y = log_h_y, width = width, height = height,
+		priority = priority)
+	class(ret) = "interval"
+	return(ret)
+}
+
+print.interval = function(intvl)
+{
+	printf("log_x: %g\n", intvl$log_x)
+	printf("log_y: %g\n", intvl$log_y)
+	printf("log_h_x: %g\n", intvl$log_h_x)
+	printf("log_h_y: %g\n", intvl$log_h_y)
+	printf("width: %g\n", intvl$width)
+	printf("height: %g\n", intvl$height)
+	printf("priority: %g\n", intvl$priority)
+}

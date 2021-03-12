@@ -1,7 +1,7 @@
 #' Multivariate Normal Distribution
 #' 
-#' Density and drawing functions for Multivariate Normal distribution on
-#' \eqn{\mathbb{R}^k}, parameterized either by the covariance or precision
+#' Density and drawing functions for the k-dimensional Multivariate Normal
+#' distribution on, parameterized either by the covariance or precision
 #' matrix.
 #' 
 #' @param n Number of draws to generate.
@@ -11,26 +11,26 @@
 #' @param Omega k-by-k precision matrix.
 #' @param log If \code{TRUE}, return the log-density.
 #' 
-#' @name MVN
+#' @name Multivariate Normal
 NULL
 
-#' @name MVN
+#' @name Multivariate Normal
 #' @export
 rmvnorm = function(n, mu, Sigma)
 {
 	k = length(mu)
-	stopifnot(k == nrow(Sigma) && k == ncol(Sigma))
+	stopifnot(all(dim(Sigma) == k))
 	Z = matrix(rnorm(n*k), k, n)
 	A = t(chol(Sigma))
 	A %*% Z + mu
 }
 
-#' @name MVN
+#' @name Multivariate Normal
 #' @export
 rmvnorm_prec = function(n, mu, Omega)
 {
 	k = length(mu)
-	stopifnot(k == nrow(Omega) && k == ncol(Omega))
+	stopifnot(all(dim(Omega) == k))
 	Z = matrix(rnorm(n*k), k, n)
 
 	# Note that Ainv %*% t(Ainv) is the Cholesky decomposition of the covariance
@@ -40,13 +40,14 @@ rmvnorm_prec = function(n, mu, Omega)
 	Ainv %*% Z + mu
 }
 
-#' @name MVN
+#' @name Multivariate Normal
 #' @export
 dmvnorm = function(x, mu, Sigma, log = FALSE)
 {
 	n = nrow(x)
 	k = length(mu)
-	stopifnot(k == nrow(Sigma) && k == ncol(Sigma) && k == ncol(x))
+	stopifnot(all(dim(Sigma) == k))
+	stopifnot(ncol(x) == k)
 
 	# Use QR decomposition to efficiently compute determinant and inverse
 	xc = x - t(mu) %x% matrix(1,n,1)
@@ -58,13 +59,14 @@ dmvnorm = function(x, mu, Sigma, log = FALSE)
 	if (log) { return(logf) } else { return(exp(logf))}
 }
 
-#' @name MVN
+#' @name Multivariate Normal
 #' @export
 dmvnorm_prec = function(x, mu, Omega, log = FALSE)
 {
 	n = nrow(x)
 	k = length(mu)
-	stopifnot(k == nrow(Sigma) && k == ncol(Sigma) && k == ncol(x))
+	stopifnot(all(dim(Omega) == k))
+	stopifnot(ncol(x) == k)
 
 	xc = x - t(mu) %x% matrix(1,n,1)
 	Omega_xc = Omega %*% t(xc)
@@ -73,4 +75,3 @@ dmvnorm_prec = function(x, mu, Omega, log = FALSE)
 
 	if (log) { return(logf) } else { return(exp(logf))}
 }
-

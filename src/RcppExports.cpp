@@ -5,41 +5,6 @@
 
 using namespace Rcpp;
 
-// rcateg
-Rcpp::IntegerVector rcateg(unsigned int n, const Rcpp::NumericVector& p);
-RcppExport SEXP _DirectSampling_rcateg(SEXP nSEXP, SEXP pSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< unsigned int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcateg(n, p));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcateg_mat
-Rcpp::IntegerVector rcateg_mat(const Rcpp::NumericMatrix& P);
-RcppExport SEXP _DirectSampling_rcateg_mat(SEXP PSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type P(PSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcateg_mat(P));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcateg_logp
-Rcpp::IntegerVector rcateg_logp(unsigned int n, const Rcpp::NumericVector& logprob);
-RcppExport SEXP _DirectSampling_rcateg_logp(SEXP nSEXP, SEXP logprobSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< unsigned int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type logprob(logprobSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcateg_logp(n, logprob));
-    return rcpp_result_gen;
-END_RCPP
-}
 // d_dgeom
 Rcpp::NumericVector d_dgeom(const Rcpp::NumericVector& x, double p, bool take_log);
 RcppExport SEXP _DirectSampling_d_dgeom(SEXP xSEXP, SEXP pSEXP, SEXP take_logSEXP) {
@@ -309,35 +274,8 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// quadratic_roots
-Rcpp::NumericVector quadratic_roots(double A, double B, double C);
-RcppExport SEXP _DirectSampling_quadratic_roots(SEXP ASEXP, SEXP BSEXP, SEXP CSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type A(ASEXP);
-    Rcpp::traits::input_parameter< double >::type B(BSEXP);
-    Rcpp::traits::input_parameter< double >::type C(CSEXP);
-    rcpp_result_gen = Rcpp::wrap(quadratic_roots(A, B, C));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logsumprobs
-double logsumprobs(const Rcpp::NumericVector& logprob);
-RcppExport SEXP _DirectSampling_logsumprobs(SEXP logprobSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type logprob(logprobSEXP);
-    rcpp_result_gen = Rcpp::wrap(logsumprobs(logprob));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_DirectSampling_rcateg", (DL_FUNC) &_DirectSampling_rcateg, 2},
-    {"_DirectSampling_rcateg_mat", (DL_FUNC) &_DirectSampling_rcateg_mat, 1},
-    {"_DirectSampling_rcateg_logp", (DL_FUNC) &_DirectSampling_rcateg_logp, 2},
     {"_DirectSampling_d_dgeom", (DL_FUNC) &_DirectSampling_d_dgeom, 3},
     {"_DirectSampling_p_dgeom", (DL_FUNC) &_DirectSampling_p_dgeom, 2},
     {"_DirectSampling_r_dgeom", (DL_FUNC) &_DirectSampling_r_dgeom, 2},
@@ -357,8 +295,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DirectSampling_direct_sampler_lognormal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_laplace, 8},
     {"_DirectSampling_direct_sampler_lognormal_dgeom", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dgeom, 8},
     {"_DirectSampling_direct_sampler_normal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_normal_laplace, 8},
-    {"_DirectSampling_quadratic_roots", (DL_FUNC) &_DirectSampling_quadratic_roots, 3},
-    {"_DirectSampling_logsumprobs", (DL_FUNC) &_DirectSampling_logsumprobs, 1},
     {NULL, NULL, 0}
 };
 

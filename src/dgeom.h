@@ -21,25 +21,26 @@ double q_dgeom(double q, double p);
 //' @details
 //' Here we assume Double Geometric distribution with density
 //' \deqn{
-//' f(x) = \frac{\rho}{2 - \rho} (1 - \rho)^{|x|}, \quad x \in \mathbb{Z}.
+//' f(x) = \frac{\rho}{2 - \rho} (1 - \rho)^{|x|}, \quad x \in
+//' \{ \ldots, -1, 0, 1, \ldots \}.
 //' }
 //' 
-//' @name DGeom
+//' @name Double Geometric
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector d_dgeom(const Rcpp::NumericVector& x, double p, bool take_log);
 
-//' @name DGeom
+//' @name Double Geometric
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector p_dgeom(const Rcpp::NumericVector& x, double p);
 
-//' @name DGeom
+//' @name Double Geometric
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector r_dgeom(unsigned int n, double p);
 
-//' @name DGeom
+//' @name Double Geometric
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector q_dgeom(const Rcpp::NumericVector& q, double p);

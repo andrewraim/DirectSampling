@@ -160,7 +160,7 @@ get_dscnorm_base = function(tau, tol = 1e-10)
 		d_dscnorm(x, tau, tol = tol, take_log = log)
 	}
 
-	# Compute Pr(x1 < X <= x2) probability where X ~ DscNorm(tau)
+	# Compute Pr(x1 < X < x2) probability where X ~ DscNorm(tau)
 	# This calculation should exclude endpoints if they are integers
 	pr_interval = function(x1, x2) {
 		a = floor(x1 + 1)

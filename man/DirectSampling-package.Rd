@@ -4,3 +4,6 @@
 \name{DirectSampling-package}
 \alias{DirectSampling-package}
 \title{DirectSampling}
+\description{
+The \code{DirectSampling} package.
+}

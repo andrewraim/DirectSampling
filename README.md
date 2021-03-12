@@ -1,6 +1,6 @@
-This package contains code to accompany the manuscript "Direct Sampling in
+This package contains code to support the manuscript "Direct Sampling in
 Bayesian Regression Models with Additive Disclosure Avoidance Noise" (link
-pending).
+pending). It may be extended beyond the manuscript as well.
 
 To install the package from Github, first ensure that you have a recent
 installation of R and the packages Rcpp, datastructures, R6, and devtools.
@@ -9,8 +9,8 @@ can get [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and Mac OS X
 users can find similar tools
 [here](https://cran.r-project.org/bin/macosx/tools/).
 
-At a minimum, the following R script should run and print the vector
-`(2,3,4,5,6)`.
+After installing the development tools, you should be able to run the following
+following R script from within R and to print the vector `(2,3,4,5,6)`.
 
 ```r
 library(Rcpp)
@@ -32,8 +32,7 @@ Now the DirectSampling package can be installed and built using devtools:
 R> devtools::install_github("andrewraim/DirectSampling")
 ```
 
-Package documentation is currently between minimal and nonexistent. However,
-the folder `inst/manuscript` contains replication materials for the manuscript
-which demonstrate use of the package. This folder includes a README describing
-the contents.
+The folder `inst/manuscript` contains replication materials for the manuscript
+which also demonstrate use of the package. See `inst/manuscript/README.md` for
+a description of the contents.
 

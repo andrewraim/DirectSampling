@@ -4,14 +4,14 @@
 \alias{bisection}
 \title{Bisection Algorithm}
 \usage{
-bisection(x_lo, x_hi, pred, mid, dist, tol)
+bisection(x_lo, x_hi, f, mid, dist, tol)
 }
 \arguments{
 \item{x_lo}{A finite lower bound for \eqn{x} which should occur before the step.}
 
 \item{x_hi}{A finite upper bound for \eqn{x} which should occur after the step.}
 
-\item{pred}{The function \eqn{f(x)} (the "predicate").}
+\item{f}{The function \eqn{f(x)}.}
 
 \item{mid}{A midpoint function which operates on two points \code{(x,y)} where \code{x <= y}.}
 

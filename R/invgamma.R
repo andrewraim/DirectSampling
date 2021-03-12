@@ -14,17 +14,17 @@
 #' f(x) = \frac{b^a}{\Gamma(a)} x^{-(a+1)} e^{-b/x}.
 #' }
 #' 
-#' @name InvGamma
+#' @name Inverse Gamma
 NULL
 
-#' @name InvGamma
+#' @name Inverse Gamma
 #' @export
 rinvgamma = function(n, a, b)
 {
 	1 / rgamma(n, a, b)
 }
 
-#' @name InvGamma
+#' @name Inverse Gamma
 #' @export
 dinvgamma = function(x, a, b, log = FALSE)
 {
