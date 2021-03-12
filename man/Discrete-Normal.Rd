@@ -50,5 +50,5 @@ the distribution to have finite support for the simple implementation here.
 }
 \references{
 Clement L. Canonne, Gautam Kamath, Thomas Steinke (2021), The Discrete
-Gaussian for Differential Privacy. <https://arxiv.org/abs/2004.00010>.
+Gaussian for Differential Privacy. \url{https://arxiv.org/abs/2004.00010}.
 }

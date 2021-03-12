@@ -31,6 +31,12 @@ Now the DirectSampling package can be installed and built using devtools:
 ```
 R> devtools::install_github("andrewraim/DirectSampling")
 ```
+That will install whatever is currently in `HEAD`. The tag `v0.1.0` represents
+the code which corresponds to the latest version of the manuscript. To install
+this instead, use:
+```
+R> devtools::install_github("andrewraim/DirectSampling", ref = "v0.1.0")
+```
 
 The folder `inst/manuscript` contains replication materials for the manuscript
 which also demonstrate use of the package. See `inst/manuscript/README.md` for

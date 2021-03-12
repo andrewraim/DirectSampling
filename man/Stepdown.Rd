@@ -31,6 +31,18 @@ distribution g.
 \item \code{r_truncated(n, x1, x2)}: Take n draws from distribution g
 truncated to the open interval \eqn{(x1, x2)}.
 }
+
+We make use of the \code{fibonacci_heap} structure in the
+\code{datastructures} package to avoid repeated sorted when
+\code{small_rects} is used as the method of knot selection.
+}
+\references{
+Simon Dirmeier, (2018). datastructures: An R package for organisation and
+storage of data . Journal of Open Source Software, 3(28), 910,
+\url{https://doi.org/10.21105/joss.00910}
+
+Winston Chang (2020). R6: Encapsulated Classes with Reference Semantics. R
+package version 2.5.0. \url{https://CRAN.R-project.org/package=R6}
 }
 \section{Methods}{
 \subsection{Public methods}{
