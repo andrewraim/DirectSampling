@@ -28,4 +28,3 @@ g_obj = get_dgeom_base(rho)
 gg = make_plot_discrete(n, w_obj, g_obj) +
 	ggtitle(get_label(z, mu, sigma2, rho))
 ggsave("example6c_draws.pdf", gg, width = 4, height = 3)
-

@@ -112,7 +112,7 @@ my_sampler = function(y_tilde, X_tilde, rho_y, lambda_x, init, prior, control,
 	# Update value of X
 	X = X_tilde - xi_x
 
-	# Update mu from init beta
+	# Update mu from initial beta
 	mu = X %*% beta
 
 	# Set up prior

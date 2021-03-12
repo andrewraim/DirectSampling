@@ -90,7 +90,7 @@ my_sampler = function(y_tilde, X, rho, init, prior, control, fixed = get_fixed()
 	sigma2 = init$sigma2
 	xi = init$xi
 
-	# Update mu from init beta
+	# Update mu from initial beta
 	mu = X %*% beta
 
 	# Set up prior
@@ -113,13 +113,9 @@ my_sampler = function(y_tilde, X, rho, init, prior, control, fixed = get_fixed()
 		st = Sys.time()
 		if (!fixed$xi) {
 			for (i in 1:n) {
-				tryCatch({
-					xi[i] = direct_sampler_lognormal_dgeom(n = 1, y_tilde[i], mu[i], sigma2,
-						rho[i], tol = direct_options$tol, N = direct_options$N,
-						fill_method = direct_options$fill_method)
-				}, error = function(e) {
-					browser()
-				})
+				xi[i] = direct_sampler_lognormal_dgeom(n = 1, y_tilde[i], mu[i], sigma2,
+					rho[i], tol = direct_options$tol, N = direct_options$N,
+					fill_method = direct_options$fill_method)
 			}
 		}
 		elapsed$xi = elapsed$xi + as.numeric(Sys.time() - st, units = "secs")

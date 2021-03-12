@@ -66,11 +66,11 @@ for (idx_lambda in seq_along(lambda_levels)) {
 		direct_y = get_direct_control(N = 100),
 		direct_x = get_direct_control(N = 100))
 
-	# Run the full sampler
+	logger("Fitting noisy obs\n")
 	init = get_init(n = n, d = d)
 	sampler_out = my_sampler(y_tilde, X_tilde, rho_y, lambda_x, init, prior, control)
 
-	# Fit y and X as if there were no added noise
+	logger("Fitting noiseless obs\n")
 	init = get_init(xi_y = rep(0,n), xi_x = matrix(0,n,d), n = n, d = d)
 	fixed = get_fixed(xi_y = TRUE, xi_x = TRUE)
 	noisefree_out = my_sampler(y_true, X_true, rho_y = rep(1,n),

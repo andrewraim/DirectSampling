@@ -3,6 +3,7 @@ source("functions.R")
 set.seed(1234)
 
 # ----- Example 1: Basic implementation, works okay -----
+n = 1000
 z = 10
 mu = 3
 sigma2 = 2
@@ -10,7 +11,7 @@ rho = 0.7
 
 w_obj = get_lognormal_weight(z, mu, sigma2)
 g_obj = get_dgeom_base(rho)
-out = direct_sampler_basic(n = 1000, w_obj, g_obj, N = 100, max_iter = 10000)
+out = direct_sampler_basic(n, w_obj, g_obj, N = 100, max_iter = 10000)
 
 # Histogram showing number of tries needed for successful draw
 dat_plot = as.data.frame(out)
@@ -22,7 +23,7 @@ g = ggplot(dat_plot, aes(x = tries)) +
 ggsave("example1_tries.pdf", g, width = 4, height = 3)
 
 # Tabulate draws from the sampler
-p_seq = table(out$x) / 1000
+p_seq = table(out$x) / n
 x_seq = as.integer(names(p_seq))
 
 # Using draws from the sampler, evaluate the target density
@@ -51,6 +52,7 @@ g = ggplot() +
 ggsave("example1_draws.pdf", g, width = 4, height = 3)
 
 # ----- Example 2: Basic implementation, works poorly -----
+n = 1000
 z = 244388
 mu = 3.5
 sigma2 = 8.5
@@ -58,10 +60,11 @@ rho = 0.7
 
 w_obj = get_lognormal_weight(z, mu, sigma2)
 g_obj = get_dgeom_base(rho)
-out = direct_sampler_basic(n = 1000, w_obj, g_obj, N = 100, max_iter = 10000)
+out = direct_sampler_basic(n, w_obj, g_obj, N = 100, max_iter = 10000)
 table(out$tries)
 
 # ----- Example 2: Customized implementation, works okay -----
+n = 1000
 z = 244388
 mu = 3.5
 sigma2 = 8.5
@@ -69,10 +72,10 @@ rho = 0.7
 
 w_obj = get_lognormal_weight(z, mu, sigma2)
 g_obj = get_dgeom_base(rho)
-x = direct_sampler(1000, w_obj, g_obj, tol = 1e-8, N = 100)
+x = direct_sampler(n, w_obj, g_obj, tol = 1e-8, N = 100)
 
 # Tabulate draws from the sampler
-p_seq = table(x) / 1000
+p_seq = table(x) / n
 x_seq = as.integer(names(p_seq))
 
 # Using draws from the sampler, evaluate the target density
@@ -126,7 +129,6 @@ gg = make_plot_discrete(n, w_obj, g_obj) +
 	ggtitle(get_label(z, mu, sigma2, rho))
 ggsave("example3b_draws.pdf", gg, width = 4, height = 3)
 
-# For cases like this, it helps to increase N
 n = 50000; z = 244388; mu = 3.5; sigma2 = 8.5; rho = 0.01
 w_obj = get_lognormal_weight(z, mu, sigma2)
 g_obj = get_dgeom_base(rho)
@@ -156,36 +158,24 @@ gg = make_plot_discrete(n, w_obj, g_obj) +
 ggsave("example3f_draws.pdf", gg, width = 4, height = 3)
 
 # ----- Example 4 -----
-# This setting is interesting because it shows a case where larger N
-# is apparently needed for a good approximation.
+n = 50000; z = -244; mu = 3.5; sigma2 = 8.5; rho = 0.9
+w_obj = get_lognormal_weight(z, mu, sigma2)
+g_obj = get_dgeom_base(rho)
+gg = make_plot_discrete(n, w_obj, g_obj) +
+	ggtitle(get_label(z, mu, sigma2, rho))
+print(gg)
 
-tryCatch({
-	n = 50000; z = -244; mu = 3.5; sigma2 = 8.5; rho = 0.9
-	w_obj = get_lognormal_weight(z, mu, sigma2)
-	g_obj = get_dgeom_base(rho)
-	gg = make_plot_discrete(n, w_obj, g_obj, N = 200) +
-		ggtitle(get_label(z, mu, sigma2, rho))
-}, error = function(e) {
-	print(e)	
-})
+n = 50000; z = -244; mu = 3.5; sigma2 = 8.5; rho = 0.1
+w_obj = get_lognormal_weight(z, mu, sigma2)
+g_obj = get_dgeom_base(rho)
+gg = make_plot_discrete(n, w_obj, g_obj) +
+	ggtitle(get_label(z, mu, sigma2, rho))
+print(gg)
 
-tryCatch({
-	n = 50000; z = -244; mu = 3.5; sigma2 = 8.5; rho = 0.1
-	w_obj = get_lognormal_weight(z, mu, sigma2)
-	g_obj = get_dgeom_base(rho)
-	gg = make_plot_discrete(n, w_obj, g_obj, N = 200) +
-		ggtitle(get_label(z, mu, sigma2, rho))
-}, error = function(e) {
-	print(e)	
-})
-
-tryCatch({
-	n = 50000; z = -244; mu = 3.5; sigma2 = 8.5; rho = 0.01
-	w_obj = get_lognormal_weight(z, mu, sigma2)
-	g_obj = get_dgeom_base(rho)
-	gg = make_plot_discrete(n, w_obj, g_obj, N = 200) +
-		ggtitle("")
-	ggsave("example4_draws.pdf", gg, width = 4, height = 3)
-}, error = function(e) {
-	print(e)	
-})
+n = 50000; z = -244; mu = 3.5; sigma2 = 8.5; rho = 0.01
+w_obj = get_lognormal_weight(z, mu, sigma2)
+g_obj = get_dgeom_base(rho)
+gg = make_plot_discrete(n, w_obj, g_obj) +
+	ggtitle(get_label(z, mu, sigma2, rho))
+print(gg)
+ggsave("example4_draws.pdf", gg, width = 4, height = 3)

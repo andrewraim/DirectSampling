@@ -53,11 +53,11 @@ for (idx_sigma in seq_along(sigma2_levels)) {
 	control = get_gibbs_control(save_xi = TRUE, R = 2000, burn = 1000,
 		thin = 1, report_period = 500, direct = get_direct_control(N = 100))
 
-	# Run the full sampler
+	logger("Fitting noisy obs\n")
 	init = get_init(n = n, d = d)
 	sampler_out = my_sampler(y_tilde, X, rho, init, prior, control)
 
-	# Fit the y as if there were no added noise
+	logger("Fitting noiseless obs\n")
 	init = get_init(xi = rep(0,n), n = n, d = d)
 	fixed = get_fixed(xi = TRUE)
 	noisefree_out = my_sampler(y_true, X, rho = rep(1,n), init, prior,

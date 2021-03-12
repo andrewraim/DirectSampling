@@ -4,10 +4,6 @@ library(gridExtra)
 library(DirectSampling)
 
 # ----- Setup for customized direct sampler -----
-# The customized version of the direct sampler is written more generally. It
-# takes a "weight" object and a "base" object as input. The following functions
-# produce these kinds of objects.
-
 get_lognormal_weight = function(z, mu, sigma2)
 {
 	# log_c is the maximum value of the function log[w(x)]
