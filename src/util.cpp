@@ -2,20 +2,25 @@
 
 Rcpp::NumericVector concat(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y)
 {
-	Rcpp::NumericVector z(x.size() + y.size());
-	for (unsigned int i = 0; i < x.size(); i++) {
+	unsigned int m = x.size();
+	unsigned int n = y.size();
+
+	Rcpp::NumericVector z(m + n);
+	for (unsigned int i = 0; i < m; i++) {
 		z(i) = x(i);
 	}
-	for (unsigned int i = 0; i < y.size(); i++) {
-		z(i + x.size()) = y(i);
+	for (unsigned int i = 0; i < n; i++) {
+		z(i + m) = y(i);
 	}
 	return z;
 }
 
 Rcpp::IntegerVector which(const Rcpp::LogicalVector& x)
 {
+	unsigned int n = x.size();
 	std::vector<unsigned int> idx;
-	for (unsigned int i = 0; i < x.size(); i++) {
+
+	for (unsigned int i = 0; i < n; i++) {
 		if (x(i)) {
 			idx.push_back(i);
 		}
@@ -29,8 +34,10 @@ Rcpp::IntegerVector which(const Rcpp::LogicalVector& x)
 Rcpp::NumericVector cumsum(const Rcpp::NumericVector& x)
 {
 	double sum = 0;
-	Rcpp::NumericVector out(x.size());
-	for (unsigned int i = 0; i < out.size(); i++) {
+	unsigned int n = x.size();
+	Rcpp::NumericVector out(n);
+
+	for (unsigned int i = 0; i < n; i++) {
 		sum += x(i);
 		out(i) = sum;
 	}
@@ -42,3 +49,4 @@ Rcpp::IntegerVector order(const Rcpp::NumericVector& x, bool decrease)
 	Rcpp::NumericVector sorted = clone(x).sort(decrease);
 	return Rcpp::match(sorted, x);
 }
+

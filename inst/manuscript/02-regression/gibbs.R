@@ -18,7 +18,7 @@ get_gibbs_control = function(save_xi = FALSE, R = 1000, burn = 0, thin = 1,
 	return(ret)
 }
 
-get_prior = function(a_sigma, b_sigma, a_pi, sigma2_beta, d)
+get_prior = function(a_sigma, b_sigma, sigma2_beta, d)
 {
 	stopifnot(all(a_sigma > 0))
 	stopifnot(all(b_sigma > 0))
