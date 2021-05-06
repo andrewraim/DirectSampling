@@ -3,8 +3,8 @@
 #' Basic and customized versions of the direct sampler.
 #' 
 #' @param n Number of draws to generate.
-#' @param w An weight function object.
-#' @param g An base distribution object.
+#' @param w A weight function object.
+#' @param g A base distribution object.
 #' @param N Number of knots to use in approximation for \eqn{p(u)}. Specifically,
 #' N+1 points will be used.
 #' @param max_iter Maximum number of accept/reject attempts to try for each draw.

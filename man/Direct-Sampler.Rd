@@ -13,9 +13,9 @@ direct_sampler(n, w, g, tol = 1e-08, N = 100, fill_method = "small_rects")
 \arguments{
 \item{n}{Number of draws to generate.}
 
-\item{w}{An weight function object.}
+\item{w}{A weight function object.}
 
-\item{g}{An base distribution object.}
+\item{g}{A base distribution object.}
 
 \item{N}{Number of knots to use in approximation for \eqn{p(u)}. Specifically,
 N+1 points will be used.}

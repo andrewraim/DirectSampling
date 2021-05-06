@@ -274,6 +274,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// q_discrete
+unsigned int q_discrete(double q, const Rcpp::NumericVector& cp);
+RcppExport SEXP _DirectSampling_q_discrete(SEXP qSEXP, SEXP cpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type q(qSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cp(cpSEXP);
+    rcpp_result_gen = Rcpp::wrap(q_discrete(q, cp));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_DirectSampling_d_dgeom", (DL_FUNC) &_DirectSampling_d_dgeom, 3},
@@ -295,6 +307,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DirectSampling_direct_sampler_lognormal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_laplace, 8},
     {"_DirectSampling_direct_sampler_lognormal_dgeom", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dgeom, 8},
     {"_DirectSampling_direct_sampler_normal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_normal_laplace, 8},
+    {"_DirectSampling_q_discrete", (DL_FUNC) &_DirectSampling_q_discrete, 2},
     {NULL, NULL, 0}
 };
 
