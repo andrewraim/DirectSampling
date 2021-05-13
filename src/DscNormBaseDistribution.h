@@ -59,8 +59,8 @@ public:
 		double b = ceil(x_max - 1);
 		double p_min = p_local(a - 1);
 		double p_max = p_local(b);
-		double x = q_local((p_max - p_min)*p + p_min);
-		return std::max(ceil(x_min), std::min(x, floor(x_max)));
+		int x = q_local((p_max - p_min)*p + p_min);
+		return std::max(ceil(x_min), std::min(double(x), floor(x_max)));
 	}
 	// CDF of DscNorm which avoids recomputing cumprobs
 	double p_local(double x) const {
@@ -75,7 +75,7 @@ public:
 		}
 	}
 	// Quantile function of DscNorm which avoids recomputing cumprobs
-	double q_local(double p) const {
+	int q_local(double p) const {
 		unsigned int idx = q_discrete(p, _cumprobs);
 		return idx + _x_lo;
 	}
