@@ -275,12 +275,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // q_discrete
-unsigned int q_discrete(double q, const Rcpp::NumericVector& cp);
+Rcpp::IntegerVector q_discrete(const Rcpp::NumericVector& q, const Rcpp::NumericVector& cp);
 RcppExport SEXP _DirectSampling_q_discrete(SEXP qSEXP, SEXP cpSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type q(qSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type q(qSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cp(cpSEXP);
     rcpp_result_gen = Rcpp::wrap(q_discrete(q, cp));
     return rcpp_result_gen;

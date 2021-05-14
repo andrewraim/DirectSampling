@@ -226,6 +226,45 @@ direct_sampler_normal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill
     .Call(`_DirectSampling_direct_sampler_normal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method)
 }
 
+#' Quantile Function for Discrete Distributions with Finite Support
+#' 
+#' @param q A vector of quantiles to compute 
+#' @param cp Vector of cumulative probabilities of distribution
+#' 
+#' @return 0-based indices corresponding to the \code{q} quantiles
+#' 
+#' @details
+#' Compute quantiles of a discrete distribution with cumulative probabilities
+#' \code{cp(0)}, \code{cp(1)}, ..., \code{cp(k-1)}. Return indices in
+#' \eqn{\{ 0, 1, \ldots, k-1 \}} which represent the
+#' \code{q} quantiles. The caller can then identify the corresponding value
+#' of the distribution (of which this function does not need to be aware).
+#' 
+#' Uses a bisection search so support relatively large \code{k}.
+#' 
+#' Note that both \code{q} and \code{cp} may be given on the original
+#' probability scale or the log-scale, as long as they are both on the same
+#' scale.
+#' @examples
+#' # Create a simple distribution and compute cumulative probabilities
+#' x_seq = 1:10
+#' k = length(x_seq)
+#' p = rep(1/k, k)
+#' cp = cumsum(p)
+#' 
+#' xx = sample(x = x_seq, size = 100000, replace = TRUE, prob = p)
+#' 
+#' Compare empirical qq quantiles with q_discrete
+#' qq = seq(0, 1, length.out = 100)
+#' idx_calc = q_discrete(qq, cp)
+#' x_emp = quantile(xx, probs = qq)
+#' plot(x_emp, x_seq[idx_calc + 1])
+#' 
+#' Repeat calculation on the log-scale
+#' idx_calc_log = q_discrete(log(qq), log(cp))
+#' plot(idx_calc, idx_calc_log)
+#' 
+#' @export
 q_discrete <- function(q, cp) {
     .Call(`_DirectSampling_q_discrete`, q, cp)
 }

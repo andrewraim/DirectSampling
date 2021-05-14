@@ -50,6 +50,18 @@ Rcpp::IntegerVector order(const Rcpp::NumericVector& x, bool decrease)
 	return Rcpp::match(sorted, x);
 }
 
+Rcpp::IntegerVector q_discrete(const Rcpp::NumericVector& q, const Rcpp::NumericVector& cp)
+{
+	unsigned int n = q.size();
+	Rcpp::IntegerVector out(n);
+
+	for (unsigned int i = 0; i < n; i++) {
+		out(i) = q_discrete(q(i), cp);
+	}
+
+	return out;
+}
+
 unsigned int q_discrete(double q, const Rcpp::NumericVector& cp)
 {
 	unsigned int k = cp.size();
@@ -60,12 +72,12 @@ unsigned int q_discrete(double q, const Rcpp::NumericVector& cp)
 	// Otherwise do a binary search
 	unsigned int x_lo = 0;
 	unsigned int x_hi = k-1;
-	unsigned int x = int(floor((x_hi + x_lo) / 2.0));
+	unsigned int x = (unsigned int)(floor((x_hi + x_lo) / 2.0));
 	while (x_hi - x_lo > 1) {
 		bool ind = (cp(x) >= q);
 		x_lo = (1 - ind) * x + ind * x_lo;
 		x_hi = ind * x + (1 - ind) * x_hi;
-		x = int(floor((x_hi + x_lo) / 2.0));
+		x = (unsigned int)(floor((x_hi + x_lo) / 2.0));
 	}
 
 	if (cp(x_lo) >= q) {
