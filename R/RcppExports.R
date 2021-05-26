@@ -172,6 +172,10 @@ q_laplace <- function(q, mu, lambda) {
 #' @param N Number of knots to use in approximation for \eqn{p(u)}.
 #' @param fill_method Knot selection method for customized direct sampler.
 #' Can be either \code{equal_steps} or \code{small_rects}.
+#' @param max_rejections Maximum number of allowed rejections in accept-reject.
+#' If zero (the default), use step function to approximate \eqn{p(u)}, rather
+#' than as an envelope; this will avoid any rejections but yield an approximate
+#' sample.
 #' 
 #' @details
 #' Implementations for the following direct samplers are provided:
@@ -198,37 +202,37 @@ q_laplace <- function(q, mu, lambda) {
 #' }
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_normal <- function(n, z, mu, sigma2, tau, tol, N, fill_method) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_normal`, n, z, mu, sigma2, tau, tol, N, fill_method)
+direct_sampler_lognormal_normal <- function(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections = 0L) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_normal`, n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_dscnorm <- function(n, z, mu, sigma2, tau, tol, N, fill_method) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_dscnorm`, n, z, mu, sigma2, tau, tol, N, fill_method)
+direct_sampler_lognormal_dscnorm <- function(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections = 0L) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_dscnorm`, n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method)
+direct_sampler_lognormal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections = 0L) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_dgeom <- function(n, z, mu, sigma2, rho, tol, N, fill_method) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_dgeom`, n, z, mu, sigma2, rho, tol, N, fill_method)
+direct_sampler_lognormal_dgeom <- function(n, z, mu, sigma2, rho, tol, N, fill_method, max_rejections = 0L) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_dgeom`, n, z, mu, sigma2, rho, tol, N, fill_method, max_rejections)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_normal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method) {
-    .Call(`_DirectSampling_direct_sampler_normal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method)
+direct_sampler_normal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections = 0L) {
+    .Call(`_DirectSampling_direct_sampler_normal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections)
 }
 
 #' Quantile Function for Discrete Distributions with Finite Support
 #' 
-#' @param q A vector of quantiles to compute 
+#' @param q A vector of quantiles to compute
 #' @param cp Vector of cumulative probabilities of distribution
 #' 
 #' @return 0-based indices corresponding to the \code{q} quantiles

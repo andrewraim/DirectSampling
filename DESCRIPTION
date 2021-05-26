@@ -1,7 +1,7 @@
 Package: DirectSampling
 Type: Package
 Title: Direct Sampling
-Version: 0.1.2
+Version: 0.1.3
 Author: Andrew Raim <andrew.raim@gmail.com>
 Maintainer: Andrew Raim <andrew.raim@gmail.com>
 URL: https://github.com/andrewraim/direct-sampling

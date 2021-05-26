@@ -185,8 +185,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // direct_sampler_lognormal_normal
-Rcpp::NumericVector direct_sampler_lognormal_normal(unsigned int n, double z, double mu, double sigma2, double tau, double tol, unsigned int N, const std::string& fill_method);
-RcppExport SEXP _DirectSampling_direct_sampler_lognormal_normal(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP tauSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP) {
+Rcpp::NumericVector direct_sampler_lognormal_normal(unsigned int n, double z, double mu, double sigma2, double tau, double tol, unsigned int N, const std::string& fill_method, unsigned int max_rejections);
+RcppExport SEXP _DirectSampling_direct_sampler_lognormal_normal(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP tauSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP, SEXP max_rejectionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -198,13 +198,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type fill_method(fill_methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_normal(n, z, mu, sigma2, tau, tol, N, fill_method));
+    Rcpp::traits::input_parameter< unsigned int >::type max_rejections(max_rejectionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_normal(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections));
     return rcpp_result_gen;
 END_RCPP
 }
 // direct_sampler_lognormal_dscnorm
-Rcpp::NumericVector direct_sampler_lognormal_dscnorm(unsigned int n, double z, double mu, double sigma2, double tau, double tol, unsigned int N, const std::string& fill_method);
-RcppExport SEXP _DirectSampling_direct_sampler_lognormal_dscnorm(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP tauSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP) {
+Rcpp::NumericVector direct_sampler_lognormal_dscnorm(unsigned int n, double z, double mu, double sigma2, double tau, double tol, unsigned int N, const std::string& fill_method, unsigned int max_rejections);
+RcppExport SEXP _DirectSampling_direct_sampler_lognormal_dscnorm(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP tauSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP, SEXP max_rejectionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -216,13 +217,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type fill_method(fill_methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_dscnorm(n, z, mu, sigma2, tau, tol, N, fill_method));
+    Rcpp::traits::input_parameter< unsigned int >::type max_rejections(max_rejectionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_dscnorm(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections));
     return rcpp_result_gen;
 END_RCPP
 }
 // direct_sampler_lognormal_laplace
-Rcpp::NumericVector direct_sampler_lognormal_laplace(unsigned int n, double z, double mu, double sigma2, double lambda, double tol, unsigned int N, const std::string& fill_method);
-RcppExport SEXP _DirectSampling_direct_sampler_lognormal_laplace(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP lambdaSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP) {
+Rcpp::NumericVector direct_sampler_lognormal_laplace(unsigned int n, double z, double mu, double sigma2, double lambda, double tol, unsigned int N, const std::string& fill_method, unsigned int max_rejections);
+RcppExport SEXP _DirectSampling_direct_sampler_lognormal_laplace(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP lambdaSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP, SEXP max_rejectionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -234,13 +236,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type fill_method(fill_methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_laplace(n, z, mu, sigma2, lambda, tol, N, fill_method));
+    Rcpp::traits::input_parameter< unsigned int >::type max_rejections(max_rejectionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_laplace(n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections));
     return rcpp_result_gen;
 END_RCPP
 }
 // direct_sampler_lognormal_dgeom
-Rcpp::NumericVector direct_sampler_lognormal_dgeom(unsigned int n, double z, double mu, double sigma2, double rho, double tol, unsigned int N, const std::string& fill_method);
-RcppExport SEXP _DirectSampling_direct_sampler_lognormal_dgeom(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP rhoSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP) {
+Rcpp::NumericVector direct_sampler_lognormal_dgeom(unsigned int n, double z, double mu, double sigma2, double rho, double tol, unsigned int N, const std::string& fill_method, unsigned int max_rejections);
+RcppExport SEXP _DirectSampling_direct_sampler_lognormal_dgeom(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP rhoSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP, SEXP max_rejectionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -252,13 +255,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type fill_method(fill_methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_dgeom(n, z, mu, sigma2, rho, tol, N, fill_method));
+    Rcpp::traits::input_parameter< unsigned int >::type max_rejections(max_rejectionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_dgeom(n, z, mu, sigma2, rho, tol, N, fill_method, max_rejections));
     return rcpp_result_gen;
 END_RCPP
 }
 // direct_sampler_normal_laplace
-Rcpp::NumericVector direct_sampler_normal_laplace(unsigned int n, double z, double mu, double sigma2, double lambda, double tol, unsigned int N, const std::string& fill_method);
-RcppExport SEXP _DirectSampling_direct_sampler_normal_laplace(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP lambdaSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP) {
+Rcpp::NumericVector direct_sampler_normal_laplace(unsigned int n, double z, double mu, double sigma2, double lambda, double tol, unsigned int N, const std::string& fill_method, unsigned int max_rejections);
+RcppExport SEXP _DirectSampling_direct_sampler_normal_laplace(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP lambdaSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP, SEXP max_rejectionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -270,7 +274,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type fill_method(fill_methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(direct_sampler_normal_laplace(n, z, mu, sigma2, lambda, tol, N, fill_method));
+    Rcpp::traits::input_parameter< unsigned int >::type max_rejections(max_rejectionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(direct_sampler_normal_laplace(n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -302,11 +307,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DirectSampling_p_laplace", (DL_FUNC) &_DirectSampling_p_laplace, 3},
     {"_DirectSampling_r_laplace", (DL_FUNC) &_DirectSampling_r_laplace, 3},
     {"_DirectSampling_q_laplace", (DL_FUNC) &_DirectSampling_q_laplace, 3},
-    {"_DirectSampling_direct_sampler_lognormal_normal", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_normal, 8},
-    {"_DirectSampling_direct_sampler_lognormal_dscnorm", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dscnorm, 8},
-    {"_DirectSampling_direct_sampler_lognormal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_laplace, 8},
-    {"_DirectSampling_direct_sampler_lognormal_dgeom", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dgeom, 8},
-    {"_DirectSampling_direct_sampler_normal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_normal_laplace, 8},
+    {"_DirectSampling_direct_sampler_lognormal_normal", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_normal, 9},
+    {"_DirectSampling_direct_sampler_lognormal_dscnorm", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dscnorm, 9},
+    {"_DirectSampling_direct_sampler_lognormal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_laplace, 9},
+    {"_DirectSampling_direct_sampler_lognormal_dgeom", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dgeom, 9},
+    {"_DirectSampling_direct_sampler_normal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_normal_laplace, 9},
     {"_DirectSampling_q_discrete", (DL_FUNC) &_DirectSampling_q_discrete, 2},
     {NULL, NULL, 0}
 };

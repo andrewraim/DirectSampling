@@ -22,7 +22,8 @@ public:
 	double q_truncated(double p, double x_min, double x_max) const {
 		double p_min = R::pnorm(x_min, 0, _sigma, true, false);
 		double p_max = R::pnorm(x_max, 0, _sigma, true, false);
-		double x = R::qnorm((p_max - p_min)*p + p_min, 0, _sigma, true, false);
+		double p_trunc = (p_max - p_min)*p + p_min;
+		double x = R::qnorm(p_trunc, 0, _sigma, true, false);
 		return std::max(x_min, std::min(x, x_max));
 	}
 private:
@@ -30,4 +31,3 @@ private:
 };
 
 #endif
-

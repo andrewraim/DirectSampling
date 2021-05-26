@@ -9,15 +9,65 @@
 \alias{direct_sampler_normal_laplace}
 \title{Specific Direct Samplers}
 \usage{
-direct_sampler_lognormal_normal(n, z, mu, sigma2, tau, tol, N, fill_method)
+direct_sampler_lognormal_normal(
+  n,
+  z,
+  mu,
+  sigma2,
+  tau,
+  tol,
+  N,
+  fill_method,
+  max_rejections = 0L
+)
 
-direct_sampler_lognormal_dscnorm(n, z, mu, sigma2, tau, tol, N, fill_method)
+direct_sampler_lognormal_dscnorm(
+  n,
+  z,
+  mu,
+  sigma2,
+  tau,
+  tol,
+  N,
+  fill_method,
+  max_rejections = 0L
+)
 
-direct_sampler_lognormal_laplace(n, z, mu, sigma2, lambda, tol, N, fill_method)
+direct_sampler_lognormal_laplace(
+  n,
+  z,
+  mu,
+  sigma2,
+  lambda,
+  tol,
+  N,
+  fill_method,
+  max_rejections = 0L
+)
 
-direct_sampler_lognormal_dgeom(n, z, mu, sigma2, rho, tol, N, fill_method)
+direct_sampler_lognormal_dgeom(
+  n,
+  z,
+  mu,
+  sigma2,
+  rho,
+  tol,
+  N,
+  fill_method,
+  max_rejections = 0L
+)
 
-direct_sampler_normal_laplace(n, z, mu, sigma2, lambda, tol, N, fill_method)
+direct_sampler_normal_laplace(
+  n,
+  z,
+  mu,
+  sigma2,
+  lambda,
+  tol,
+  N,
+  fill_method,
+  max_rejections = 0L
+)
 }
 \arguments{
 \item{n}{Number of draws to generate.}
@@ -36,6 +86,11 @@ direct_sampler_normal_laplace(n, z, mu, sigma2, lambda, tol, N, fill_method)
 
 \item{fill_method}{Knot selection method for customized direct sampler.
 Can be either \code{equal_steps} or \code{small_rects}.}
+
+\item{max_rejections}{Maximum number of allowed rejections in accept-reject.
+If zero (the default), use step function to approximate \eqn{p(u)}, rather
+than as an envelope; this will avoid any rejections but yield an approximate
+sample.}
 
 \item{lambda}{Scale parameter for base distribution.}
 
