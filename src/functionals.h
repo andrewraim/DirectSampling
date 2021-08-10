@@ -13,6 +13,12 @@ public:
 	virtual bool operator()(double x) const = 0;
 };
 
+class Functional1
+{
+public:
+	virtual double operator()(double x) const = 0;
+};
+
 class Functional2
 {
 public:

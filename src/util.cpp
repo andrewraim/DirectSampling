@@ -70,6 +70,7 @@ unsigned int q_discrete(double q, const Rcpp::NumericVector& cp)
 	}
 
 	// Otherwise do a binary search
+	// TBD: Could we use bisection functions here?
 	unsigned int x_lo = 0;
 	unsigned int x_hi = k-1;
 	unsigned int x = (unsigned int)(floor((x_hi + x_lo) / 2.0));
