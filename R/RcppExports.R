@@ -232,14 +232,8 @@ direct_sampler_normal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_suffstat1_laplace <- function(n, z, sigma2, m, d, lambda, tol, N, fill_method, max_rejections = 0L) {
-    .Call(`_DirectSampling_direct_sampler_suffstat1_laplace`, n, z, sigma2, m, d, lambda, tol, N, fill_method, max_rejections)
-}
-
-#' @name Specific Direct Samplers
-#' @export
-direct_sampler_suffstat3_laplace <- function(n, z, phi2, sigma2, lambda, tol, N, fill_method, max_rejections = 0L) {
-    .Call(`_DirectSampling_direct_sampler_suffstat3_laplace`, n, z, phi2, sigma2, lambda, tol, N, fill_method, max_rejections)
+direct_sampler_gamma_laplace <- function(n, z, alpha, beta, lambda, tol, N, fill_method, max_rejections = 0L) {
+    .Call(`_DirectSampling_direct_sampler_gamma_laplace`, n, z, alpha, beta, lambda, tol, N, fill_method, max_rejections)
 }
 
 #' Quantile Function for Discrete Distributions with Finite Support

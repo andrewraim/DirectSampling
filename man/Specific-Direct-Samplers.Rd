@@ -7,8 +7,7 @@
 \alias{direct_sampler_lognormal_laplace}
 \alias{direct_sampler_lognormal_dgeom}
 \alias{direct_sampler_normal_laplace}
-\alias{direct_sampler_suffstat1_laplace}
-\alias{direct_sampler_suffstat3_laplace}
+\alias{direct_sampler_gamma_laplace}
 \title{Specific Direct Samplers}
 \usage{
 direct_sampler_lognormal_normal(
@@ -71,24 +70,11 @@ direct_sampler_normal_laplace(
   max_rejections = 0L
 )
 
-direct_sampler_suffstat1_laplace(
+direct_sampler_gamma_laplace(
   n,
   z,
-  sigma2,
-  m,
-  d,
-  lambda,
-  tol,
-  N,
-  fill_method,
-  max_rejections = 0L
-)
-
-direct_sampler_suffstat3_laplace(
-  n,
-  z,
-  phi2,
-  sigma2,
+  alpha,
+  beta,
   lambda,
   tol,
   N,

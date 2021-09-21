@@ -1,5 +1,5 @@
-#ifndef SUFFSTAT1_WEIGHT_FUNCTION
-#define SUFFSTAT1_WEIGHT_FUNCTION
+#ifndef GAMMA_WEIGHT_FUNCTION
+#define GAMMA_WEIGHT_FUNCTION
 
 #include <Rcpp.h>
 #include "WeightFunction.h"
@@ -8,11 +8,11 @@
 /*
 * This class is used in root-finding
 */
-class SuffStat1Root_pred : public Functional1
+class GammaRoot_pred : public Functional1
 {
 public:
-	SuffStat1Root_pred(double z, double sigma2, unsigned int n, unsigned int d, double log_a)
-		: _z(z), _sigma2(sigma2), _n(n), _d(d), _log_a(log_a)
+	GammaRoot_pred(double z, double alpha, double beta, double log_a)
+		: _z(z), _alpha(alpha), _beta(beta), _log_a(log_a)
 	{
 	}
 
@@ -23,25 +23,24 @@ public:
 		} else if (x >= _z) {
 			out = -std::numeric_limits<double>::infinity();
 		} else {
-			out = 0.5*(_n-_d-2) * log(_z-x) - (_z-x) / (2*_sigma2) - _log_a;
+			out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta - _log_a;
 		}
-		// Rprintf("SuffStat1Root_pred(%g) = %g :: z = %g, sigma2 = %g, n = %d, d = %d, log_a = %g\n", x, out, _z, _sigma2, _n, _d, _log_a);
+		// Rprintf("GammaRoot_pred(%g) = %g :: z = %g, sigma2 = %g, n = %d, d = %d, log_a = %g\n", x, out, _z, _sigma2, _n, _d, _log_a);
 		return out;
 	}
 
 private:
 	double _z;
-	double _sigma2;
-	unsigned int _n;
-	unsigned int _d;
+	double _alpha;
+	double _beta;
 	double _log_a;
 };
 
-class SuffStat1WeightFunction : public WeightFunction
+class GammaWeightFunction : public WeightFunction
 {
 public:
-	SuffStat1WeightFunction(double z, double sigma2, unsigned int n, unsigned int d, double tol = 1e-6)
-		: WeightFunction(), _z(z), _sigma2(sigma2), _n(n), _d(d), _tol(tol)
+	GammaWeightFunction(double z, double alpha, double beta, double tol = 1e-6)
+		: WeightFunction(), _z(z), _alpha(alpha), _beta(beta), _tol(tol)
 	{
 	}
 	// Evaluate the function
@@ -52,10 +51,10 @@ public:
 		} else if (x >= _z) {
 			out = -std::numeric_limits<double>::infinity();
 		} else {
-			out = 0.5*(_n-_d-2) * log(_z-x) - (_z-x) / (2*_sigma2);
+			out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta;
 		}
 
-		// Rprintf("SuffStat1WeightFunction.eval(%g) = %g :: z = %g, sigma2 = %g, n = %d, d = %d\n", x, out, _z, _sigma2, _n, _d);
+		// Rprintf("GammaWeightFunction.eval(%g) = %g :: z = %g, sigma2 = %g, n = %d, d = %d\n", x, out, _z, _sigma2, _n, _d);
 		if (take_log) { return(out); } else { return(exp(out)); }
 	}
 
@@ -64,7 +63,7 @@ public:
 	std::pair<double,double> roots(double log_a) const {
         double x1;
         double x2;
-		double x_max = _z - _sigma2 * (_n-_d-2);
+		double x_max = _z - _beta * (_alpha - 1);
 
    		if (log_a >= log_c()) {
    			x1 = x_max;
@@ -89,7 +88,7 @@ public:
 				x2 = _z;
 			} else {
 				// Use numerical root-finding
-				SuffStat1Root_pred pred(_z, _sigma2, _n, _d, log_a);
+				GammaRoot_pred pred(_z, _alpha, _beta, log_a);
 				x1 = find_root(x_lo, x_max, pred, _tol);
 				x2 = find_root(x_max, _z, pred, _tol);
 			}
@@ -99,14 +98,13 @@ public:
 
 	// log_c is the maximum value of the function log[w(x)]
 	double log_c() const {
-		double x_max = _z - _sigma2 * (_n-_d-2);
+		double x_max = _z - _beta * (_alpha - 1);
 		return eval(x_max, true);
 	}
 private:
 	double _z;
-	double _sigma2;
-	unsigned int _n;
-	unsigned int _d;
+	double _alpha;
+	double _beta;
 	double _tol;
 };
 

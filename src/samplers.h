@@ -84,15 +84,8 @@ Rcpp::NumericVector direct_sampler_normal_laplace(unsigned int n, double z,
 //' @name Specific Direct Samplers
 //' @export
 // [[Rcpp::export]]
-Rcpp::NumericVector direct_sampler_suffstat1_laplace(unsigned int n, double z,
-	double sigma2, unsigned int m, unsigned int d, double lambda, double tol,
-	unsigned int N, const std::string& fill_method, unsigned int max_rejections = 0);
-
-//' @name Specific Direct Samplers
-//' @export
-// [[Rcpp::export]]
-Rcpp::NumericVector direct_sampler_suffstat3_laplace(unsigned int n, double z,
-	double phi2, double sigma2, double lambda, double tol, unsigned int N,
+Rcpp::NumericVector direct_sampler_gamma_laplace(unsigned int n, double z,
+	double alpha, double beta, double lambda, double tol, unsigned int N,
 	const std::string& fill_method, unsigned int max_rejections = 0);
 
 #endif
