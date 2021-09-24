@@ -23,7 +23,8 @@ public:
 		} else if (x >= _z) {
 			out = -std::numeric_limits<double>::infinity();
 		} else {
-			out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta - _log_a;
+			// out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta - _log_a;
+			out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta + log(x < _z) - lgamma(_alpha) - _alpha * log(_beta) - _log_a;
 		}
 		// Rprintf("GammaRoot_pred(%g) = %g :: z = %g, sigma2 = %g, n = %d, d = %d, log_a = %g\n", x, out, _z, _sigma2, _n, _d, _log_a);
 		return out;
@@ -51,7 +52,8 @@ public:
 		} else if (x >= _z) {
 			out = -std::numeric_limits<double>::infinity();
 		} else {
-			out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta;
+			// out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta;
+			out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta + log(x < _z)- lgamma(_alpha) - _alpha * log(_beta);
 		}
 
 		// Rprintf("GammaWeightFunction.eval(%g) = %g :: z = %g, sigma2 = %g, n = %d, d = %d\n", x, out, _z, _sigma2, _n, _d);

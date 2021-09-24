@@ -8,7 +8,15 @@
 \usage{
 direct_sampler_basic(n, w, g, N = 100, max_iter = 10000)
 
-direct_sampler(n, w, g, tol = 1e-08, N = 100, fill_method = "small_rects")
+direct_sampler(
+  n,
+  w,
+  g,
+  tol = 1e-08,
+  N = 100,
+  fill_method = "small_rects",
+  priority_weight = 1/2
+)
 }
 \arguments{
 \item{n}{Number of draws to generate.}

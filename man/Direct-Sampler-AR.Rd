@@ -12,7 +12,8 @@ direct_sampler_ar(
   tol = 1e-08,
   N = 10,
   max_rejections,
-  fill_method = "small_rects"
+  fill_method = "small_rects",
+  priority_weight = 1/2
 )
 }
 \arguments{

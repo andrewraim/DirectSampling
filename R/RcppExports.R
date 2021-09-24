@@ -202,38 +202,38 @@ q_laplace <- function(q, mu, lambda) {
 #' }
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_normal <- function(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections = 0L) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_normal`, n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections)
+direct_sampler_lognormal_normal <- function(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections = 0L, priority_weight = 0.5) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_normal`, n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections, priority_weight)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_dscnorm <- function(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections = 0L) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_dscnorm`, n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections)
+direct_sampler_lognormal_dscnorm <- function(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections = 0L, priority_weight = 0.5) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_dscnorm`, n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections, priority_weight)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections = 0L) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections)
+direct_sampler_lognormal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections = 0L, priority_weight = 0.5) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections, priority_weight)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_dgeom <- function(n, z, mu, sigma2, rho, tol, N, fill_method, max_rejections = 0L) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_dgeom`, n, z, mu, sigma2, rho, tol, N, fill_method, max_rejections)
+direct_sampler_lognormal_dgeom <- function(n, z, mu, sigma2, rho, tol, N, fill_method, max_rejections = 0L, priority_weight = 0.5) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_dgeom`, n, z, mu, sigma2, rho, tol, N, fill_method, max_rejections, priority_weight)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_normal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections = 0L) {
-    .Call(`_DirectSampling_direct_sampler_normal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections)
+direct_sampler_normal_laplace <- function(n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections = 0L, priority_weight = 0.5) {
+    .Call(`_DirectSampling_direct_sampler_normal_laplace`, n, z, mu, sigma2, lambda, tol, N, fill_method, max_rejections, priority_weight)
 }
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_gamma_laplace <- function(n, z, alpha, beta, lambda, tol, N, fill_method, max_rejections = 0L) {
-    .Call(`_DirectSampling_direct_sampler_gamma_laplace`, n, z, alpha, beta, lambda, tol, N, fill_method, max_rejections)
+direct_sampler_gamma_laplace <- function(n, z, alpha, beta, lambda, tol, N, fill_method, max_rejections = 0L, priority_weight = 0.5) {
+    .Call(`_DirectSampling_direct_sampler_gamma_laplace`, n, z, alpha, beta, lambda, tol, N, fill_method, max_rejections, priority_weight)
 }
 
 #' Quantile Function for Discrete Distributions with Finite Support

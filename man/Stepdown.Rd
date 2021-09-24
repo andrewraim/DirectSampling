@@ -53,6 +53,7 @@ package version 2.5.0. \url{https://CRAN.R-project.org/package=R6}
 \item \href{#method-get_log_x_vals}{\code{Stepdown$get_log_x_vals()}}
 \item \href{#method-get_log_h_vals}{\code{Stepdown$get_log_h_vals()}}
 \item \href{#method-get_log_p}{\code{Stepdown$get_log_p()}}
+\item \href{#method-get_priority_weight}{\code{Stepdown$get_priority_weight()}}
 \item \href{#method-add}{\code{Stepdown$add()}}
 \item \href{#method-q}{\code{Stepdown$q()}}
 \item \href{#method-r}{\code{Stepdown$r()}}
@@ -67,7 +68,7 @@ package version 2.5.0. \url{https://CRAN.R-project.org/package=R6}
 \subsection{Method \code{new()}}{
 Construct the step function
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Stepdown$new(w, g, tol, N, method)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$new(w, g, tol, N, method, priority_weight = 1/2)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -148,6 +149,15 @@ on the log-scale.
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_priority_weight"></a>}}
+\if{latex}{\out{\hypertarget{method-get_priority_weight}{}}}
+\subsection{Method \code{get_priority_weight()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$get_priority_weight()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-add"></a>}}

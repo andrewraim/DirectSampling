@@ -37,7 +37,8 @@ public:
 	}
 	bool operator()(double log_u) const {
 		double log_prob = _step.log_p(log_u);
-		return std::isinf(log_prob);
+		// return std::isinf(log_prob);
+		return log_prob < log(1e-5) + _log_prob_max;
 	}
 private:
 	const Stepdown& _step;
@@ -52,9 +53,12 @@ private:
 class Interval
 {
 public:
-	Interval(double log_x, double log_y, double log_h_x, double log_h_y)
-		: _log_x(log_x), _log_y(log_y), _log_h_x(log_h_x), _log_h_y(log_h_y)
+	Interval(double log_x, double log_y, double log_h_x, double log_h_y, double pw = 0.5)
+		: _log_x(log_x), _log_y(log_y), _log_h_x(log_h_x), _log_h_y(log_h_y), _pw(pw)
 	{
+		if (_pw < 0 || _pw > 1) {
+			Rcpp::stop("pw must be in [0,1]");
+		}
 	}
 	Interval(const Interval& rhs) {
 		*this = rhs;
@@ -68,17 +72,18 @@ public:
 	double priority() const {
 		double width = exp(_log_y) - exp(_log_x);
 		double height = exp(_log_h_x) - exp(_log_h_y);
-		return log(height) + log(width);
-	}
-	bool operator<(const Interval& rhs) const {
-		return priority() < rhs.priority();
+		return _pw*log(height) + (1-_pw)*log(width);
 	}
 	const Interval& operator=(const Interval& rhs) {
 		_log_x = rhs._log_x;
 		_log_y = rhs._log_y;
 		_log_h_x = rhs._log_h_x;
 		_log_h_y = rhs._log_h_y;
+		_pw = rhs._pw;
 		return *this;
+	}
+	bool operator<(const Interval& rhs) const {
+		return priority() < rhs.priority();
 	}
 	bool operator>(const Interval& rhs) const {
 		return priority() > rhs.priority();
@@ -95,17 +100,31 @@ public:
 	double get_log_h_y() const {
 		return _log_h_y;
 	}
-	void print() const {
-		Rprintf("log_x = %g, log_y = %g, log_h_x = %g, log_h_y = %g\n",
-			_log_x, _log_y, _log_h_x, _log_h_y);
-		Rprintf("width = %g, log_height = %g, priority = %g\n",
-			width(), height(), priority());
+	void print(bool log_scale = false) const {
+		if (log_scale) {
+			Rprintf("log_x: %g\n", _log_x);
+			Rprintf("log_y: %g\n", _log_y);
+			Rprintf("log_h_x: %g\n", _log_h_x);
+			Rprintf("log_h_y: %g\n", _log_h_y);
+			Rprintf("width: %g\n", width());
+			Rprintf("height: %g\n", height());
+			Rprintf("priority: %g\n", priority());
+		} else {
+			Rprintf("x: %g\n", exp(_log_x));
+			Rprintf("y: %g\n", exp(_log_y));
+			Rprintf("h_x: %g\n", exp(_log_h_x));
+			Rprintf("h_y: %g\n", exp(_log_h_y));
+			Rprintf("width: %g\n", width());
+			Rprintf("height: %g\n", height());
+			Rprintf("priority: %g\n", priority());
+		}
 	}
 private:
 	double _log_x;
 	double _log_y;
 	double _log_h_x;
 	double _log_h_y;
+	double _pw;
 };
 
 void print(std::priority_queue<Interval> q)
@@ -118,8 +137,9 @@ void print(std::priority_queue<Interval> q)
 }
 
 Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
-	double tol, unsigned int N, const std::string& method)
-	: _w(w), _g(g), _log_x_vals(), _log_h_vals(), _cum_probs()
+	double tol, unsigned int N, const std::string& method, double priority_weight)
+	: _w(w), _g(g), _tol(tol), _N(N), _log_x_vals(), _log_h_vals(),
+	  _cum_probs(), _priority_weight(priority_weight)
 {
 	double log_prob;
 	double delta;
@@ -145,20 +165,20 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	}
 
 	// Do a bisection search to find log_L between log_L_lo and log_L_hi.
-	Predicate_logL pred1(*this, log_prob_max);
+	Predicate_logL predL(*this, log_prob_max);
 	delta = tol * (log_L_hi - log_L_lo);
-	double log_L = bisection(log_L_lo, log_L_hi, pred1, midpoint, dist, delta);
+	double log_L = bisection(log_L_lo, log_L_hi, predL, midpoint, dist, delta);
 
 	// Do a bisection search to find U, the smallest point where P(A_U) = 0.
-	Predicate_logU pred2(*this, log_prob_max);
+	Predicate_logU predU(*this, log_prob_max);
 	delta = tol * (0 - log_L);
-	double log_U = bisection(log_L, 0, pred2, midpoint, dist, delta);
+	double log_U = bisection(log_L, 0, predU, midpoint, dist, delta);
 
 	// Now fill in points between L and U
 	if (method == "equal_steps") {
-		init_equal_steps(log_L, log_U, log_prob_max, N);
+		init_equal_steps(log_L, log_U, log_prob_max);
 	} else if (method == "small_rects") {
-		init_small_rects(log_L, log_U, log_prob_max, N);
+		init_small_rects(log_L, log_U, log_prob_max);
 	} else {
 		char msg[256];
 		sprintf(msg,
@@ -170,15 +190,15 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	update();
 }
 
-void Stepdown::init_equal_steps(double log_L, double log_U, double log_prob_max,
-	unsigned int N)
+void Stepdown::init_equal_steps(double log_L, double log_U, double log_prob_max)
 {
+	unsigned int N = _N;
 	double L = exp(log_L);
 	double U = exp(log_U);
 
 	_log_x_vals = Rcpp::NumericVector(N+2);
 	_log_h_vals = Rcpp::NumericVector(N+2);
-	
+
 	// Add pieces for the interval [-Inf, 0) where h(u) = 0, and
 	// the interval [0, L) where h(u) = 1
 	_log_x_vals(0) = -INFINITY;
@@ -190,16 +210,17 @@ void Stepdown::init_equal_steps(double log_L, double log_U, double log_prob_max,
 		_log_x_vals(i+1) = log_u;
 		_log_h_vals(i+1) = log_p(log_u);
 	}
-	
 }
 
-void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max, unsigned int N)
+void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max)
 {
+	unsigned int N = _N;
+	double pw = _priority_weight;
 	Midpoint midpoint;
 
-	// This queue should be in max-heap order by height
+	// This queue should be in max-heap order by area
 	std::priority_queue<Interval> q;
-	q.push(Interval(log_L, log_U, log_p(log_L), log_p(log_U)));
+	q.push(Interval(log_L, log_U, log_p(log_L), log_p(log_U), pw));
 
 	// Try to be efficient by preallocating log_x_vals and
 	// log_h_vals to the (maximum) size needed, then copying these temporary
@@ -225,6 +246,11 @@ void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max,
 		// Get the interval with the largest priority
 		Interval int_top = q.top();
 		q.pop();
+		
+		// Rprintf("-----------------\n");
+		// Rprintf("Popped int_top:\n");
+		// int_top.print();
+		// Rprintf("\n");
 
 		// Break the interval int_top into two pieces: left and right.
 		double log_x_new = log(midpoint(exp(int_top.get_log_x()), exp(int_top.get_log_y())));
@@ -234,24 +260,43 @@ void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max,
 		log_x_vals.push_back(log_x_new);
 		log_h_vals.push_back(log_h_new);
 		iter++;
+		// if (log_h_new > log(1e-5) + log_prob_max) {
+			// Experimental: Only add x_new if h_new > _tol*prob_max
+			// Trying to keep inconsequential knot points out of final set
+			// log_x_vals.push_back(log_x_new);
+			// log_h_vals.push_back(log_h_new);
+			// iter++;
+		// }
 
 		// Add the interval which represents [int_top$log_x, log_x_new]
 		Interval int_left(int_top.get_log_x(), log_x_new, int_top.get_log_h_x(),
-			log_h_new);
+			log_h_new, pw);
 		q.push(int_left);
 
 		// Add the interval which represents [log_x_new, int_top$log_x]
 		Interval int_right(log_x_new, int_top.get_log_y(), log_h_new,
-			int_top.get_log_h_y());
+			int_top.get_log_h_y(), pw);
 		q.push(int_right);
 
-		// Rcpp::checkUserInterrupt();
+		// Rprintf("Pushed int_left:\n");
+		// int_left.print();
+		// Rprintf("\n");
+		// Rprintf("Pushed int_right:\n");
+		// int_right.print();
+
+		Rcpp::checkUserInterrupt();
 	}
 
 	_log_x_vals.assign(log_x_vals.begin(), log_x_vals.end());
 	_log_h_vals.assign(log_h_vals.begin(), log_h_vals.end());
 	_log_x_vals.sort(false);
 	_log_h_vals.sort(true);
+
+	// Rprintf("After init:\n");
+	// Rcpp::NumericVector x_vals = Rcpp::exp(_log_x_vals);
+	// Rcpp::NumericVector h_vals = Rcpp::exp(_log_h_vals);
+	// Rcpp::print(x_vals);
+	// Rcpp::print(h_vals);
 }
 
 const Rcpp::NumericVector& Stepdown::get_cum_probs() const
@@ -357,7 +402,7 @@ void Stepdown::add(double log_u)
 /*
 * Compute normalizing constant, cumulative probabilities, and maximum jump
 * based on current state of _log_x_vals and _log_h_vals. More sophisticated
-* data structures would would make it possible not to reallocate things.
+* data structures would would make it possible to not reallocate things.
 */
 void Stepdown::update()
 {

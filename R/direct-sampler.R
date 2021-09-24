@@ -57,13 +57,13 @@ direct_sampler_basic = function(n, w, g, N = 100, max_iter = 10000)
 #' @name Direct Sampler
 #' @export
 direct_sampler = function(n, w, g, tol = 1e-8, N = 100,
-	fill_method = "small_rects")
+	fill_method = "small_rects", priority_weight = 1/2)
 {
 	stopifnot(class(w) == "weight")
 	stopifnot(class(g) == "base")
 
 	# Use our Stepdown approximation to draw from p(u)
-	step = Stepdown$new(w, g, tol, N, fill_method)
+	step = Stepdown$new(w, g, tol, N, fill_method, priority_weight)
 	u = step$r(n)
 
 	# Draw from g(x | u) for each value of u

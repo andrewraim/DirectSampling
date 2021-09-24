@@ -28,14 +28,14 @@ NULL
 #' @name Direct Sampler AR
 #' @export
 direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
-	max_rejections, fill_method = "small_rects")
+	max_rejections, fill_method = "small_rects", priority_weight = 1/2)
 {
 	stopifnot(class(w) == "weight")
 	stopifnot(class(g) == "base")
 
 	# Use our Stepdown approximation to draw from p(u)
 	u = numeric(n)
-	step = Stepdown$new(w, g, tol, N = N, fill_method)
+	step = Stepdown$new(w, g, tol, N, fill_method, priority_weight)
 	rejections = 0
 
 	# Because the step function is an upper bound for P(A_u), the constant M in

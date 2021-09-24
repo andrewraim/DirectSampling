@@ -7,10 +7,11 @@
 */
 Rcpp::NumericVector direct_sampler_ar(unsigned int n, const WeightFunction& w,
 	const BaseDistribution& g, double tol, unsigned int N_init,
-	unsigned int max_rejections, const std::string& fill_method)
+	unsigned int max_rejections, const std::string& fill_method,
+	double priority_weight)
 {
 	// Use our Stepdown approximation to draw from p(u)
-	Stepdown step(w, g, tol, N_init, fill_method);
+	Stepdown step(w, g, tol, N_init, fill_method, priority_weight);
 	const Rcpp::NumericVector& v = step.draw(n);
 	const Rcpp::NumericVector& log_u = Rcpp::log(v);
 
@@ -21,7 +22,7 @@ Rcpp::NumericVector direct_sampler_ar(unsigned int n, const WeightFunction& w,
 	// Because the step function is an upper bound for P(A_u), the constant M in
 	// the acceptance ratio is always M = 1.
 	double log_M = 0;
-	
+
 	for (unsigned int i = 0; i < n; i++) {
 		accept = false;
 		while (!accept && rejections < max_rejections) {

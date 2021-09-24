@@ -3,10 +3,10 @@
 
 Rcpp::NumericVector direct_sampler(unsigned int n, const WeightFunction& w,
 	const BaseDistribution& g, double tol, unsigned int N,
-	const std::string& fill_method)
+	const std::string& fill_method, double priority_weight)
 {
 	// Use our Stepdown approximation to draw from p(u)
-	Stepdown step(w, g, tol, N, fill_method);
+	Stepdown step(w, g, tol, N, fill_method, priority_weight);
 	const Rcpp::NumericVector& v = step.draw(n);
 	const Rcpp::NumericVector& log_u = Rcpp::log(v);
 

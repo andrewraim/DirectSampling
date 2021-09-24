@@ -19,7 +19,8 @@ direct_sampler_lognormal_normal(
   tol,
   N,
   fill_method,
-  max_rejections = 0L
+  max_rejections = 0L,
+  priority_weight = 0.5
 )
 
 direct_sampler_lognormal_dscnorm(
@@ -31,7 +32,8 @@ direct_sampler_lognormal_dscnorm(
   tol,
   N,
   fill_method,
-  max_rejections = 0L
+  max_rejections = 0L,
+  priority_weight = 0.5
 )
 
 direct_sampler_lognormal_laplace(
@@ -43,7 +45,8 @@ direct_sampler_lognormal_laplace(
   tol,
   N,
   fill_method,
-  max_rejections = 0L
+  max_rejections = 0L,
+  priority_weight = 0.5
 )
 
 direct_sampler_lognormal_dgeom(
@@ -55,7 +58,8 @@ direct_sampler_lognormal_dgeom(
   tol,
   N,
   fill_method,
-  max_rejections = 0L
+  max_rejections = 0L,
+  priority_weight = 0.5
 )
 
 direct_sampler_normal_laplace(
@@ -67,7 +71,8 @@ direct_sampler_normal_laplace(
   tol,
   N,
   fill_method,
-  max_rejections = 0L
+  max_rejections = 0L,
+  priority_weight = 0.5
 )
 
 direct_sampler_gamma_laplace(
@@ -79,7 +84,8 @@ direct_sampler_gamma_laplace(
   tol,
   N,
   fill_method,
-  max_rejections = 0L
+  max_rejections = 0L,
+  priority_weight = 0.5
 )
 }
 \arguments{

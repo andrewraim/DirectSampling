@@ -12,7 +12,8 @@
 class Stepdown {
 public:
 	Stepdown(const WeightFunction& w, const BaseDistribution& g,
-		double tol, unsigned int N, const std::string& method);
+		double tol, unsigned int N, const std::string& method,
+		double priority_weight);
 
 	double get_norm_const() const;
 	const Rcpp::NumericVector& get_cum_probs() const;
@@ -28,18 +29,19 @@ public:
 	Rcpp::NumericVector draw(unsigned int n) const;
 
 private:
-	void init_equal_steps(double log_L, double log_U, double log_prob_max,
-		unsigned int N);
-	void init_small_rects(double log_L, double log_U, double log_prob_max,
-		unsigned int N);
+	void init_equal_steps(double log_L, double log_U, double log_prob_max);
+	void init_small_rects(double log_L, double log_U, double log_prob_max);
 	void update();
 
 	const WeightFunction& _w;
 	const BaseDistribution& _g;
+	double _tol;
+	unsigned int _N;
 	Rcpp::NumericVector _log_x_vals;
 	Rcpp::NumericVector _log_h_vals;
 	Rcpp::NumericVector _cum_probs;
 	double _norm_const;
+	double _priority_weight;
 };
 
 #endif

@@ -7,6 +7,7 @@
 
 Rcpp::NumericVector direct_sampler_ar(unsigned int n, const WeightFunction& w,
 	const BaseDistribution& g, double tol, unsigned int N_init,
-	unsigned int max_rejections, const std::string& fill_method);
+	unsigned int max_rejections, const std::string& fill_method,
+	double priority_weight = 0.5);
 
 #endif
