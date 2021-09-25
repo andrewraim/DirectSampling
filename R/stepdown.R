@@ -191,16 +191,25 @@ Stepdown = R6Class("Stepdown",
 # Build a stepdown function
 Stepdown$set("private", "setup", function(w, g, tol, N, method)
 {
-	midpoint = function(x,y) { (x+y)/2 }
+	# midpoint = function(x,y) { (x+y)/2 }
+	# Compute the midpoint (x+y) / 2, where both x and y are given on the
+	# log-scale. This is to handle very small magnitude numbers.
+	# midpoint = function(log_x, log_y, take_log = TRUE) {
+	#	out = log(1/2) + logadd(log_y, log_x)
+	#	ifelse(take_log, out, exp(out))
+	# }
+
+	# The geometric mean
+	midpoint = function(log_x, log_y, take_log = TRUE) {
+		out = 1/2 * (log_x + log_y)
+		ifelse(take_log, out, exp(out))
+	}
+
+	# unidist = function(x,y) { y-x }
+	unidist = function(log_x, log_y) { logsub(log_y, log_x) }
 
 	# Compute r*x + (1-r)*y
 	# Compute on the log-scale in case we encounter very small magnitude numbers
-	# midpoint2 = function(log_x, log_y, log_h_x, log_h_y) {
-	#	log_r = log_h_x - logadd(log_h_x, log_h_y)
-	#	log_r_comp = log1p(-exp(log_r))
-	#	logadd(log_r + log_x, log_r_comp + log_y)
-	# }
-	unidist = function(x,y) { y-x }
 	log_p = function(log_u) {
 		endpoints = w$roots(w$log_c + log_u)
 		log(g$pr_interval(endpoints[1], endpoints[2]))
@@ -208,7 +217,6 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 
 	# Save functions for later use
 	private$midpoint = midpoint
-	# private$midpoint2 = midpoint2
 	private$log_p = log_p
 
 	# First, make sure A_0 has positive probability according to g.
@@ -234,7 +242,8 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 		log_p(log_u) < log_prob_max
 	}
 	delta = tol * (log_L_hi - log_L_lo)
-	log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, delta)
+	# log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, log(delta))
+	log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, log_L_lo)
 
 	# Do a bisection search to find U, the smallest point where P(A_U) = 0.	
 	# Find the smallest point where P(A_U) > tol * P(A_L).
@@ -244,7 +253,8 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 		log_p(log_u) < log(1e-5) + log_p(log_L)
 	}
 	delta = tol * (0 - log_L)
-	log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, delta)
+	# log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, log(delta))
+	log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, log_L)
 	# logger("log_U = %g\n", log_U)
 
 	# Now fill in points between L and U
@@ -286,7 +296,7 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 	# This queue should be in max-heap order by height
 	q = fibonacci_heap("numeric")
 	intvl = get_interval(log_L, log_U, private$log_p(log_L), private$log_p(log_U))
-	priority = pw * log(intvl$height) + (1-pw) * log(intvl$width)
+	priority = pw * intvl$log_height + (1-pw) * intvl$log_width
 	insert(q, -priority, intvl)
 
 	# Preallocate log_x_vals and log_h_vals to the maximum size we will need.
@@ -305,17 +315,16 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 	iter = 3
 
 	while (size(q) > 0 && iter < N+2) {
-		# Get the interval with the largest height
+		# Get the interval with the highest priority
 		int_top = pop(q)[[1]]
 
-		# printf("-----------------\n")
-		# printf("Popped int_top:\n")
-		# print(int_top, log_scale = FALSE)
-		# printf("\n")
+		printf("-----------------\n")
+		printf("Popped int_top:\n")
+		print(int_top, log_scale = TRUE)
+		printf("\n")
 
 		# Break the interval int_top into two pieces: left and right.
-		log_x_new = log(private$midpoint(exp(int_top$log_x), exp(int_top$log_y)))
-		# log_x_new = private$midpoint2(int_top$log_x, int_top$log_y, int_top$log_h_x, int_top$log_h_y)
+		log_x_new = private$midpoint(int_top$log_x, int_top$log_y, take_log = TRUE)
 		log_h_new = private$log_p(log_x_new)
 
 		# Add the midpoint to our list of knots
@@ -327,7 +336,7 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 
 		# Add the interval which represents [int_top$log_x, log_x_new]
 		int_left = get_interval(int_top$log_x, log_x_new, int_top$log_h_x, log_h_new)
-		priority = pw * log(int_left$height) + (1-pw) * log(int_left$width)
+		priority = pw * int_left$log_height + (1-pw) * int_left$log_width
 		insert(q, -priority, int_left)
 		# if (int_left$log_h_x >= log(1e-2) + log_prob_max) {
 		#	insert(q, -int_left$priority, int_left)
@@ -335,17 +344,17 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 
 		# Add the interval which represents [log_x_new, int_top$log_x]
 		int_right = get_interval(log_x_new, int_top$log_y, log_h_new, int_top$log_h_y)
-		priority = pw * log(int_right$height) + (1-pw) * log(int_right$width)
+		priority = pw * int_right$log_height + (1-pw) * int_right$log_width
 		insert(q, -priority, int_right)
 		# if (int_right$log_h_x >= log(1e-2) + log_prob_max) {
 		#	insert(q, -int_right$priority, int_right)
 		# }
 		
-		# printf("Pushed int_left:\n")
-		# print(int_left, log_scale = FALSE)
-		# printf("\n")
-		# printf("Pushed int_right:\n")
-		# print(int_right, log_scale = FALSE)
+		printf("Pushed int_left:\n")
+		print(int_left, log_scale = TRUE)
+		printf("\n")
+		printf("Pushed int_right:\n")
+		print(int_right, log_scale = TRUE)
 	}
 
 	private$log_x_vals = sort(log_x_vals[seq_len(iter)], decreasing = FALSE)
@@ -366,18 +375,34 @@ Stepdown$set("private", "update", function()
 		widths = diff(exp(private$log_x_vals))
 		heights = exp(private$log_h_vals[-(N+2)])
 		areas = widths * heights
+		private$norm_const = sum(areas)
+		private$cum_probs = cumsum(areas) / private$norm_const
 	} else {
 		# This version tries to be more precise and do more work on the log-scale
-		idx1 = 1:(N+1)
-		idx2 = 2:(N+2)
-		areas = numeric(N+1)
-		areas[1] = exp(private$log_h_vals[1] + private$log_x_vals[2])
-		areas[idx1] = exp(private$log_h_vals[idx1] + private$log_x_vals[idx2]) -
-			exp(private$log_h_vals[idx1] + private$log_x_vals[idx1])
-	}
+		# idx1 = 1:(N+1)
+		# idx2 = 2:(N+2)
+		# areas = numeric(N+1)
+		# areas[1] = exp(private$log_h_vals[1] + private$log_x_vals[2])
+		# areas[idx1] = exp(private$log_h_vals[idx1] + private$log_x_vals[idx2]) -
+		# 	exp(private$log_h_vals[idx1] + private$log_x_vals[idx1])
 
-	private$norm_const = sum(areas)
-	private$cum_probs = cumsum(areas) / private$norm_const
+		log_areas = numeric(N+1)
+		log_cum_areas = numeric(N+1)
+
+		log_areas[1] = private$log_h_vals[1] + private$log_x_vals[2]
+		log_cum_areas[1] = log_areas[1]
+		for (l in seq(2, N+1)) {
+			log_A = private$log_h_vals[l] + private$log_x_vals[l+1]
+			log_B = private$log_h_vals[l] + private$log_x_vals[l]
+			log_areas[l] = logsub(log_A, log_B)
+			log_cum_areas[l] = logadd(log_cum_areas[l-1], log_areas[l])
+		}
+
+		log_normconst = log_cum_areas[N+1]
+		log_cum_probs = log_cum_areas - log_normconst
+		private$norm_const = exp(log_normconst)
+		private$cum_probs = exp(log_cum_probs)
+	}
 
 	if (any(is.na(private$cum_probs))) {
 		warning("NA values found in cum_probs. Approximation may have failed")
@@ -393,10 +418,10 @@ Stepdown$lock()
 get_interval = function(log_x, log_y, log_h_x, log_h_y)
 {
 	# Consider changing these to have a "log_" prefix
-	width = exp(log_y) - exp(log_x)
-	height = exp(log_h_x) - exp(log_h_y)
+	log_width = logsub(log_y, log_x)
+	log_height = logsub(log_h_x, log_h_y)
 	ret = list(log_x = log_x, log_y = log_y, log_h_x = log_h_x,
-		log_h_y = log_h_y, width = width, height = height)
+		log_h_y = log_h_y, log_width = log_width, log_height = log_height)
 	class(ret) = "interval"
 	return(ret)
 }
@@ -408,14 +433,14 @@ print.interval = function(intvl, log_scale = FALSE)
 		printf("log_y: %g\n", intvl$log_y)
 		printf("log_h_x: %g\n", intvl$log_h_x)
 		printf("log_h_y: %g\n", intvl$log_h_y)
-		printf("width: %g\n", intvl$width)
-		printf("height: %g\n", intvl$height)
+		printf("width: %g\n", intvl$log_width)
+		printf("height: %g\n", intvl$log_height)
 	} else {
 		printf("x: %g\n", exp(intvl$log_x))
 		printf("y: %g\n", exp(intvl$log_y))
 		printf("h_x: %g\n", exp(intvl$log_h_x))
 		printf("h_y: %g\n", exp(intvl$log_h_y))
-		printf("width: %g\n", intvl$width)
-		printf("height: %g\n", intvl$height)
+		printf("width: %g\n", exp(intvl$log_width))
+		printf("height: %g\n", exp(intvl$log_height))
 	}
 }

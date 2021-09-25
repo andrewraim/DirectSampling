@@ -20,13 +20,14 @@ bisection = function(x_lo, x_hi, f, mid, dist, tol)
 		x_lo = ind*x_lo + (1-ind)*x
 		x_hi = ind*x + (1-ind)*x_hi
 		x = mid(x_lo, x_hi)
+		# printf("mid(%g, %g) = %g\n", x_lo, x_hi, x)
 	}
 
 	# Watch out for numerical overflow. eventually mid(x,y) will no longer be
 	# strictly between x and y.
-	if (dist(x_lo, x_hi) > tol && (x <= x_lo || x >= x_hi)) {
-		stop("Numerical overflow in bisection. tol may be too small")
-	}
+	# if (dist(x_lo, x_hi) > tol && (x <= x_lo || x >= x_hi)) {
+	# 	stop("Numerical overflow in bisection. tol may be too small")
+	# }
 
 	return(x)
 }

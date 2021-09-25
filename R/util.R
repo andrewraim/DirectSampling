@@ -37,3 +37,10 @@ logger = function(msg, ...)
 logadd = function(logx, logy) {
 	logx + log1p(exp(logy - logx))
 }
+
+# Same as logadd, but for subtraction
+#  log(x - y) = log(x) + log(1 - y/x)
+#             = log(x) + log1p(-exp(log(y) - log(x)))
+logsub = function(logx, logy) {
+	logx + log1p(-exp(logy - logx))
+}
