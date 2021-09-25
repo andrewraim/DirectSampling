@@ -287,10 +287,14 @@ void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max)
 		Rcpp::checkUserInterrupt();
 	}
 
+	// Rprintf("Checkpoint 1:\n");
+
 	_log_x_vals.assign(log_x_vals.begin(), log_x_vals.end());
 	_log_h_vals.assign(log_h_vals.begin(), log_h_vals.end());
 	_log_x_vals.sort(false);
 	_log_h_vals.sort(true);
+
+	// Rprintf("Checkpoint 2:\n");
 
 	// Rprintf("After init:\n");
 	// Rcpp::NumericVector x_vals = Rcpp::exp(_log_x_vals);
@@ -356,7 +360,10 @@ double Stepdown::density(double x, bool take_log, bool normalize) const
 {
 	// Get the idx such that h_vals[idx] <= log(x) < h_vals[idx+1]
 	unsigned int idx = find_interval(log(x), _log_x_vals);
-	double out = _log_h_vals(idx);
+	double out = -INFINITY;
+	if (idx < _N) {
+		out = _log_h_vals(idx);
+	}
 	if (normalize) { out -= _norm_const; }
 	if (take_log) { return out; } else { return exp(out); }
 }
@@ -406,12 +413,15 @@ void Stepdown::add(double log_u)
 */
 void Stepdown::update()
 {
+	// Rprintf("Checkpoint 3:\n");
 	unsigned int N = _log_x_vals.size() - 2;
 	Rcpp::NumericVector areas(N+1);
 
+	// Rprintf("Checkpoint 4:\n");
 	_cum_probs = Rcpp::NumericVector(N+1);
 	_norm_const = 0;
 
+	// Rprintf("Checkpoint 5:\n");
 	#ifdef SIMPLER_VERSION
 		// This is a more readable version of the calculation that may be less precise
 		for (unsigned int i = 0; i < N+1; i++) {
@@ -436,9 +446,19 @@ void Stepdown::update()
 		}
 	#endif
 
+	// Rprintf("Checkpoint 6:\n");
 	_cum_probs = _cum_probs / _norm_const;
 
+	// Rprintf("Checkpoint 7:\n");
 	if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(_cum_probs)))) {
-		Rcpp::warning("NA values found in cum_probs. Approximation may have failed");
+		// Rcpp::warning("NA values found in cum_probs. Approximation may have failed");
+
+		Rprintf("_log_x_vals:\n");
+		Rcpp::print(_log_x_vals);
+		Rprintf("_log_h_vals:\n");
+		Rcpp::print(_log_h_vals);
+		Rprintf("_cum_probs:\n");
+		Rcpp::print(_cum_probs);
+		Rcpp::stop("NA values found in cum_probs. Approximation may have failed");
 	}
 }

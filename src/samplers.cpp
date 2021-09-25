@@ -84,11 +84,16 @@ Rcpp::NumericVector direct_sampler_gamma_laplace(unsigned int n, double z,
 	const std::string& fill_method, unsigned int max_rejections,
 	double priority_weight)
 {
+	// Rprintf("direct_sampler_gamma_laplace: Checkpoint 0\n");
 	GammaWeightFunction w(z, alpha, beta);
+	// Rprintf("direct_sampler_gamma_laplace: Checkpoint 1\n");
 	LaplaceBaseDistribution g(lambda);
+	// Rprintf("direct_sampler_gamma_laplace: Checkpoint 2\n");
 	if (max_rejections > 0) {
+		// Rprintf("direct_sampler_gamma_laplace: Checkpoint 3a\n");
 		return direct_sampler_ar(n, w, g, tol, N, max_rejections, fill_method, priority_weight);
 	} else {
+		// Rprintf("direct_sampler_gamma_laplace: Checkpoint 3b\n");
 		return direct_sampler(n, w, g, tol, N, fill_method, priority_weight);
 	}
 }
