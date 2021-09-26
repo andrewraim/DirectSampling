@@ -7,6 +7,27 @@
 #include "find_interval.h"
 
 /*
+* Geometric mean
+*/
+class StepdownMidpoint : public Functional2
+{
+public:
+	virtual double operator()(double log_x, double log_y) const
+	{
+		return 0.5 * (log_x + log_y);
+	}
+};
+
+class StepdownDistance : public Functional2
+{
+public:
+	virtual double operator()(double log_x, double log_y) const
+	{
+		return logsub(log_y, log_x);
+	}
+};
+
+/*
 * A predicate which is used to locate log_L
 */
 class Predicate_logL : public Predicate
@@ -37,7 +58,6 @@ public:
 	}
 	bool operator()(double log_u) const {
 		double log_prob = _step.log_p(log_u);
-		// return std::isinf(log_prob);
 		return log_prob < log(1e-5) + _log_prob_max;
 	}
 private:
@@ -63,16 +83,16 @@ public:
 	Interval(const Interval& rhs) {
 		*this = rhs;
 	}
-	double width() const {
-		return exp(_log_y) - exp(_log_x);
+	double log_width() const {
+		return logsub(_log_y, _log_x);
 	}
-	double height() const {
-		return exp(_log_h_x) - exp(_log_h_y);
+	double log_height() const {
+		return logsub(_log_h_x, _log_h_y);
 	}
 	double priority() const {
-		double width = exp(_log_y) - exp(_log_x);
-		double height = exp(_log_h_x) - exp(_log_h_y);
-		return _pw*log(height) + (1-_pw)*log(width);
+		double log_width = logsub(_log_y, _log_x);
+		double log_height = logsub(_log_h_x, _log_h_y);
+		return _pw * log_height + (1-_pw) * log_width;
 	}
 	const Interval& operator=(const Interval& rhs) {
 		_log_x = rhs._log_x;
@@ -106,16 +126,16 @@ public:
 			Rprintf("log_y: %g\n", _log_y);
 			Rprintf("log_h_x: %g\n", _log_h_x);
 			Rprintf("log_h_y: %g\n", _log_h_y);
-			Rprintf("width: %g\n", width());
-			Rprintf("height: %g\n", height());
+			Rprintf("width: %g\n", log_width());
+			Rprintf("height: %g\n", log_height());
 			Rprintf("priority: %g\n", priority());
 		} else {
 			Rprintf("x: %g\n", exp(_log_x));
 			Rprintf("y: %g\n", exp(_log_y));
 			Rprintf("h_x: %g\n", exp(_log_h_x));
 			Rprintf("h_y: %g\n", exp(_log_h_y));
-			Rprintf("width: %g\n", width());
-			Rprintf("height: %g\n", height());
+			Rprintf("width: %g\n", exp(log_width()));
+			Rprintf("height: %g\n", exp(log_height()));
 			Rprintf("priority: %g\n", priority());
 		}
 	}
@@ -144,9 +164,9 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	double log_prob;
 	double delta;
 	std::pair<double,double> endpoints;
-	Midpoint midpoint;
-	IntervalLength dist;
-	
+	StepdownMidpoint midpoint;
+	StepdownDistance dist;
+
 	// First, make sure the widest possible A_u intersects with [x_lo, x_hi]. If it
 	// doesn't, the rest of the algorithm won't work, so bail out.
 	double log_prob_max = log_p(-INFINITY);
@@ -167,12 +187,12 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	// Do a bisection search to find log_L between log_L_lo and log_L_hi.
 	Predicate_logL predL(*this, log_prob_max);
 	delta = tol * (log_L_hi - log_L_lo);
-	double log_L = bisection(log_L_lo, log_L_hi, predL, midpoint, dist, delta);
+	double log_L = bisection(log_L_lo, log_L_hi, predL, midpoint, dist, log_L_lo);
 
 	// Do a bisection search to find U, the smallest point where P(A_U) = 0.
 	Predicate_logU predU(*this, log_prob_max);
 	delta = tol * (0 - log_L);
-	double log_U = bisection(log_L, 0, predU, midpoint, dist, delta);
+	double log_U = bisection(log_L, 0, predU, midpoint, dist, log_L);
 
 	// Now fill in points between L and U
 	if (method == "equal_steps") {
@@ -216,7 +236,7 @@ void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max)
 {
 	unsigned int N = _N;
 	double pw = _priority_weight;
-	Midpoint midpoint;
+	StepdownMidpoint midpoint;
 
 	// This queue should be in max-heap order by area
 	std::priority_queue<Interval> q;
@@ -246,27 +266,15 @@ void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max)
 		// Get the interval with the largest priority
 		Interval int_top = q.top();
 		q.pop();
-		
-		// Rprintf("-----------------\n");
-		// Rprintf("Popped int_top:\n");
-		// int_top.print();
-		// Rprintf("\n");
 
 		// Break the interval int_top into two pieces: left and right.
-		double log_x_new = log(midpoint(exp(int_top.get_log_x()), exp(int_top.get_log_y())));
+		double log_x_new = midpoint(int_top.get_log_x(), int_top.get_log_y());
 		double log_h_new = log_p(log_x_new);
 
 		// Add the midpoint to our list of knots
 		log_x_vals.push_back(log_x_new);
 		log_h_vals.push_back(log_h_new);
 		iter++;
-		// if (log_h_new > log(1e-5) + log_prob_max) {
-			// Experimental: Only add x_new if h_new > _tol*prob_max
-			// Trying to keep inconsequential knot points out of final set
-			// log_x_vals.push_back(log_x_new);
-			// log_h_vals.push_back(log_h_new);
-			// iter++;
-		// }
 
 		// Add the interval which represents [int_top$log_x, log_x_new]
 		Interval int_left(int_top.get_log_x(), log_x_new, int_top.get_log_h_x(),
@@ -278,29 +286,13 @@ void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max)
 			int_top.get_log_h_y(), pw);
 		q.push(int_right);
 
-		// Rprintf("Pushed int_left:\n");
-		// int_left.print();
-		// Rprintf("\n");
-		// Rprintf("Pushed int_right:\n");
-		// int_right.print();
-
 		Rcpp::checkUserInterrupt();
 	}
-
-	// Rprintf("Checkpoint 1:\n");
 
 	_log_x_vals.assign(log_x_vals.begin(), log_x_vals.end());
 	_log_h_vals.assign(log_h_vals.begin(), log_h_vals.end());
 	_log_x_vals.sort(false);
 	_log_h_vals.sort(true);
-
-	// Rprintf("Checkpoint 2:\n");
-
-	// Rprintf("After init:\n");
-	// Rcpp::NumericVector x_vals = Rcpp::exp(_log_x_vals);
-	// Rcpp::NumericVector h_vals = Rcpp::exp(_log_h_vals);
-	// Rcpp::print(x_vals);
-	// Rcpp::print(h_vals);
 }
 
 const Rcpp::NumericVector& Stepdown::get_cum_probs() const
@@ -413,16 +405,13 @@ void Stepdown::add(double log_u)
 */
 void Stepdown::update()
 {
-	// Rprintf("Checkpoint 3:\n");
 	unsigned int N = _log_x_vals.size() - 2;
-	Rcpp::NumericVector areas(N+1);
 
-	// Rprintf("Checkpoint 4:\n");
-	_cum_probs = Rcpp::NumericVector(N+1);
-	_norm_const = 0;
-
-	// Rprintf("Checkpoint 5:\n");
 	#ifdef SIMPLER_VERSION
+		Rcpp::NumericVector areas(N+1);
+		_cum_probs = Rcpp::NumericVector(N+1);
+		_norm_const = 0;
+
 		// This is a more readable version of the calculation that may be less precise
 		for (unsigned int i = 0; i < N+1; i++) {
 			double h_cur = exp(_log_h_vals(i));
@@ -435,30 +424,23 @@ void Stepdown::update()
 		}
 	#else
 		// This version tries to be more precise and do more work on the log-scale
-		for (unsigned int i = 0; i < N+1; i++) {
-			double log_h_cur = _log_h_vals(i);
-			// double log_h_next = _log_h_vals(i+1);
-			double log_x_cur = _log_x_vals(i);
-			double log_x_next = _log_x_vals(i+1);
-			areas(i) = exp(log_x_next + log_h_cur) - exp(log_x_cur + log_h_cur);
-			_norm_const += areas(i);
-			_cum_probs(i) = _norm_const;
+		Rcpp::NumericVector log_areas(N+1);
+		Rcpp::NumericVector log_cum_areas(N+1);
+
+		log_areas(0) = _log_h_vals(0) + _log_x_vals(1);
+		log_cum_areas(0) = log_areas(0);
+
+		for (unsigned int l = 1; l < N; l++) {
+			double log_A = _log_h_vals(l) + _log_x_vals(l+1);
+			double log_B = _log_h_vals(l) + _log_x_vals(l);
+			log_areas(l) = logsub(log_A, log_B);
+			log_cum_areas(l) = logadd(log_cum_areas(l-1), log_areas(l));
 		}
+
+		double log_normconst = log_cum_areas(N);
+		const Rcpp::NumericVector& log_cum_probs = log_cum_areas - log_normconst;
+		_norm_const = exp(log_normconst);
+		_cum_probs = Rcpp::exp(log_cum_probs);
+		
 	#endif
-
-	// Rprintf("Checkpoint 6:\n");
-	_cum_probs = _cum_probs / _norm_const;
-
-	// Rprintf("Checkpoint 7:\n");
-	if (Rcpp::is_true(Rcpp::any(Rcpp::is_na(_cum_probs)))) {
-		// Rcpp::warning("NA values found in cum_probs. Approximation may have failed");
-
-		Rprintf("_log_x_vals:\n");
-		Rcpp::print(_log_x_vals);
-		Rprintf("_log_h_vals:\n");
-		Rcpp::print(_log_h_vals);
-		Rprintf("_cum_probs:\n");
-		Rcpp::print(_cum_probs);
-		Rcpp::stop("NA values found in cum_probs. Approximation may have failed");
-	}
 }

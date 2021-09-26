@@ -191,21 +191,13 @@ Stepdown = R6Class("Stepdown",
 # Build a stepdown function
 Stepdown$set("private", "setup", function(w, g, tol, N, method)
 {
-	# midpoint = function(x,y) { (x+y)/2 }
-	# Compute the midpoint (x+y) / 2, where both x and y are given on the
-	# log-scale. This is to handle very small magnitude numbers.
-	# midpoint = function(log_x, log_y, take_log = TRUE) {
-	#	out = log(1/2) + logadd(log_y, log_x)
-	#	ifelse(take_log, out, exp(out))
-	# }
-
 	# The geometric mean
 	midpoint = function(log_x, log_y, take_log = TRUE) {
 		out = 1/2 * (log_x + log_y)
 		ifelse(take_log, out, exp(out))
 	}
 
-	# unidist = function(x,y) { y-x }
+	# Compute log(y - x) given log(x) and log(y)
 	unidist = function(log_x, log_y) { logsub(log_y, log_x) }
 
 	# Compute r*x + (1-r)*y
@@ -242,20 +234,16 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 		log_p(log_u) < log_prob_max
 	}
 	delta = tol * (log_L_hi - log_L_lo)
-	# log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, log(delta))
 	log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, log_L_lo)
 
 	# Do a bisection search to find U, the smallest point where P(A_U) = 0.	
-	# Find the smallest point where P(A_U) > tol * P(A_L).
+	# Find the smallest point where P(A_U) > 1e-5 * P(A_L).
 	pred_logU = function(log_u) {
 		# Compare on the log-scale
-		# is.infinite(log_p(log_u))
 		log_p(log_u) < log(1e-5) + log_p(log_L)
 	}
 	delta = tol * (0 - log_L)
-	# log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, log(delta))
 	log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, log_L)
-	# logger("log_U = %g\n", log_U)
 
 	# Now fill in points between L and U
 	if (method == "equal_steps") {
@@ -318,11 +306,6 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 		# Get the interval with the highest priority
 		int_top = pop(q)[[1]]
 
-		printf("-----------------\n")
-		printf("Popped int_top:\n")
-		print(int_top, log_scale = TRUE)
-		printf("\n")
-
 		# Break the interval int_top into two pieces: left and right.
 		log_x_new = private$midpoint(int_top$log_x, int_top$log_y, take_log = TRUE)
 		log_h_new = private$log_p(log_x_new)
@@ -332,29 +315,15 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 		log_x_vals[iter] = log_x_new
 		log_h_vals[iter] = log_h_new
 
-		# printf("log_p(%g) = %g\n", log_x_new, log_h_new)
-
 		# Add the interval which represents [int_top$log_x, log_x_new]
 		int_left = get_interval(int_top$log_x, log_x_new, int_top$log_h_x, log_h_new)
 		priority = pw * int_left$log_height + (1-pw) * int_left$log_width
 		insert(q, -priority, int_left)
-		# if (int_left$log_h_x >= log(1e-2) + log_prob_max) {
-		#	insert(q, -int_left$priority, int_left)
-		# }
 
 		# Add the interval which represents [log_x_new, int_top$log_x]
 		int_right = get_interval(log_x_new, int_top$log_y, log_h_new, int_top$log_h_y)
 		priority = pw * int_right$log_height + (1-pw) * int_right$log_width
 		insert(q, -priority, int_right)
-		# if (int_right$log_h_x >= log(1e-2) + log_prob_max) {
-		#	insert(q, -int_right$priority, int_right)
-		# }
-		
-		printf("Pushed int_left:\n")
-		print(int_left, log_scale = TRUE)
-		printf("\n")
-		printf("Pushed int_right:\n")
-		print(int_right, log_scale = TRUE)
 	}
 
 	private$log_x_vals = sort(log_x_vals[seq_len(iter)], decreasing = FALSE)
@@ -379,13 +348,6 @@ Stepdown$set("private", "update", function()
 		private$cum_probs = cumsum(areas) / private$norm_const
 	} else {
 		# This version tries to be more precise and do more work on the log-scale
-		# idx1 = 1:(N+1)
-		# idx2 = 2:(N+2)
-		# areas = numeric(N+1)
-		# areas[1] = exp(private$log_h_vals[1] + private$log_x_vals[2])
-		# areas[idx1] = exp(private$log_h_vals[idx1] + private$log_x_vals[idx2]) -
-		# 	exp(private$log_h_vals[idx1] + private$log_x_vals[idx1])
-
 		log_areas = numeric(N+1)
 		log_cum_areas = numeric(N+1)
 
@@ -414,7 +376,6 @@ Stepdown$lock()
 
 # This is used in the heap implementation of init_small_rects.
 # It represents an interval [x,y] with function values h(x) and h(y).
-# We save width = y-x and height = h(x) - h(y).
 get_interval = function(log_x, log_y, log_h_x, log_h_y)
 {
 	# Consider changing these to have a "log_" prefix

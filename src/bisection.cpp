@@ -15,9 +15,5 @@ double bisection(double x_lo, double x_hi,
 		x = mid(x_lo, x_hi);
 	}
 
-	if (dist(x_lo, x_hi) > tol && (x <= x_lo || x >= x_hi)) {
-		Rcpp::stop("Numerical overflow in bisection. tol may be too small");
-	}
-
 	return x;
 }
