@@ -357,7 +357,9 @@ Stepdown$set("private", "update", function()
 			log_A = private$log_h_vals[l] + private$log_x_vals[l+1]
 			log_B = private$log_h_vals[l] + private$log_x_vals[l]
 			log_areas[l] = logsub(log_A, log_B)
-			log_cum_areas[l] = logadd(log_cum_areas[l-1], log_areas[l])
+			arg1 = max(log_cum_areas[l-1], log_areas[l])
+			arg2 = min(log_cum_areas[l-1], log_areas[l])
+			log_cum_areas[l] = logadd(arg1, arg2)
 		}
 
 		log_normconst = log_cum_areas[N+1]

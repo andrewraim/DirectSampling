@@ -430,17 +430,18 @@ void Stepdown::update()
 		log_areas(0) = _log_h_vals(0) + _log_x_vals(1);
 		log_cum_areas(0) = log_areas(0);
 
-		for (unsigned int l = 1; l < N; l++) {
+		for (unsigned int l = 1; l < N+1; l++) {
 			double log_A = _log_h_vals(l) + _log_x_vals(l+1);
 			double log_B = _log_h_vals(l) + _log_x_vals(l);
 			log_areas(l) = logsub(log_A, log_B);
-			log_cum_areas(l) = logadd(log_cum_areas(l-1), log_areas(l));
+			double arg1 = std::max(log_cum_areas(l-1), log_areas(l));
+			double arg2 = std::min(log_cum_areas(l-1), log_areas(l));
+			log_cum_areas(l) = logadd(arg1, arg2);
 		}
 
 		double log_normconst = log_cum_areas(N);
 		const Rcpp::NumericVector& log_cum_probs = log_cum_areas - log_normconst;
 		_norm_const = exp(log_normconst);
 		_cum_probs = Rcpp::exp(log_cum_probs);
-		
 	#endif
 }

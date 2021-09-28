@@ -105,8 +105,7 @@ direct_sampler_ar_adapt = function(n, w, g, tol = 1e-8, N = 10,
 				u[i] = u_proposal
 				accept = TRUE
 	 		} else {
-				# TBD: Adapt the step function.
-				# printf("Adding %f to step function\n", log(u))
+				# Adapt the step function.
 				step$add(log(u_proposal))
 				rejections = rejections + 1
 			}
