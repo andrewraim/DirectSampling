@@ -210,8 +210,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // direct_sampler_lognormal_dscnorm
-Rcpp::NumericVector direct_sampler_lognormal_dscnorm(unsigned int n, double z, double mu, double sigma2, double tau, double tol, unsigned int N, const std::string& fill_method, unsigned int max_rejections, double priority_weight);
-RcppExport SEXP _DirectSampling_direct_sampler_lognormal_dscnorm(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP tauSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP, SEXP max_rejectionsSEXP, SEXP priority_weightSEXP) {
+Rcpp::NumericVector direct_sampler_lognormal_dscnorm(unsigned int n, double z, double mu, double sigma2, double tau, double tol, unsigned int N, const std::string& fill_method, unsigned int max_rejections, double priority_weight, double dscnorm_tol);
+RcppExport SEXP _DirectSampling_direct_sampler_lognormal_dscnorm(SEXP nSEXP, SEXP zSEXP, SEXP muSEXP, SEXP sigma2SEXP, SEXP tauSEXP, SEXP tolSEXP, SEXP NSEXP, SEXP fill_methodSEXP, SEXP max_rejectionsSEXP, SEXP priority_weightSEXP, SEXP dscnorm_tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -225,7 +225,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type fill_method(fill_methodSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type max_rejections(max_rejectionsSEXP);
     Rcpp::traits::input_parameter< double >::type priority_weight(priority_weightSEXP);
-    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_dscnorm(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections, priority_weight));
+    Rcpp::traits::input_parameter< double >::type dscnorm_tol(dscnorm_tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(direct_sampler_lognormal_dscnorm(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections, priority_weight, dscnorm_tol));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -338,7 +339,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DirectSampling_r_laplace", (DL_FUNC) &_DirectSampling_r_laplace, 3},
     {"_DirectSampling_q_laplace", (DL_FUNC) &_DirectSampling_q_laplace, 3},
     {"_DirectSampling_direct_sampler_lognormal_normal", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_normal, 10},
-    {"_DirectSampling_direct_sampler_lognormal_dscnorm", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dscnorm, 10},
+    {"_DirectSampling_direct_sampler_lognormal_dscnorm", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dscnorm, 11},
     {"_DirectSampling_direct_sampler_lognormal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_laplace, 10},
     {"_DirectSampling_direct_sampler_lognormal_dgeom", (DL_FUNC) &_DirectSampling_direct_sampler_lognormal_dgeom, 10},
     {"_DirectSampling_direct_sampler_normal_laplace", (DL_FUNC) &_DirectSampling_direct_sampler_normal_laplace, 10},

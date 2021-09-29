@@ -123,6 +123,7 @@ Stepdown = R6Class("Stepdown",
 		log_h_val = private$log_p(log_u)
 		private$log_x_vals = sort(c(private$log_x_vals, log_u))
 		private$log_h_vals = sort(c(private$log_h_vals, log_h_val), decreasing = TRUE)
+		private$N = private$N + 1
 		private$update()
 	},
 
@@ -233,7 +234,6 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 		# Compare prob < prob_max on the log-scale
 		log_p(log_u) < log_prob_max
 	}
-	delta = tol * (log_L_hi - log_L_lo)
 	log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, log_L_lo)
 
 	# Do a bisection search to find U, the smallest point where P(A_U) = 0.	
@@ -242,7 +242,6 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 		# Compare on the log-scale
 		log_p(log_u) < log(1e-5) + log_p(log_L)
 	}
-	delta = tol * (0 - log_L)
 	log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, log_L)
 
 	# Now fill in points between L and U
@@ -332,7 +331,7 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 
 Stepdown$set("private", "update", function()
 {
-	N = length(private$log_x_vals) - 2
+	N = private$N
 
 	# The approximation was computed on the log-scale. Transform it back to the
 	# probability sample and integrate over the pieces to find the normalizing
@@ -354,9 +353,7 @@ Stepdown$set("private", "update", function()
 		log_areas[1] = private$log_h_vals[1] + private$log_x_vals[2]
 		log_cum_areas[1] = log_areas[1]
 		for (l in seq(2, N+1)) {
-			log_A = private$log_h_vals[l] + private$log_x_vals[l+1]
-			log_B = private$log_h_vals[l] + private$log_x_vals[l]
-			log_areas[l] = logsub(log_A, log_B)
+			log_areas[l] = private$log_h_vals[l] + logsub(private$log_x_vals[l+1], private$log_x_vals[l])
 			arg1 = max(log_cum_areas[l-1], log_areas[l])
 			arg2 = min(log_cum_areas[l-1], log_areas[l])
 			log_cum_areas[l] = logadd(arg1, arg2)

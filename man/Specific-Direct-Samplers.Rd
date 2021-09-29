@@ -33,7 +33,8 @@ direct_sampler_lognormal_dscnorm(
   N,
   fill_method,
   max_rejections = 0L,
-  priority_weight = 0.5
+  priority_weight = 0.5,
+  dscnorm_tol = 1e-10
 )
 
 direct_sampler_lognormal_laplace(

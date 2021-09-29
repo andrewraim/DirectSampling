@@ -162,7 +162,6 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	  _cum_probs(), _priority_weight(priority_weight)
 {
 	double log_prob;
-	double delta;
 	std::pair<double,double> endpoints;
 	StepdownMidpoint midpoint;
 	StepdownDistance dist;
@@ -186,12 +185,10 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 
 	// Do a bisection search to find log_L between log_L_lo and log_L_hi.
 	Predicate_logL predL(*this, log_prob_max);
-	delta = tol * (log_L_hi - log_L_lo);
 	double log_L = bisection(log_L_lo, log_L_hi, predL, midpoint, dist, log_L_lo);
 
 	// Do a bisection search to find U, the smallest point where P(A_U) = 0.
 	Predicate_logU predU(*this, log_prob_max);
-	delta = tol * (0 - log_L);
 	double log_U = bisection(log_L, 0, predU, midpoint, dist, log_L);
 
 	// Now fill in points between L and U
@@ -395,6 +392,7 @@ void Stepdown::add(double log_u)
 	_log_h_vals.push_back(log_h);
 	_log_h_vals.sort(true);
 
+	_N++;
 	update();
 }
 
@@ -405,7 +403,7 @@ void Stepdown::add(double log_u)
 */
 void Stepdown::update()
 {
-	unsigned int N = _log_x_vals.size() - 2;
+	unsigned int N = _N;
 
 	#ifdef SIMPLER_VERSION
 		Rcpp::NumericVector areas(N+1);
@@ -431,9 +429,7 @@ void Stepdown::update()
 		log_cum_areas(0) = log_areas(0);
 
 		for (unsigned int l = 1; l < N+1; l++) {
-			double log_A = _log_h_vals(l) + _log_x_vals(l+1);
-			double log_B = _log_h_vals(l) + _log_x_vals(l);
-			log_areas(l) = logsub(log_A, log_B);
+			log_areas(l) = _log_h_vals(l) + logsub(_log_x_vals(l+1), _log_x_vals(l));
 			double arg1 = std::max(log_cum_areas(l-1), log_areas(l));
 			double arg2 = std::min(log_cum_areas(l-1), log_areas(l));
 			log_cum_areas(l) = logadd(arg1, arg2);

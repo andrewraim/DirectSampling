@@ -31,11 +31,13 @@ Rcpp::NumericVector direct_sampler_ar(unsigned int n, const WeightFunction& w,
 			double log_p_val = step.log_p(log(u_proposal));
 			double log_h_val = step.density(u_proposal, true, false);
 			double log_ratio = log_p_val - log_h_val - log_M;
+
 			if (log(v) < log_ratio) {
 				// Accept u as a draw from p(u)
 				u(i) = u_proposal;
 				accept = true;
 	 		} else {
+	 			// Reject u and add it to knots
 	 			step.add(log(u_proposal));
 				rejections++;
 			}

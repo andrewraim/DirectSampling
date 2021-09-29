@@ -60,7 +60,7 @@ Rcpp::NumericVector direct_sampler_lognormal_normal(unsigned int n, double z,
 Rcpp::NumericVector direct_sampler_lognormal_dscnorm(unsigned int n, double z,
 	double mu, double sigma2, double tau, double tol, unsigned int N,
 	const std::string& fill_method, unsigned int max_rejections = 0,
-	double priority_weight = 0.5);
+	double priority_weight = 0.5, double dscnorm_tol = 1e-10);
 
 //' @name Specific Direct Samplers
 //' @export

@@ -208,8 +208,8 @@ direct_sampler_lognormal_normal <- function(n, z, mu, sigma2, tau, tol, N, fill_
 
 #' @name Specific Direct Samplers
 #' @export
-direct_sampler_lognormal_dscnorm <- function(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections = 0L, priority_weight = 0.5) {
-    .Call(`_DirectSampling_direct_sampler_lognormal_dscnorm`, n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections, priority_weight)
+direct_sampler_lognormal_dscnorm <- function(n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections = 0L, priority_weight = 0.5, dscnorm_tol = 1e-10) {
+    .Call(`_DirectSampling_direct_sampler_lognormal_dscnorm`, n, z, mu, sigma2, tau, tol, N, fill_method, max_rejections, priority_weight, dscnorm_tol)
 }
 
 #' @name Specific Direct Samplers

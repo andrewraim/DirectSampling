@@ -26,10 +26,10 @@ Rcpp::NumericVector direct_sampler_lognormal_normal(unsigned int n, double z,
 Rcpp::NumericVector direct_sampler_lognormal_dscnorm(unsigned int n, double z,
 	double mu, double sigma2, double tau, double tol, unsigned int N,
 	const std::string& fill_method, unsigned int max_rejections,
-	double priority_weight)
+	double priority_weight, double dscnorm_tol)
 {
 	LognormalWeightFunction w(z, mu, sigma2);
-	DscNormBaseDistribution g(tau);
+	DscNormBaseDistribution g(tau, dscnorm_tol);
 	if (max_rejections > 0) {
 		return direct_sampler_ar(n, w, g, tol, N, max_rejections, fill_method, priority_weight);
 	} else {
