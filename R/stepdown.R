@@ -234,7 +234,8 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 		# Compare prob < prob_max on the log-scale
 		log_p(log_u) < log_prob_max
 	}
-	log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, log_L_lo)
+	log_delta1 = min(log_L_lo, log(tol))
+	log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, log_delta1)
 
 	# Do a bisection search to find U, the smallest point where P(A_U) = 0.	
 	# Find the smallest point where P(A_U) > 1e-5 * P(A_L).
@@ -242,7 +243,8 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 		# Compare on the log-scale
 		log_p(log_u) < log(1e-5) + log_p(log_L)
 	}
-	log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, log_L)
+	log_delta2 = min(log_L, log(tol))
+	log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, log_delta2)
 
 	# Now fill in points between L and U
 	if (method == "equal_steps") {

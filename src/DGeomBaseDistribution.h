@@ -24,6 +24,9 @@ public:
 	}
 	// Quantile function of DGeom truncated to (x_min, x_max)
 	double q_truncated(double p, double x_min, double x_max) const {
+		if (ceil(x_min) > floor(x_max)) {
+			Rcpp::stop("There are no integers between x_min = %g and x_max = %g\n", x_min, x_max);
+		}
 		double a = floor(x_min + 1);
 		double b = ceil(x_max - 1);
 		double p_min = p_dgeom(a - 1, _rho);

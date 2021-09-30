@@ -185,11 +185,13 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 
 	// Do a bisection search to find log_L between log_L_lo and log_L_hi.
 	Predicate_logL predL(*this, log_prob_max);
-	double log_L = bisection(log_L_lo, log_L_hi, predL, midpoint, dist, log_L_lo);
+	double log_delta1 = std::min(log_L_lo, log(tol));
+	double log_L = bisection(log_L_lo, log_L_hi, predL, midpoint, dist, log_delta1);
 
 	// Do a bisection search to find U, the smallest point where P(A_U) = 0.
 	Predicate_logU predU(*this, log_prob_max);
-	double log_U = bisection(log_L, 0, predU, midpoint, dist, log_L);
+	double log_delta2 = std::min(log_L, log(tol));
+	double log_U = bisection(log_L, 0, predU, midpoint, dist, log_delta2);
 
 	// Now fill in points between L and U
 	if (method == "equal_steps") {
