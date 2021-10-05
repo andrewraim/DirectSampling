@@ -52,6 +52,7 @@ package version 2.5.0. \url{https://CRAN.R-project.org/package=R6}
 \item \href{#method-get_norm_const}{\code{Stepdown$get_norm_const()}}
 \item \href{#method-get_log_x_vals}{\code{Stepdown$get_log_x_vals()}}
 \item \href{#method-get_log_h_vals}{\code{Stepdown$get_log_h_vals()}}
+\item \href{#method-get_knot_order}{\code{Stepdown$get_knot_order()}}
 \item \href{#method-get_log_p}{\code{Stepdown$get_log_p()}}
 \item \href{#method-get_priority_weight}{\code{Stepdown$get_priority_weight()}}
 \item \href{#method-add}{\code{Stepdown$add()}}
@@ -128,6 +129,18 @@ Values of the approximation evaluated at the points
 returned by \code{get_log_x_vals}, given at the log-scale.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Stepdown$get_log_h_vals()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_knot_order"></a>}}
+\if{latex}{\out{\hypertarget{method-get_knot_order}{}}}
+\subsection{Method \code{get_knot_order()}}{
+Returns the order in which knot points were added to the
+step function. Indices correspond to the points returned by
+\code{get_log_x_vals}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$get_knot_order()}\if{html}{\out{</div>}}
 }
 
 }

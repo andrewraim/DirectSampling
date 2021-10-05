@@ -57,6 +57,7 @@ Stepdown = R6Class("Stepdown",
 		tol = NULL,
 		log_x_vals = NULL,
 		log_h_vals = NULL,
+		knot_order = NULL,
 		cum_probs = NULL,
 		norm_const = NULL,
 		log_p = NULL,
@@ -104,6 +105,13 @@ Stepdown = R6Class("Stepdown",
 		private$log_h_vals
 	},
 
+	#' @description Returns the order in which knot points were added to the
+	#' step function. Indices correspond to the points returned by
+	#' \code{get_log_x_vals}.
+	get_knot_order = function() {
+		private$knot_order
+	},
+
 	#' @description Evaluate the function \eqn{\rm{Pr}(A_u)} on a given
 	#' point u (to be provided on the log-scale). The result is returned
 	#' on the log-scale.
@@ -119,10 +127,19 @@ Stepdown = R6Class("Stepdown",
 	#' (given on the log-scale).
 	add = function(log_u)
 	{
-		# This is not very efficient; we should be able to do better in C++.
 		log_h_val = private$log_p(log_u)
-		private$log_x_vals = sort(c(private$log_x_vals, log_u))
-		private$log_h_vals = sort(c(private$log_h_vals, log_h_val), decreasing = TRUE)
+
+		# Add new x and h value, and keep track of the order in which it was added
+		# This is not very efficient; we could potentially to do better than resorting.
+		log_x_vals = c(private$log_x_vals, log_u)
+		log_h_vals = c(private$log_h_vals, log_h_val)
+		knot_order = c(private$knot_order, private$N + 3)
+		idx = order(log_x_vals)
+		private$log_x_vals = log_x_vals[idx]
+		private$log_h_vals = log_h_vals[idx]
+		private$knot_order = knot_order[idx]
+
+		# Update cumulative probabilities
 		private$N = private$N + 1
 		private$update()
 	},
@@ -201,7 +218,6 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 	# Compute log(y - x) given log(x) and log(y)
 	unidist = function(log_x, log_y) { logsub(log_y, log_x) }
 
-	# Compute r*x + (1-r)*y
 	# Compute on the log-scale in case we encounter very small magnitude numbers
 	log_p = function(log_u) {
 		endpoints = w$roots(w$log_c + log_u)
@@ -273,6 +289,7 @@ Stepdown$set("private", "init_equal_steps", function(log_L, log_U, log_prob_max)
 	# Add pieces for the interval [0, L) where h(u) = 1
 	private$log_x_vals = c(-Inf, log_x_vals)
 	private$log_h_vals = c(log_prob_max, log_h_vals)
+	private$knot_order = seq_len(N+2)
 
 })
 
@@ -327,8 +344,10 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 		insert(q, -priority, int_right)
 	}
 
-	private$log_x_vals = sort(log_x_vals[seq_len(iter)], decreasing = FALSE)
-	private$log_h_vals = sort(log_h_vals[seq_len(iter)], decreasing = TRUE)
+	idx = order(log_x_vals)
+	private$log_x_vals = log_x_vals[idx]
+	private$log_h_vals = log_h_vals[idx]
+	private$knot_order = idx
 })
 
 Stepdown$set("private", "update", function()
