@@ -34,7 +34,7 @@ direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 	stopifnot(class(g) == "base")
 
 	# Use our Stepdown approximation to draw from p(u)
-	u = numeric(n)
+	log_u = numeric(n)
 	step = Stepdown$new(w, g, tol, N, fill_method, priority_weight)
 	rejections = 0
 
@@ -46,15 +46,17 @@ direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 		accept = FALSE
 		while (!accept && rejections < max_rejections) {
 			v = runif(1)
-			u_proposal = step$r(1)
-			log_p_val = step$get_log_p(log(u_proposal))
-			log_h_val = step$d(u_proposal, log = TRUE, normalize = FALSE)
+			log_u_proposal = step$r(1, log = TRUE)
+			# printf("%d: log_u_proposal = %g\n", i, log_u_proposal)
+			log_p_val = step$get_log_p(log_u_proposal)
+			log_h_val = step$d(log_u_proposal, log = TRUE, normalize = FALSE)
 			log_ratio = log_p_val - log_h_val - log_M
 			if (log(v) < log_ratio) {
 				# Accept u as a draw from p(u)
-				u[i] = u_proposal
+				log_u[i] = log_u_proposal
 				accept = TRUE
 			} else {
+				# step$add(log(u_proposal))
 				rejections = rejections + 1
 			}
 		}
@@ -68,59 +70,7 @@ direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 	# Draw from g(x | u) for each value of log(u)
 	x = rep(NA, n)
 	for (i in 1:n) {
-		endpoints = w$roots(w$log_c + log(u[i]))
-		x[i] = g$r_truncated(1, endpoints[1], endpoints[2])
-	}
-
-	return(x)
-}
-
-direct_sampler_ar_adapt = function(n, w, g, tol = 1e-8, N = 10,
-	max_rejections, fill_method = "small_rects")
-{
-	stop("This function is under construction!")
-
-	stopifnot(class(w) == "weight")
-	stopifnot(class(g) == "base")
-
-	# Use our Stepdown approximation to draw from p(u)
-	u = numeric(n)
-	step = Stepdown$new(w, g, tol, N = N, fill_method)
-	rejections = 0
-
-	# Because the step function is an upper bound for P(A_u), the constant M in
-	# the acceptance ratio is always M = 1.
-	log_M = 0
-
-	for (i in 1:n) {
-		accept = FALSE
-		while (!accept && rejections < max_rejections) {
-			v = runif(1)
-			u_proposal = step$r(1)
-			log_p_val = step$get_log_p(log(u_proposal))
-			log_h_val = step$d(u_proposal, log = TRUE, normalize = FALSE)
-			log_ratio = log_p_val - log_h_val - log_M
-			if (log(v) < log_ratio) {
-				# Accept u as a draw from p(u)
-				u[i] = u_proposal
-				accept = TRUE
-	 		} else {
-				# Adapt the step function.
-				step$add(log(u_proposal))
-				rejections = rejections + 1
-			}
-		}
-	}
-
-	if (rejections == max_rejections) {
-		msg = sprintf("Reached maximum number of rejections: %d\n", max_rejections)
-		stop(msg)
-	}
-
-	# Draw from g(x | u) for each value of log(u)
-	x = rep(NA, n)
-	for (i in 1:n) {
-		endpoints = w$roots(w$log_c + log(u[i]))
+		endpoints = w$roots(w$log_c + log_u[i])
 		x[i] = g$r_truncated(1, endpoints[1], endpoints[2])
 	}
 

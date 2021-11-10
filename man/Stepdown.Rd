@@ -84,6 +84,10 @@ Construct the step function
 \item{\code{N}}{Number of knot points will be N+1.}
 
 \item{\code{method}}{Either \code{equal_steps} or \code{small_rects} (see details).}
+
+\item{\code{priority_weight}}{Wxperimental: An weight between 0 and 1. When closer
+to 1, more priority is given in \code{small_rects} to rectangle height. When
+closer to 0, more priority is given to rectangle width.}
 }
 \if{html}{\out{</div>}}
 }
@@ -167,6 +171,7 @@ on the log-scale.
 \if{html}{\out{<a id="method-get_priority_weight"></a>}}
 \if{latex}{\out{\hypertarget{method-get_priority_weight}{}}}
 \subsection{Method \code{get_priority_weight()}}{
+Returns the value of \code{priority_weight}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Stepdown$get_priority_weight()}\if{html}{\out{</div>}}
 }
@@ -196,13 +201,15 @@ Update step function by adding a knot at the point u
 \subsection{Method \code{q()}}{
 Quantiles of the distribution based on the step function.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Stepdown$q(p)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$q(p, log = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{p}}{A probability to evaluate.}
+
+\item{\code{log}}{If \code{TRUE}, return value on the log-scale.}
 }
 \if{html}{\out{</div>}}
 }
@@ -213,13 +220,15 @@ Quantiles of the distribution based on the step function.
 \subsection{Method \code{r()}}{
 Draw from the distribution based on the step function.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Stepdown$r(n)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$r(n, log = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{n}}{Number of draws to generate.}
+
+\item{\code{log}}{If \code{TRUE}, return value on the log-scale.}
 }
 \if{html}{\out{</div>}}
 }
@@ -230,13 +239,13 @@ Draw from the distribution based on the step function.
 \subsection{Method \code{d()}}{
 Density of the distribution based on the step function.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Stepdown$d(x, log = FALSE, normalize = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$d(log_x, log = FALSE, normalize = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x}}{A vector of points to evaluate.}
+\item{\code{log_x}}{A vector of points to evaluate, provided on the log-scale.}
 
 \item{\code{log}}{If \code{TRUE}, return value on the log-scale.}
 
@@ -251,13 +260,13 @@ Density of the distribution based on the step function.
 \subsection{Method \code{p()}}{
 CDF of the distribution based on the step function.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Stepdown$p(x)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$p(log_x)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x}}{A vector of points to evaluate.}
+\item{\code{log_x}}{A vector of points to evaluate, provided on the log-scale.}
 }
 \if{html}{\out{</div>}}
 }

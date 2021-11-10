@@ -9,8 +9,12 @@
 #' @param p A probability to evaluate.
 #' @param n Number of draws to generate.
 #' @param x A vector of points to evaluate.
+#' @param log_x A vector of points to evaluate, provided on the log-scale.
 #' @param log If \code{TRUE}, return value on the log-scale.
 #' @param normalize If \code{TRUE}, normalize the result to be a density value.
+#' @param priority_weight Wxperimental: An weight between 0 and 1. When closer
+#' to 1, more priority is given in \code{small_rects} to rectangle height. When
+#' closer to 0, more priority is given to rectangle width.
 #' 
 #' @details
 #' This R6 class represents a step function approximation to the non-increasing
@@ -119,6 +123,7 @@ Stepdown = R6Class("Stepdown",
 		private$log_p(log_u)
 	},
 
+	#' @description Returns the value of \code{priority_weight}.
 	get_priority_weight = function() {
 		private$priority_weight
 	},
@@ -145,7 +150,7 @@ Stepdown = R6Class("Stepdown",
 	},
 
 	#' @description Quantiles of the distribution based on the step function.
-	q = function(p)
+	q = function(p, log = FALSE)
 	{
 		n = length(p)
 		out = numeric(n)
@@ -153,34 +158,43 @@ Stepdown = R6Class("Stepdown",
 		for (i in 1:n) {
 			j1 = findInterval(p[i], cum_probs_ext, rightmost.closed = TRUE)
 			j2 = j1 + 1
-			x1 = exp(private$log_x_vals[j1])
-			x2 = exp(private$log_x_vals[j2])
 			cp1 = cum_probs_ext[j1]
 			cp2 = cum_probs_ext[j2]
-			out[i] = x1 + (x2 - x1) * (p - cp1) / (cp2 - cp1)
+			log_x1 = private$log_x_vals[j1]
+			log_x2 = private$log_x_vals[j2]
+
+			# Do the following computation, but be careful to keep x values on
+			# the log-scale, since they may be extremely small.
+			# out[i] = x1 + (x2 - x1) * (p[i] - cp1) / (cp2 - cp1)
+			log_ratio = log(p[i] - cp1) - log(cp2 - cp1)
+			out[i] = logadd(logsub(log_x2, log_x1) + log_ratio, log_x1)
 		}
-		return(out)
+		if (any(is.na(out))) {
+			stop("NA or NaN values were produced in Stepdown::q")
+		}
+
+		if (log) { return(out) } else { return(exp(out)) }
 	},
 
 	#' @description Draw from the distribution based on the step function.
-	r = function(n)
+	r = function(n, log = TRUE)
 	{
 		u = runif(n)
 		out = numeric(n)
 		for (i in 1:n) {
-			out[i] = self$q(u[i])
+			out[i] = self$q(u[i], log = log)
 		}
 		return(out)
 	},
 
 	#' @description Density of the distribution based on the step function.
-	d = function(x, log = FALSE, normalize = TRUE)
+	d = function(log_x, log = FALSE, normalize = TRUE)
 	{
-		n = length(x)
+		n = length(log_x)
 		out = numeric(n)
 		for (i in 1:n) {
 			# Get the idx such that x_vals[idx] <= x < x_vals[idx+1]
-			idx = findInterval(log(x[i]), private$log_x_vals)
+			idx = findInterval(log_x[i], private$log_x_vals)
 			out[i] = private$log_h_vals[idx]
 		}
 		if (normalize) { out = out - private$norm_const }
@@ -188,19 +202,27 @@ Stepdown = R6Class("Stepdown",
 	},
 
 	#' @description CDF of the distribution based on the step function.
-	p = function(x)
+	p = function(log_x)
 	{
-		n = length(x)
+		n = length(log_x)
 		out = numeric(n)
 		for (i in 1:n) {
 			# Get the idx such that x_vals[idx] <= x < x_vals[idx+1]
-			j1 = findInterval(log(x[i]), private$log_x_vals)
+			j1 = findInterval(log_x[i], private$log_x_vals)
 			j2 = j1 + 1
-			x1 = exp(private$log_x_vals[j1])
-			x2 = exp(private$log_x_vals[j2])
 			cp1 = private$cum_probs[j1]
 			cp2 = private$cum_probs[j2]
-			out[i] = cp1 + (x[i] - x1) / (x2 - x1) * (cp2 - cp1)
+			log_x1 = private$log_x_vals[j1]
+			log_x2 = private$log_x_vals[j2]
+
+			# Do the following computation, but be careful to keep x values on
+			# the log-scale, since they may be extremely small.
+			# out[i] = cp1 + (x[i] - x1) / (x2 - x1) * (cp2 - cp1)
+			log_ratio = logsub(log_x[i], log_x1) - logsub(log_x2, log_x1) + log(cp2 - cp1)
+			out[i] = exp(logadd(log(cp1), log_ratio))
+		}
+		if (any(is.na(out))) {
+			stop("NA or NaN values were produced in Stepdown::q")
 		}
 		return(out)
 	})
@@ -221,6 +243,7 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 	# Compute on the log-scale in case we encounter very small magnitude numbers
 	log_p = function(log_u) {
 		endpoints = w$roots(w$log_c + log_u)
+		# printf("g$pr_interval(%g, %g) = %g\n", endpoints[1], endpoints[2], g$pr_interval(endpoints[1], endpoints[2]))
 		log(g$pr_interval(endpoints[1], endpoints[2]))
 	}
 
@@ -254,10 +277,13 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 	log_L = bisection(log_L_lo, log_L_hi, pred_logL, midpoint, unidist, log_delta1)
 
 	# Do a bisection search to find U, the smallest point where P(A_U) = 0.	
-	# Find the smallest point where P(A_U) > 1e-5 * P(A_L).
+	# Find the smallest point where P(A_U) > small_factor * P(A_L).
 	pred_logU = function(log_u) {
 		# Compare on the log-scale
-		log_p(log_u) < log(1e-5) + log_p(log_L)
+		# TBD: small_factor = 1e-10 is a magic number for now. If it's too small,
+		# we'll get areas where nothing much is happening in the support. But if
+		# it's too large, we might miss a little bit of useful support.
+		log_p(log_u) < log(1e-10) + log_p(log_L)
 	}
 	log_delta2 = min(log_L, log(tol))
 	log_U = bisection(log_L, 0, pred_logU, midpoint, unidist, log_delta2)

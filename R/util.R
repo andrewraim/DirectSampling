@@ -35,6 +35,10 @@ logger = function(msg, ...)
 #
 #  https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Summation
 logadd = function(logx, logy) {
+	if (logx < 0 && logy < 0 && is.infinite(logx) && is.infinite(logy)) {
+		# Is it possible to handle this case more naturally?
+		return(-Inf)
+	}
 	logx + log1p(exp(logy - logx))
 }
 
@@ -42,5 +46,9 @@ logadd = function(logx, logy) {
 #  log(x - y) = log(x) + log(1 - y/x)
 #             = log(x) + log1p(-exp(log(y) - log(x)))
 logsub = function(logx, logy) {
+	if (logx < 0 && logy < 0 && is.infinite(logx) && is.infinite(logy)) {
+		# Is it possible to handle this case more naturally?
+		return(-Inf)
+	}
 	logx + log1p(-exp(logy - logx))
 }

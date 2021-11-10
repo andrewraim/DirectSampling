@@ -64,12 +64,12 @@ direct_sampler = function(n, w, g, tol = 1e-8, N = 100,
 
 	# Use our Stepdown approximation to draw from p(u)
 	step = Stepdown$new(w, g, tol, N, fill_method, priority_weight)
-	u = step$r(n)
+	log_u = step$r(n, log = TRUE)
 
 	# Draw from g(x | u) for each value of u
 	x = rep(NA, n)
 	for (i in 1:n) {
-		endpoints = w$roots(w$log_c + log(u[i]))
+		endpoints = w$roots(w$log_c + log_u[i])
 		x[i] = g$r_truncated(1, endpoints[1], endpoints[2])
 	}
 
