@@ -47,7 +47,6 @@ direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 		while (!accept && rejections < max_rejections) {
 			v = runif(1)
 			log_u_proposal = step$r(1, log = TRUE)
-			# printf("%d: log_u_proposal = %g\n", i, log_u_proposal)
 			log_p_val = step$get_log_p(log_u_proposal)
 			log_h_val = step$d(log_u_proposal, log = TRUE, normalize = FALSE)
 			log_ratio = log_p_val - log_h_val - log_M
@@ -56,7 +55,7 @@ direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 				log_u[i] = log_u_proposal
 				accept = TRUE
 			} else {
-				# step$add(log(u_proposal))
+				step$add(log_u_proposal)
 				rejections = rejections + 1
 			}
 		}
@@ -76,3 +75,4 @@ direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 
 	return(x)
 }
+

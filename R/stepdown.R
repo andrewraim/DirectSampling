@@ -132,12 +132,12 @@ Stepdown = R6Class("Stepdown",
 	#' (given on the log-scale).
 	add = function(log_u)
 	{
-		log_h_val = private$log_p(log_u)
+		log_h = private$log_p(log_u)
 
 		# Add new x and h value, and keep track of the order in which it was added
 		# This is not very efficient; we could potentially to do better than resorting.
 		log_x_vals = c(private$log_x_vals, log_u)
-		log_h_vals = c(private$log_h_vals, log_h_val)
+		log_h_vals = c(private$log_h_vals, log_h)
 		knot_order = c(private$knot_order, private$N + 3)
 		idx = order(log_x_vals)
 		private$log_x_vals = log_x_vals[idx]
@@ -243,7 +243,6 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 	# Compute on the log-scale in case we encounter very small magnitude numbers
 	log_p = function(log_u) {
 		endpoints = w$roots(w$log_c + log_u)
-		# printf("g$pr_interval(%g, %g) = %g\n", endpoints[1], endpoints[2], g$pr_interval(endpoints[1], endpoints[2]))
 		log(g$pr_interval(endpoints[1], endpoints[2]))
 	}
 
@@ -351,7 +350,7 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 		int_top = pop(q)[[1]]
 
 		# Break the interval int_top into two pieces: left and right.
-		log_x_new = private$midpoint(int_top$log_x, int_top$log_y, take_log = TRUE)
+		log_x_new = private$midpoint(int_top$log_x, int_top$log_y)
 		log_h_new = private$log_p(log_x_new)
 
 		# Add the midpoint to our list of knots
@@ -426,7 +425,11 @@ get_interval = function(log_x, log_y, log_h_x, log_h_y)
 {
 	# Consider changing these to have a "log_" prefix
 	log_width = logsub(log_y, log_x)
-	log_height = logsub(log_h_x, log_h_y)
+	if (log_h_x < log_h_y) {
+		log_height = 0
+	} else {
+		log_height = logsub(log_h_x, log_h_y)
+	}
 	ret = list(log_x = log_x, log_y = log_y, log_h_x = log_h_x,
 		log_h_y = log_h_y, log_width = log_width, log_height = log_height)
 	class(ret) = "interval"
@@ -451,3 +454,4 @@ print.interval = function(intvl, log_scale = FALSE)
 		printf("height: %g\n", exp(intvl$log_height))
 	}
 }
+
