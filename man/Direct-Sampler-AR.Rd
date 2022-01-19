@@ -13,7 +13,8 @@ direct_sampler_ar(
   N = 10,
   max_rejections,
   fill_method = "small_rects",
-  priority_weight = 1/2
+  priority_weight = 1/2,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ is reached, an exception will be thrown.}
 
 \item{fill_method}{Knot selection method for customized sampler. See
 \code{\link{Stepdown}}.}
+
+\item{verbose}{Return a list with the sample \code{x} and the number of
+rejections \code{rejections}.}
 }
 \value{
 A vector of length \code{n} which represents the sample.

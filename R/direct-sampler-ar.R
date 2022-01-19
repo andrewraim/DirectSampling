@@ -10,6 +10,8 @@
 #' is reached, an exception will be thrown.
 #' @param fill_method Knot selection method for customized sampler. See
 #' \code{\link{Stepdown}}.
+#' @param verbose Return a list with the sample \code{x} and the number of
+#' rejections \code{rejections}.
 #'
 #' @return A vector of length \code{n} which represents the sample.
 #' 
@@ -28,7 +30,8 @@ NULL
 #' @name Direct Sampler AR
 #' @export
 direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
-	max_rejections, fill_method = "small_rects", priority_weight = 1/2)
+	max_rejections, fill_method = "small_rects", priority_weight = 1/2,
+	verbose = FALSE)
 {
 	stopifnot(class(w) == "weight")
 	stopifnot(class(g) == "base")
@@ -50,6 +53,7 @@ direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 			log_p_val = step$get_log_p(log_u_proposal)
 			log_h_val = step$d(log_u_proposal, log = TRUE, normalize = FALSE)
 			log_ratio = log_p_val - log_h_val - log_M
+
 			if (log(v) < log_ratio) {
 				# Accept u as a draw from p(u)
 				log_u[i] = log_u_proposal
@@ -73,6 +77,11 @@ direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 		x[i] = g$r_truncated(1, endpoints[1], endpoints[2])
 	}
 
-	return(x)
+	if (verbose) {
+		out = list(x = x, rejections = rejections)
+	} else {
+		out = x
+	}
+	return(out)
 }
 
