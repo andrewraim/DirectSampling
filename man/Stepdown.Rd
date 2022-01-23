@@ -52,6 +52,7 @@ package version 2.5.0. \url{https://CRAN.R-project.org/package=R6}
 \item \href{#method-get_norm_const}{\code{Stepdown$get_norm_const()}}
 \item \href{#method-get_log_x_vals}{\code{Stepdown$get_log_x_vals()}}
 \item \href{#method-get_log_h_vals}{\code{Stepdown$get_log_h_vals()}}
+\item \href{#method-get_rects}{\code{Stepdown$get_rects()}}
 \item \href{#method-get_knot_order}{\code{Stepdown$get_knot_order()}}
 \item \href{#method-get_log_p}{\code{Stepdown$get_log_p()}}
 \item \href{#method-get_priority_weight}{\code{Stepdown$get_priority_weight()}}
@@ -69,7 +70,15 @@ package version 2.5.0. \url{https://CRAN.R-project.org/package=R6}
 \subsection{Method \code{new()}}{
 Construct the step function
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Stepdown$new(w, g, tol, N, method, priority_weight = 1/2)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$new(
+  w,
+  g,
+  tol,
+  N,
+  method,
+  priority_weight = 1/2,
+  midpoint_type = "geometric"
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -85,9 +94,13 @@ Construct the step function
 
 \item{\code{method}}{Either \code{equal_steps} or \code{small_rects} (see details).}
 
-\item{\code{priority_weight}}{Wxperimental: An weight between 0 and 1. When closer
+\item{\code{priority_weight}}{Experimental: An weight between 0 and 1. When closer
 to 1, more priority is given in \code{small_rects} to rectangle height. When
 closer to 0, more priority is given to rectangle width.}
+
+\item{\code{midpoint_type}}{Type of midpoint function to use. Currently only
+\code{geometric} or \code{arithmetic} are supported. \code{geometric} is
+preferred when the support of \eqn{p(u)} is focused very close to zero.}
 }
 \if{html}{\out{</div>}}
 }
@@ -135,6 +148,25 @@ returned by \code{get_log_x_vals}, given at the log-scale.
 \if{html}{\out{<div class="r">}}\preformatted{Stepdown$get_log_h_vals()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_rects"></a>}}
+\if{latex}{\out{\hypertarget{method-get_rects}{}}}
+\subsection{Method \code{get_rects()}}{
+Rectangles used to bound the approximation: x and h
+coordinates along with the area. Values are returned on the log-scale or
+the original scale according to the \code{log} argument.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Stepdown$get_rects(log = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{log}}{If \code{TRUE}, return value on the log-scale.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_knot_order"></a>}}

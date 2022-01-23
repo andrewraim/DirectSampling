@@ -12,9 +12,12 @@
 #' @param log_x A vector of points to evaluate, provided on the log-scale.
 #' @param log If \code{TRUE}, return value on the log-scale.
 #' @param normalize If \code{TRUE}, normalize the result to be a density value.
-#' @param priority_weight Wxperimental: An weight between 0 and 1. When closer
+#' @param priority_weight Experimental: An weight between 0 and 1. When closer
 #' to 1, more priority is given in \code{small_rects} to rectangle height. When
 #' closer to 0, more priority is given to rectangle width.
+#' @param midpoint_type Type of midpoint function to use. Currently only
+#' \code{geometric} or \code{arithmetic} are supported. \code{geometric} is
+#' preferred when the support of \eqn{p(u)} is focused very close to zero.
 #' 
 #' @details
 #' This R6 class represents a step function approximation to the non-increasing
@@ -65,7 +68,8 @@ Stepdown = R6Class("Stepdown",
 		cum_probs = NULL,
 		norm_const = NULL,
 		log_p = NULL,
-		priority_weight = NULL
+		priority_weight = NULL,
+		midpoint_type = NULL
 	),
 	public = list(
 
@@ -76,12 +80,14 @@ Stepdown = R6Class("Stepdown",
 	# and I missed it).
 
 	#' @description Construct the step function
-	initialize = function(w, g, tol, N, method, priority_weight = 1/2) {
+	initialize = function(w, g, tol, N, method, priority_weight = 1/2,
+		midpoint_type = "geometric") {
 		stopifnot(class(w) == "weight")
 		stopifnot(class(g) == "base")
 		private$tol = tol
 		private$N = N
 		private$priority_weight = priority_weight
+		private$midpoint_type = midpoint_type
 		private$setup(w, g, tol, N, method)
 	},
 
@@ -107,6 +113,34 @@ Stepdown = R6Class("Stepdown",
 	#' returned by \code{get_log_x_vals}, given at the log-scale.
 	get_log_h_vals = function() {
 		private$log_h_vals
+	},
+
+	#' @description Rectangles used to bound the approximation: x and h
+	#' coordinates along with the area. Values are returned on the log-scale or
+	#' the original scale according to the \code{log} argument.
+	get_rects = function(log = FALSE) {
+		k = private$N + 2
+		log_x1 = private$log_x_vals[-k]
+		log_x2 = private$log_x_vals[-1]
+		log_h1 = private$log_h_vals[-k]
+		log_h2 = private$log_h_vals[-1]
+		log_area = numeric(k-1)
+		for (i in seq_len(k-1)) {
+			log_area[i] = logsub(log_x2[i], log_x1[i]) +  logsub(log_h1[i], log_h2[i])
+		}
+
+		if (log) {
+			rects = data.frame(log_x1, log_x2, log_h1, log_h2, log_area)
+		} else {
+			rects = data.frame(
+				x1 = exp(log_x1),
+				x2 = exp(log_x2),
+				h1 = exp(log_h1),
+				h2 = exp(log_h2),
+				area = exp(log_area)
+			)
+		}
+		return(rects)
 	},
 
 	#' @description Returns the order in which knot points were added to the
@@ -191,11 +225,13 @@ Stepdown = R6Class("Stepdown",
 	d = function(log_x, log = FALSE, normalize = TRUE)
 	{
 		n = length(log_x)
-		out = numeric(n)
+		out = rep(-Inf, n)
 		for (i in 1:n) {
 			# Get the idx such that x_vals[idx] <= x < x_vals[idx+1]
 			idx = findInterval(log_x[i], private$log_x_vals)
-			out[i] = private$log_h_vals[idx]
+			if (idx < private$N + 2) {
+				out[i] = private$log_h_vals[idx]
+			}
 		}
 		if (normalize) { out = out - private$norm_const }
 		if (log) { return(out) } else { return(exp(out)) }
@@ -231,10 +267,18 @@ Stepdown = R6Class("Stepdown",
 # Build a stepdown function
 Stepdown$set("private", "setup", function(w, g, tol, N, method)
 {
-	# The geometric mean
-	midpoint = function(log_x, log_y, take_log = TRUE) {
-		out = 1/2 * (log_x + log_y)
-		ifelse(take_log, out, exp(out))
+	if (private$midpoint_type == "geometric") {
+		# The geometric mean
+		midpoint = function(log_x, log_y, take_log = TRUE) {
+			out = 1/2 * (log_x + log_y)
+			ifelse(take_log, out, exp(out))
+		}
+	} else if (private$midpoint_type == "arithmetic") {
+		# The arithmetic mean, computed on the log-scale
+		midpoint = function(log_x, log_y, take_log = TRUE) {
+			out = log(1/2) + log_x + log1p(exp(log_y - log_x))
+			ifelse(take_log, out, exp(out))
+		}
 	}
 
 	# Compute log(y - x) given log(x) and log(y)
