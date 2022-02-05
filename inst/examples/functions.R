@@ -80,8 +80,9 @@ get_normal_base = function(sigma)
 	}
 
 	# Compute Pr(x1 < X <= x2) probability where X ~ N(0, sigma2)
-	pr_interval = function(x1, x2) {
-		pnorm(x2, 0, sigma) - pnorm(x1, 0, sigma)
+	pr_interval = function(x1, x2, log = TRUE) {
+		pr = pnorm(x2, 0, sigma) - pnorm(x1, 0, sigma)
+		if (log) { return(log(pr)) } else { return(pr) } 
 	}
 
 	# Quantile function of Normal truncated to [x_min, x_max]
@@ -117,10 +118,11 @@ get_dgeom_base = function(rho)
 
 	# Compute Pr(x1 < X < x2) probability where X ~ DGeom(rho)
 	# This calculation should exclude endpoints if they are integers
-	pr_interval = function(x1, x2) {
+	pr_interval = function(x1, x2, log = TRUE) {
 		a = floor(x1 + 1)
 		b = ceiling(x2 - 1)
-		p_dgeom(b, rho) - p_dgeom(a - 1, rho)
+		pr = p_dgeom(b, rho) - p_dgeom(a - 1, rho)
+		if (log) { return(log(pr)) } else { return(pr) } 
 	}
 
 	# Quantile function of DGeom truncated to (x_min, x_max)
@@ -162,10 +164,11 @@ get_dscnorm_base = function(tau, tol = 1e-10)
 
 	# Compute Pr(x1 < X < x2) probability where X ~ DscNorm(tau)
 	# This calculation should exclude endpoints if they are integers
-	pr_interval = function(x1, x2) {
+	pr_interval = function(x1, x2, log = TRUE) {
 		a = floor(x1 + 1)
 		b = ceiling(x2 - 1)
-		p_dscnorm(b, tau, tol) - p_dscnorm(a - 1, tau, tol)
+		pr = p_dscnorm(b, tau, tol) - p_dscnorm(a - 1, tau, tol)
+		if (log) { return(log(pr)) } else { return(pr) } 
 	}
 
 	# Quantile function of DscNorm truncated to (x_min, x_max)
@@ -201,8 +204,9 @@ get_laplace_base = function(lambda)
 	}
 
 	# Compute Pr(x1 < X < x2) probability where X ~ Laplace(0, lambda)
-	pr_interval = function(x1, x2) {
-		p_laplace(x2, 0, lambda) - p_laplace(x1, 0, lambda)
+	pr_interval = function(x1, x2, log = TRUE) {
+		pr = p_laplace(x2, 0, lambda) - p_laplace(x1, 0, lambda)
+		if (log) { return(log(pr)) } else { return(pr) } 
 	}
 
 	# Quantile function of Laplace truncated to (x_min, x_max)

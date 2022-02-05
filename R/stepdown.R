@@ -279,6 +279,8 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 			out = log(1/2) + log_x + log1p(exp(log_y - log_x))
 			ifelse(take_log, out, exp(out))
 		}
+	} else {
+		stop("Unrecognized midpoint type")
 	}
 
 	# Compute log(y - x) given log(x) and log(y)
@@ -287,7 +289,7 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 	# Compute on the log-scale in case we encounter very small magnitude numbers
 	log_p = function(log_u) {
 		endpoints = w$roots(w$log_c + log_u)
-		log(g$pr_interval(endpoints[1], endpoints[2]))
+		g$pr_interval(endpoints[1], endpoints[2], log = TRUE)
 	}
 
 	# Save functions for later use
