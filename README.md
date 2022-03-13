@@ -1,6 +1,5 @@
-This package contains code to support the manuscript "Direct Sampling in
-Bayesian Regression Models with Additive Disclosure Avoidance Noise" (link
-pending). It may be extended beyond the manuscript as well.
+This package contains code to support the manuscript "Direct Sampling with a
+Step Function".
 
 To install the package from Github, first ensure that you have a recent
 installation of R and the packages Rcpp, datastructures, R6, and devtools.

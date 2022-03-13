@@ -276,7 +276,7 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 	} else if (private$midpoint_type == "arithmetic") {
 		# The arithmetic mean, computed on the log-scale
 		midpoint = function(log_x, log_y, take_log = TRUE) {
-			out = log(1/2) + log_x + log1p(exp(log_y - log_x))
+			out = log(1/2) + log_y + log1p(exp(log_x - log_y))
 			ifelse(take_log, out, exp(out))
 		}
 	} else {

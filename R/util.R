@@ -52,3 +52,4 @@ logsub = function(logx, logy) {
 	}
 	logx + log1p(-exp(logy - logx))
 }
+
