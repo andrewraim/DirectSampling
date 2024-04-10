@@ -47,26 +47,26 @@ package version 2.5.0. \url{https://CRAN.R-project.org/package=R6}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{Stepdown$new()}}
-\item \href{#method-get_cum_probs}{\code{Stepdown$get_cum_probs()}}
-\item \href{#method-get_norm_const}{\code{Stepdown$get_norm_const()}}
-\item \href{#method-get_log_x_vals}{\code{Stepdown$get_log_x_vals()}}
-\item \href{#method-get_log_h_vals}{\code{Stepdown$get_log_h_vals()}}
-\item \href{#method-get_rects}{\code{Stepdown$get_rects()}}
-\item \href{#method-get_knot_order}{\code{Stepdown$get_knot_order()}}
-\item \href{#method-get_log_p}{\code{Stepdown$get_log_p()}}
-\item \href{#method-get_priority_weight}{\code{Stepdown$get_priority_weight()}}
-\item \href{#method-add}{\code{Stepdown$add()}}
-\item \href{#method-q}{\code{Stepdown$q()}}
-\item \href{#method-r}{\code{Stepdown$r()}}
-\item \href{#method-d}{\code{Stepdown$d()}}
-\item \href{#method-p}{\code{Stepdown$p()}}
-\item \href{#method-clone}{\code{Stepdown$clone()}}
+\item \href{#method-Stepdown-new}{\code{Stepdown$new()}}
+\item \href{#method-Stepdown-get_cum_probs}{\code{Stepdown$get_cum_probs()}}
+\item \href{#method-Stepdown-get_norm_const}{\code{Stepdown$get_norm_const()}}
+\item \href{#method-Stepdown-get_log_x_vals}{\code{Stepdown$get_log_x_vals()}}
+\item \href{#method-Stepdown-get_log_h_vals}{\code{Stepdown$get_log_h_vals()}}
+\item \href{#method-Stepdown-get_rects}{\code{Stepdown$get_rects()}}
+\item \href{#method-Stepdown-get_knot_order}{\code{Stepdown$get_knot_order()}}
+\item \href{#method-Stepdown-get_log_p}{\code{Stepdown$get_log_p()}}
+\item \href{#method-Stepdown-get_priority_weight}{\code{Stepdown$get_priority_weight()}}
+\item \href{#method-Stepdown-add}{\code{Stepdown$add()}}
+\item \href{#method-Stepdown-q}{\code{Stepdown$q()}}
+\item \href{#method-Stepdown-r}{\code{Stepdown$r()}}
+\item \href{#method-Stepdown-d}{\code{Stepdown$d()}}
+\item \href{#method-Stepdown-p}{\code{Stepdown$p()}}
+\item \href{#method-Stepdown-clone}{\code{Stepdown$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-Stepdown-new"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-new}{}}}
 \subsection{Method \code{new()}}{
 Construct the step function
 \subsection{Usage}{
@@ -106,8 +106,8 @@ preferred when the support of \eqn{p(u)} is focused very close to zero.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_cum_probs"></a>}}
-\if{latex}{\out{\hypertarget{method-get_cum_probs}{}}}
+\if{html}{\out{<a id="method-Stepdown-get_cum_probs"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-get_cum_probs}{}}}
 \subsection{Method \code{get_cum_probs()}}{
 Get cumulative probabilities after normalizing
 the step function to a discrete distribution.
@@ -117,8 +117,8 @@ the step function to a discrete distribution.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_norm_const"></a>}}
-\if{latex}{\out{\hypertarget{method-get_norm_const}{}}}
+\if{html}{\out{<a id="method-Stepdown-get_norm_const"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-get_norm_const}{}}}
 \subsection{Method \code{get_norm_const()}}{
 The constant used to normalize the step function
 to a discrete distribution.
@@ -128,8 +128,8 @@ to a discrete distribution.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_log_x_vals"></a>}}
-\if{latex}{\out{\hypertarget{method-get_log_x_vals}{}}}
+\if{html}{\out{<a id="method-Stepdown-get_log_x_vals"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-get_log_x_vals}{}}}
 \subsection{Method \code{get_log_x_vals()}}{
 The knot values on which the approximation is based,
 returned on the log-scale.
@@ -139,8 +139,8 @@ returned on the log-scale.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_log_h_vals"></a>}}
-\if{latex}{\out{\hypertarget{method-get_log_h_vals}{}}}
+\if{html}{\out{<a id="method-Stepdown-get_log_h_vals"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-get_log_h_vals}{}}}
 \subsection{Method \code{get_log_h_vals()}}{
 Values of the approximation evaluated at the points
 returned by \code{get_log_x_vals}, given at the log-scale.
@@ -150,8 +150,8 @@ returned by \code{get_log_x_vals}, given at the log-scale.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_rects"></a>}}
-\if{latex}{\out{\hypertarget{method-get_rects}{}}}
+\if{html}{\out{<a id="method-Stepdown-get_rects"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-get_rects}{}}}
 \subsection{Method \code{get_rects()}}{
 Rectangles used to bound the approximation: x and h
 coordinates along with the area. Values are returned on the log-scale or
@@ -169,8 +169,8 @@ the original scale according to the \code{log} argument.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_knot_order"></a>}}
-\if{latex}{\out{\hypertarget{method-get_knot_order}{}}}
+\if{html}{\out{<a id="method-Stepdown-get_knot_order"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-get_knot_order}{}}}
 \subsection{Method \code{get_knot_order()}}{
 Returns the order in which knot points were added to the
 step function. Indices correspond to the points returned by
@@ -181,8 +181,8 @@ step function. Indices correspond to the points returned by
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_log_p"></a>}}
-\if{latex}{\out{\hypertarget{method-get_log_p}{}}}
+\if{html}{\out{<a id="method-Stepdown-get_log_p"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-get_log_p}{}}}
 \subsection{Method \code{get_log_p()}}{
 Evaluate the function \eqn{\rm{Pr}(A_u)} on a given
 point u (to be provided on the log-scale). The result is returned
@@ -200,8 +200,8 @@ on the log-scale.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_priority_weight"></a>}}
-\if{latex}{\out{\hypertarget{method-get_priority_weight}{}}}
+\if{html}{\out{<a id="method-Stepdown-get_priority_weight"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-get_priority_weight}{}}}
 \subsection{Method \code{get_priority_weight()}}{
 Returns the value of \code{priority_weight}.
 \subsection{Usage}{
@@ -210,8 +210,8 @@ Returns the value of \code{priority_weight}.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add"></a>}}
-\if{latex}{\out{\hypertarget{method-add}{}}}
+\if{html}{\out{<a id="method-Stepdown-add"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-add}{}}}
 \subsection{Method \code{add()}}{
 Update step function by adding a knot at the point u
 (given on the log-scale).
@@ -228,8 +228,8 @@ Update step function by adding a knot at the point u
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-q"></a>}}
-\if{latex}{\out{\hypertarget{method-q}{}}}
+\if{html}{\out{<a id="method-Stepdown-q"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-q}{}}}
 \subsection{Method \code{q()}}{
 Quantiles of the distribution based on the step function.
 \subsection{Usage}{
@@ -247,8 +247,8 @@ Quantiles of the distribution based on the step function.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-r"></a>}}
-\if{latex}{\out{\hypertarget{method-r}{}}}
+\if{html}{\out{<a id="method-Stepdown-r"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-r}{}}}
 \subsection{Method \code{r()}}{
 Draw from the distribution based on the step function.
 \subsection{Usage}{
@@ -266,8 +266,8 @@ Draw from the distribution based on the step function.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-d"></a>}}
-\if{latex}{\out{\hypertarget{method-d}{}}}
+\if{html}{\out{<a id="method-Stepdown-d"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-d}{}}}
 \subsection{Method \code{d()}}{
 Density of the distribution based on the step function.
 \subsection{Usage}{
@@ -287,8 +287,8 @@ Density of the distribution based on the step function.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p"></a>}}
-\if{latex}{\out{\hypertarget{method-p}{}}}
+\if{html}{\out{<a id="method-Stepdown-p"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-p}{}}}
 \subsection{Method \code{p()}}{
 CDF of the distribution based on the step function.
 \subsection{Usage}{
@@ -304,8 +304,8 @@ CDF of the distribution based on the step function.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Stepdown-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Stepdown-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

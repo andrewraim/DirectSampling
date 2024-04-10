@@ -482,6 +482,7 @@ get_interval = function(log_x, log_y, log_h_x, log_h_y)
 	return(ret)
 }
 
+#' @export
 print.interval = function(intvl, log_scale = FALSE)
 {
 	if (log_scale) {

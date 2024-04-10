@@ -2,8 +2,16 @@
 % Please edit documentation in R/package.R
 \docType{package}
 \name{DirectSampling-package}
+\alias{DirectSampling}
 \alias{DirectSampling-package}
 \title{DirectSampling}
 \description{
 The \code{DirectSampling} package.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/andrewraim/direct-sampling}
+}
+
 }
