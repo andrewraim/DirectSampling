@@ -6,14 +6,11 @@ mu = 3.5
 sigma2 = 8.5
 tau = 1
 
-# ----- Sampler in pure R -----
-source("lognormal-weight-function.R")
-source("normal-base-distribution.R")
+# ----- Sampler in C++ -----
+Rcpp::sourceCpp("sampler.cpp")
 
-w = get_lognormal_weight(z, mu, sigma2)
-g = get_normal_base(tau)
-out1 = direct_sampler_ar(n = 10000, w, g, tol = 1e-8, N = 50,
-	max_rejections = 10000, verbose = TRUE)
+out1 = r_lognormal_normal(n = 10000, z, mu, sigma2, tau, N = 50,
+	max_rejections = 10000)
 
 rej1_rate = out1$rejections / (length(out1$x) + out1$rejections)
 
@@ -24,13 +21,16 @@ data.frame(x = out1$x) %>%
 		out1$rejections, 100 * rej1_rate)) +
 	theme_minimal()
 
-# ----- Sampler in C++ -----
-Rcpp::sourceCpp("sampler.cpp")
+# ----- Sampler in pure R for comparison -----
+source("lognormal-weight-function.R")
+source("normal-base-distribution.R")
 
-out2 = r_lognormal_normal(n = 10000, z, mu, sigma2, tau, N = 50,
-	max_rejections = 10000)
+w = get_lognormal_weight(z, mu, sigma2)
+g = get_normal_base(tau)
+out2 = direct_sampler_ar(n = 10000, w, g, tol = 1e-8, N = 50,
+	max_rejections = 10000, verbose = TRUE)
 
-rej2_rate = out$rejections / (length(out$x) + out$rejections)
+rej2_rate = out2$rejections / (length(out2$x) + out2$rejections)
 
 data.frame(x = out2$x) %>%
 	ggplot() +
