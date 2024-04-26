@@ -34,6 +34,8 @@ N+1 points will be used.}
 
 \item{fill_method}{Knot selection method for customized sampler. See
 \code{\link{Stepdown}}.}
+
+\item{priority_weight}{TBD}
 }
 \description{
 Basic and customized versions of the direct sampler.

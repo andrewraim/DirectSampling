@@ -10,6 +10,7 @@
 #' is reached, an exception will be thrown.
 #' @param fill_method Knot selection method for customized sampler. See
 #' \code{\link{Stepdown}}.
+#' @param priority_weight TBD
 #' @param verbose Return a list with the sample \code{x} and the number of
 #' rejections \code{rejections}.
 #'

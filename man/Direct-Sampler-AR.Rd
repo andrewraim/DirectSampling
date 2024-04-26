@@ -35,6 +35,8 @@ is reached, an exception will be thrown.}
 \item{fill_method}{Knot selection method for customized sampler. See
 \code{\link{Stepdown}}.}
 
+\item{priority_weight}{TBD}
+
 \item{verbose}{Return a list with the sample \code{x} and the number of
 rejections \code{rejections}.}
 }

@@ -11,6 +11,7 @@
 #' @param tol Tolerance for step function approximation in customized sampler.
 #' @param fill_method Knot selection method for customized sampler. See
 #' \code{\link{Stepdown}}.
+#' @param priority_weight TBD
 #' 
 #' @name Direct Sampler
 NULL
