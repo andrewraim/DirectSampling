@@ -1,14 +1,13 @@
+// [[Rcpp::depends(DirectSampling)]]
 #ifndef TDISTDF_WEIGHT_FUNCTION
 #define TDISTDF_WEIGHT_FUNCTION
 
-#include <Rcpp.h>
-#include "../Rcpp/WeightFunction.h"
-#include "../Rcpp/find_root.h"
+#include "DirectSampling.h"
 
 /*
 * This class is used in root-finding
 */
-class TDistDFEval : public Functional1
+class TDistDFEval : public DirectSampling::Functional1
 {
 public:
 	TDistDFEval(double n, double A, double nu_min, double nu_max, double log_a)
@@ -35,7 +34,7 @@ private:
 /*
 * This class is used in root-finding
 */
-class TDistDFGrad : public Functional1
+class TDistDFGrad : public DirectSampling::Functional1
 {
 public:
 	TDistDFGrad(double n, double A, double nu_min, double nu_max)
@@ -56,11 +55,11 @@ private:
 
 enum TDistDFShape { null, mode, increasing, decreasing };
 
-class TDistDFWeightFunction : public WeightFunction
+class TDistDFWeightFunction : public DirectSampling::WeightFunction
 {
 public:
 	TDistDFWeightFunction(double n, double A, double nu_min, double nu_max, double tol)
-		: WeightFunction(), _n(n), _A(A), _nu_min(nu_min), _nu_max(nu_max), _tol(tol),
+		: DirectSampling::WeightFunction(), _n(n), _A(A), _nu_min(nu_min), _nu_max(nu_max), _tol(tol),
 			_grad_nu_min(0), _grad_nu_max(0), _x_min(nu_min), _x_max(nu_max), _log_min(-INFINITY),
 			_log_max(-INFINITY), _shape(null)
 	{
@@ -177,3 +176,4 @@ private:
 };
 
 #endif
+

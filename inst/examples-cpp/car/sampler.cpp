@@ -1,7 +1,7 @@
 // [[Rcpp::depends(DirectSampling)]]
 #include "DirectSampling.h"
-#include "../shared/BetaBaseDistribution.h"
-#include "../shared/CARWeightFunction.h"
+#include "BetaBaseDistribution.h"
+#include "CARWeightFunction.h"
 
 // [[Rcpp::export]]
 Rcpp::List r_car_beta(unsigned int n, const Rcpp::NumericVector& lambda,

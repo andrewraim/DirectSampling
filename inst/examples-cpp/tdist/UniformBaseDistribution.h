@@ -1,13 +1,14 @@
+// [[Rcpp::depends(DirectSampling)]]
 #ifndef UNIFORM_BASE_DISTRIBUTION
 #define UNIFORM_BASE_DISTRIBUTION
 
-#include "BaseDistribution.h"
+#include "DirectSampling.h"
 
-class UniformBaseDistribution : public BaseDistribution
+class UniformBaseDistribution : public DirectSampling::BaseDistribution
 {
 public:
 	UniformBaseDistribution(double a, double b)
-		: BaseDistribution(), _a(a), _b(b)
+		: DirectSampling::BaseDistribution(), _a(a), _b(b)
 	{
 	}
 	// Evaluate the Uniform(a, b) density function
@@ -35,3 +36,4 @@ private:
 };
 
 #endif
+
