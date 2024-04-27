@@ -1,14 +1,13 @@
+// [[Rcpp::depends(DirectSampling)]]
 #ifndef CAR_WEIGHT_FUNCTION
 #define CAR_WEIGHT_FUNCTION
 
-#include <Rcpp.h>
-#include "../Rcpp/WeightFunction.h"
-#include "../Rcpp/find_root.h"
+#include "DirectSampling.h"
 
 /*
 * This class is used in root-finding
 */
-class CAREval : public Functional1
+class CAREval : public DirectSampling::Functional1
 {
 public:
 	CAREval(const Rcpp::NumericVector& lambda, double C, double x_lower, double x_upper, double log_a)
@@ -35,7 +34,7 @@ private:
 /*
 * This class is used in root-finding
 */
-class CARGrad : public Functional1
+class CARGrad : public DirectSampling::Functional1
 {
 public:
 	CARGrad(const Rcpp::NumericVector& lambda, double C, double x_lower, double x_upper)
@@ -58,7 +57,7 @@ private:
 	double _x_upper;
 };
 
-class CARWeightFunction : public WeightFunction
+class CARWeightFunction : public DirectSampling::WeightFunction
 {
 public:
 	CARWeightFunction(const Rcpp::NumericVector& lambda, double C,

@@ -2,7 +2,7 @@
 #ifndef NORMAL_BASE_DISTRIBUTION
 #define NORMAL_BASE_DISTRIBUTION
 
-#include "BaseDistribution.h"
+#include "DirectSampling.h"
 
 class NormalBaseDistribution : public DirectSampling::BaseDistribution
 {

@@ -1,13 +1,14 @@
+// [[Rcpp::depends(DirectSampling)]]
 #ifndef BETA_BASE_DISTRIBUTION
 #define BETA_BASE_DISTRIBUTION
 
-#include "BaseDistribution.h"
+#include "DirectSampling.h"
 
-class BetaBaseDistribution : public BaseDistribution
+class BetaBaseDistribution : public DirectSampling::BaseDistribution
 {
 public:
 	BetaBaseDistribution(double a, double b)
-		: BaseDistribution(), _a(a), _b(b)
+		: DirectSampling::BaseDistribution(), _a(a), _b(b)
 	{
 	}
 
