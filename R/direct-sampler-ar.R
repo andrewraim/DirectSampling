@@ -10,6 +10,7 @@
 #' is reached, an exception will be thrown.
 #' @param fill_method Knot selection method for customized sampler. See
 #' \code{\link{Stepdown}}.
+#' @param priority_weight TBD
 #' @param verbose Return a list with the sample \code{x} and the number of
 #' rejections \code{rejections}.
 #'
@@ -24,10 +25,7 @@
 #' function using rejections; here, the number of knots \code{N} is kept
 #' constant throughout sampling.
 #' 
-#' @name Direct Sampler AR
-NULL
-
-#' @name Direct Sampler AR
+#' @name direct-sampler-ar
 #' @export
 direct_sampler_ar = function(n, w, g, tol = 1e-8, N = 10,
 	max_rejections, fill_method = "small_rects", priority_weight = 1/2,

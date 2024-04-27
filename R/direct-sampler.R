@@ -11,11 +11,12 @@
 #' @param tol Tolerance for step function approximation in customized sampler.
 #' @param fill_method Knot selection method for customized sampler. See
 #' \code{\link{Stepdown}}.
+#' @param priority_weight TBD
 #' 
-#' @name Direct Sampler
+#' @name direct-sampler
 NULL
 
-#' @name Direct Sampler
+#' @name direct-sampler
 #' @export
 direct_sampler_basic = function(n, w, g, N = 100, max_iter = 10000)
 {
@@ -54,7 +55,7 @@ direct_sampler_basic = function(n, w, g, N = 100, max_iter = 10000)
 	list(x = x, tries = tries)
 }
 
-#' @name Direct Sampler
+#' @name direct-sampler
 #' @export
 direct_sampler = function(n, w, g, tol = 1e-8, N = 100,
 	fill_method = "small_rects", priority_weight = 1/2)
