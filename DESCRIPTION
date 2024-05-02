@@ -9,6 +9,14 @@ Description: Implementation of direct sampling as described in
 	<10.1007/s11222-022-10188-x>.
 License: GPL-3
 LazyLoad: yes
-Depends: stats, R6, datastructures
+Imports :
+	stats,
+	R6,
+	datastructures
 RoxygenNote: 7.3.1
 Encoding: UTF-8
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder:
+	quarto

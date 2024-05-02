@@ -1,0 +1,63 @@
+---
+title: Direct Sampling with Rcpp
+author: Andrew M. Raim
+number-sections: true
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Rcpp}
+  %\VignetteEngine{quarto::pdf}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo=FALSE}
+library(DirectSampling)
+```
+
+# Introduction
+
+This document briefly describes use of the `DirectSampling` package to
+implement samplers in Rcpp [@Eddelbuettel2013]. The `DirectSampling` package
+does not directly export Rcpp interfaces; instead, a raw C++ framework is
+exported and the user provides problem-specific C++ objects which are linked to
+the framework and may be utilized in R via Rcpp.
+
+# Lognormal-Normal Example
+
+An example that arises in @DirectSamplingDAS2021 and @DPSimulation2022 is to
+sample from the distribution
+<!-- -->
+\begin{align*}
+f(y \mid z)
+%
+&\propto \frac{1}{\lambda \sqrt{2\pi}} \exp\left\{
+-\frac{1}{2\lambda^2} (z - y)^2
+\right\} \cdot
+\frac{1}{y\sigma \sqrt{2\pi}} \exp\left\{
+-\frac{1}{2\sigma^2} (\log y - \mu)^2
+\right\} \mathbb{1}_{(0,\infty)}(y) \\
+%
+&\propto
+\underbrace{\frac{1}{\lambda \sqrt{2\pi}} \exp\left\{
+-\frac{1}{2\lambda^2} (z - y)^2
+\right\}}_{g(y)} \cdot
+\underbrace{\frac{1}{y} \exp\left\{
+-\frac{1}{2\sigma^2} (\log y - \mu)^2
+\right\} \mathbb{1}_{(0,\infty)}(y)}_{w(y)}.
+\end{align*}
+<!-- -->
+
+Link to the example folder and mention other examples.
+
+# Additional Examples
+
+# References{-}
+
+::: {#refs}
+:::
