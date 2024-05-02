@@ -1,6 +1,7 @@
 # Direct sampling with Normal base distribution and Lognormal weight function.
-# Used in the technical report
-# <https://www.census.gov/library/working-papers/2021/adrm/RRS2021-01.html>.
+# This example appears in the technical reports:
+# - <https://www.census.gov/library/working-papers/2021/adrm/RRS2021-01.html>
+# - <https://www.census.gov/library/working-papers/2022/adrm/RRS2022-05.html>
 library(tidyverse)
 
 z = -10

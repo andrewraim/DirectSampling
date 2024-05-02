@@ -18,5 +18,3 @@ Encoding: UTF-8
 Suggests: 
     knitr,
     rmarkdown
-VignetteBuilder:
-	quarto

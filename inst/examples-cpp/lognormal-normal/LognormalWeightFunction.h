@@ -18,7 +18,7 @@ public:
 		if (x < _z) {
 			out = -log(_z-x) - pow(log(_z-x) - _mu, 2) / (2*_sigma2);
 		}
-		if (take_log) { return(out); } else { return(exp(out)); }
+		return take_log ? out : exp(out);
 	}
 
 	// Return the roots of the equation w(x) = a, which is equivalent to

@@ -18,7 +18,7 @@ public:
 	// Compute Pr(x1 < X < x2) probability where X ~ N(0, sigma2)
 	double pr_interval(double x1, double x2, bool take_log) const {
 		double out = R::pnorm(x2, 0, _sigma, true, false) - R::pnorm(x1, 0, _sigma, true, false);
-		if (take_log) { return log(out); } else { return out; }
+		return take_log ? log(out) : out;
 	}
 	// Quantile function of N truncated to (x_min, x_max)
 	double q_truncated(double p, double x_min, double x_max) const {
