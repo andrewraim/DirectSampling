@@ -5,3 +5,6 @@
 src/*.so
 src/*.o
 /inst/manuscript/**/*.pdf
+inst/doc
+/doc/
+/Meta/

@@ -13,9 +13,11 @@ bisection(x_lo, x_hi, f, mid, dist, tol)
 
 \item{f}{The function \eqn{f(x)}.}
 
-\item{mid}{A midpoint function which operates on two points \code{(x,y)} where \code{x <= y}.}
+\item{mid}{A midpoint function which operates on two points \code{(x,y)}
+where \code{x <= y}.}
 
-\item{dist}{A distance function which operates on two points \code{(x,y)} where \code{x <= y}.}
+\item{dist}{A distance function which operates on two points \code{(x,y)}
+where \code{x <= y}.}
 
 \item{tol}{Stop when \code{dist(x_lo, x_hi) < tol}.}
 }
