@@ -483,22 +483,22 @@ get_interval = function(log_x, log_y, log_h_x, log_h_y)
 }
 
 #' @export
-print.interval = function(intvl, log_scale = FALSE)
+print.interval = function(x, log_scale = FALSE, ...)
 {
 	if (log_scale) {
-		printf("log_x: %g\n", intvl$log_x)
-		printf("log_y: %g\n", intvl$log_y)
-		printf("log_h_x: %g\n", intvl$log_h_x)
-		printf("log_h_y: %g\n", intvl$log_h_y)
-		printf("width: %g\n", intvl$log_width)
-		printf("height: %g\n", intvl$log_height)
+		printf("log_x: %g\n", x$log_x)
+		printf("log_y: %g\n", x$log_y)
+		printf("log_h_x: %g\n", x$log_h_x)
+		printf("log_h_y: %g\n", x$log_h_y)
+		printf("width: %g\n", x$log_width)
+		printf("height: %g\n", x$log_height)
 	} else {
-		printf("x: %g\n", exp(intvl$log_x))
-		printf("y: %g\n", exp(intvl$log_y))
-		printf("h_x: %g\n", exp(intvl$log_h_x))
-		printf("h_y: %g\n", exp(intvl$log_h_y))
-		printf("width: %g\n", exp(intvl$log_width))
-		printf("height: %g\n", exp(intvl$log_height))
+		printf("x: %g\n", exp(x$log_x))
+		printf("y: %g\n", exp(x$log_y))
+		printf("h_x: %g\n", exp(x$log_h_x))
+		printf("h_y: %g\n", exp(x$log_h_y))
+		printf("width: %g\n", exp(x$log_width))
+		printf("height: %g\n", exp(x$log_height))
 	}
 }
 
