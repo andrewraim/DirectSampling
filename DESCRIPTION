@@ -1,7 +1,7 @@
 Package: DirectSampling
 Type: Package
 Title: Direct Sampling
-Version: 0.3.1
+Version: 0.3.2
 Author: Andrew Raim <andrew.raim@gmail.com>
 Maintainer: Andrew Raim <andrew.raim@gmail.com>
 URL: https://github.com/andrewraim/direct-sampling
@@ -11,8 +11,7 @@ License: MIT + file LICENSE
 LazyLoad: yes
 Imports: 
 	stats,
-	R6,
-	datastructures
+	R6
 RoxygenNote: 7.3.1
 Encoding: UTF-8
 Suggests: 

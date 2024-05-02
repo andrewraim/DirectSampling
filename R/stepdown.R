@@ -45,7 +45,12 @@
 #' 
 #' We make use of the \code{fibonacci_heap} structure in the
 #' \code{datastructures} package to avoid repeated sorted when
-#' \code{small_rects} is used as the method of knot selection.
+#' \code{small_rects} is used as the method of knot selection. This package is
+#' not maintained on CRAN at the time this message is being written; therefore,
+#' we make use of it as a suggested package, following the guidance in
+#' \url{https://cran.r-project.org/doc/manuals/R-exts.html#Suggested-packages}.
+#' I.e., all \code{datastructures} function calls are proceeded with a
+#' namespace and the package is not listed in \code{Imports} or \code{Depends}.
 #' 
 #' @references
 #' Simon Dirmeier, (2018). datastructures: An R package for organisation and
@@ -81,7 +86,12 @@ Stepdown = R6Class("Stepdown",
 
 	#' @description Construct the step function
 	initialize = function(w, g, tol, N, method, priority_weight = 1/2,
-		midpoint_type = "geometric") {
+		midpoint_type = "geometric")
+	{
+		if (!requireNamespace("datastructures", quietly = TRUE)) {
+			stop("datastructures package is required to use R implementation of DirectSampling")
+		}
+
 		stopifnot(class(w) == "weight")
 		stopifnot(class(g) == "base")
 		private$tol = tol
@@ -371,10 +381,10 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 	pw = private$priority_weight
 
 	# This queue should be in max-heap order by height
-	q = fibonacci_heap("numeric")
+	q = datastructures::fibonacci_heap("numeric")
 	intvl = get_interval(log_L, log_U, private$log_p(log_L), private$log_p(log_U))
 	priority = pw * intvl$log_height + (1-pw) * intvl$log_width
-	insert(q, -priority, intvl)
+	datastructures::insert(q, -priority, intvl)
 
 	# Preallocate log_x_vals and log_h_vals to the maximum size we will need.
 	log_x_vals = rep(NA, N+2)
@@ -391,9 +401,9 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 	# We already have three (x, h(x)) pairs from above
 	iter = 3
 
-	while (size(q) > 0 && iter < N+2) {
+	while (datastructures::size(q) > 0 && iter < N+2) {
 		# Get the interval with the highest priority
-		int_top = pop(q)[[1]]
+		int_top = datastructures::pop(q)[[1]]
 
 		# Break the interval int_top into two pieces: left and right.
 		log_x_new = private$midpoint(int_top$log_x, int_top$log_y)
@@ -407,12 +417,12 @@ Stepdown$set("private", "init_small_rects", function(log_L, log_U, log_prob_max)
 		# Add the interval which represents [int_top$log_x, log_x_new]
 		int_left = get_interval(int_top$log_x, log_x_new, int_top$log_h_x, log_h_new)
 		priority = pw * int_left$log_height + (1-pw) * int_left$log_width
-		insert(q, -priority, int_left)
+		datastructures::insert(q, -priority, int_left)
 
 		# Add the interval which represents [log_x_new, int_top$log_x]
 		int_right = get_interval(log_x_new, int_top$log_y, log_h_new, int_top$log_h_y)
 		priority = pw * int_right$log_height + (1-pw) * int_right$log_width
-		insert(q, -priority, int_right)
+		datastructures::insert(q, -priority, int_right)
 	}
 
 	idx = order(log_x_vals)

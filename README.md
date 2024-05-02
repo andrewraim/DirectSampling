@@ -5,7 +5,9 @@ in the paper demonstrate use of the sampler.
 To install the package from Github, first ensure that you have a recent
 installation of R and the packages `datastructures`  and `R6`. At the time of
 this writing, `datastructures` is not actively maintained on CRAN but is
-available from the CRAN archive.
+available from the CRAN archive. Therefore, we make use of it as a "suggested"
+package, following the guidance in
+\url{https://cran.r-project.org/doc/manuals/R-exts.html#Suggested-packages}.
 
 The `DirectSampling` package can be installed and built using `devtools`.
 The tag `v0.2.0` represents the code corresponding to the paper. 

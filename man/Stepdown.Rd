@@ -34,7 +34,12 @@ truncated to the open interval \eqn{(x1, x2)}.
 
 We make use of the \code{fibonacci_heap} structure in the
 \code{datastructures} package to avoid repeated sorted when
-\code{small_rects} is used as the method of knot selection.
+\code{small_rects} is used as the method of knot selection. This package is
+not maintained on CRAN at the time this message is being written; therefore,
+we make use of it as a suggested package, following the guidance in
+\url{https://cran.r-project.org/doc/manuals/R-exts.html#Suggested-packages}.
+I.e., all \code{datastructures} function calls are proceeded with a
+namespace and the package is not listed in \code{Imports} or \code{Depends}.
 }
 \references{
 Simon Dirmeier, (2018). datastructures: An R package for organisation and
