@@ -12,7 +12,8 @@ sigma2 = 8.5
 tau = 1
 
 # ----- Sampler in C++ -----
-Rcpp::sourceCpp("sampler.cpp")
+base_dir = system.file(file.path("examples-cpp", "lognormal-normal"), package="DirectSampling")
+Rcpp::sourceCpp(file.path(base_dir, "sampler.cpp"))
 
 out1 = r_lognormal_normal(n = 50000, z, mu, sigma2, tau, N = 50,
 	max_rejections = 10000)
@@ -27,8 +28,9 @@ data.frame(x = out1$x) %>%
 	theme_minimal()
 
 # ----- Sampler in pure R for comparison -----
-source("lognormal-weight-function.R")
-source("normal-base-distribution.R")
+library(DirectSampling)
+source(file.path(base_dir, "lognormal-weight-function.R"))
+source(file.path(base_dir, "normal-base-distribution.R"))
 
 w = get_lognormal_weight(z, mu, sigma2)
 g = get_normal_base(tau)
