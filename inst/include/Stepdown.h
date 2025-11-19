@@ -8,7 +8,7 @@
 #include "BaseDistribution.h"
 #include "util.h"
 #include "log-sum-exp.h"
-#include "functionals.h"
+#include "typedefs.h"
 #include "bisection.h"
 #include "find-interval.h"
 #include "Interval.h"
@@ -72,13 +72,13 @@ inline void print(std::priority_queue<Interval> q)
 	}
 }
 
-Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
+inline Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	const stepdown_args& args)
 : Stepdown(w, g, args.tol, args.N, args.method, args.priority_weight)
 {
 }
 
-Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
+inline Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	double tol, unsigned int N, const std::string& method, double priority_weight)
 	: _w(w), _g(g), _tol(tol), _N(N), _log_x_vals(), _log_h_vals(), _knot_order(),
 	  _cum_probs(), _priority_weight(priority_weight)

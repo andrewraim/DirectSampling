@@ -2,7 +2,7 @@
 #define DIRECT_SAMPLING_BISECTION_H
 
 #include <Rcpp.h>
-#include "functionals.h"
+#include "typedefs.h"
 
 namespace DirectSampling {
 

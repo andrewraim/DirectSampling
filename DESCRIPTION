@@ -9,10 +9,13 @@ Description: Implementation of direct sampling as described in Raim (2023)
 	<10.1007/s11222-022-10188-x>.
 License: MIT + file LICENSE
 LazyLoad: yes
+LinkingTo:
+    fntl,
+    Rcpp
 Imports: 
-	fntl,
-	stats,
-	R6
+    stats,
+    R6,
+    Rcpp
 RoxygenNote: 7.3.3
 Encoding: UTF-8
 Suggests: 

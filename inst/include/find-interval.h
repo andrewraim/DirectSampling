@@ -2,7 +2,7 @@
 #define DIRECT_SAMPLING_FIND_INTERVAL_H
 
 #include <Rcpp.h>
-#include "functionals.h"
+#include "typedefs.h"
 #include "bisection.h"
 
 namespace DirectSampling {
