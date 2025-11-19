@@ -9,13 +9,13 @@ class DscNormBaseDistribution : public BaseDistribution
 {
 public:
 	DscNormBaseDistribution(double sigma)
-		: BaseDistribution(), _sigma(sigma), _tol(1e-10)
+	: BaseDistribution(), _sigma(sigma), _tol(1e-10)
 	{
 		init();
 	}
 
 	DscNormBaseDistribution(double sigma, double tol)
-		: BaseDistribution(), _sigma(sigma), _tol(tol)
+	: BaseDistribution(), _sigma(sigma), _tol(tol)
 	{
 		init();
 	}
@@ -71,6 +71,7 @@ public:
 		int x = q_local((p_max - p_min)*p + p_min);
 		return std::max(ceil(x_min), std::min(double(x), floor(x_max)));
 	}
+
 	// CDF of DscNorm which avoids recomputing cumprobs
 	double p_local(double x) const {
 		int z = floor(x);
@@ -83,11 +84,13 @@ public:
 			return _cumprobs(idx);
 		}
 	}
+
 	// Quantile function of DscNorm which avoids recomputing cumprobs
 	int q_local(double p) const {
 		unsigned int idx = q_discrete(p, _cumprobs);
 		return idx + _x_lo;
 	}
+
 private:
 	double _sigma;
 	double _tol;

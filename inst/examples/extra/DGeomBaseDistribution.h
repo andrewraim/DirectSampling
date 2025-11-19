@@ -8,7 +8,7 @@ class DGeomBaseDistribution : public BaseDistribution
 {
 public:
 	DGeomBaseDistribution(double rho)
-		: BaseDistribution(), _rho(rho)
+	: BaseDistribution(), _rho(rho)
 	{
 	}
 

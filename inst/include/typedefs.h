@@ -6,7 +6,6 @@ namespace DirectSampling {
 /*
 * Typedefs
 */
-typedef std::function<double(double)> dfd_t;
 typedef std::function<bool(double)> predicate_t;
 typedef std::function<double(double a, double b)> midpoint_t;
 typedef std::function<double(double a, double b)> distance_t;

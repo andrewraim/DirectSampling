@@ -3,19 +3,18 @@
 
 #include <Rcpp.h>
 
-#include "util.h"
-#include "log-sum-exp.h"
-#include "functionals.h"
-#include "bisection.h"
-#include "find-interval.h"
-#include "find-root.h"
 #include "BaseDistribution.h"
-#include "WeightFunction.h"
-#include "Interval.h"
-#include "Stepdown.h"
+#include "bisection.h"
 #include "draw.h"
+#include "find-interval.h"
+#include "Interval.h"
+#include "log-sum-exp.h"
 #include "rejection.h"
 #include "rejection-args.h"
+#include "Stepdown.h"
 #include "stepdown-args.h"
+#include "typedefs.h"
+#include "util.h"
+#include "WeightFunction.h"
 
 #endif

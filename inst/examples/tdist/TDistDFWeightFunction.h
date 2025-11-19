@@ -21,7 +21,11 @@ public:
 
 	void init()
 	{
-		const DirectSampling::dfd_t& grad = [&](double x) -> double {
+		// Arguments for findroot
+		fntl::findroot_args args;
+		args.tol = _tol;
+		
+		const fntl::dfd& grad = [&](double x) -> double {
 			return _n/2 * log(x/2) - _n/2 * R::digamma(x/2) + _n/2 - _A;
 		};
 
@@ -34,7 +38,9 @@ public:
 			if (_grad_nu_min > 0 && _grad_nu_max < 0) {
 				// In this case, the function reaches its mode within [nu_min, nu_max].
 				_x_min = _nu_min;
-				_x_max = DirectSampling::find_root(_nu_min, _nu_max, grad, _tol);
+				// _x_max = DirectSampling::find_root(_nu_min, _nu_max, grad, _tol);
+				const auto& out = fntl::findroot_bisect(grad, _nu_min, _nu_max, args);
+				_x_max = out.root;
 				_shape = mode;
 			} else if (_grad_nu_min > 0 && _grad_nu_max > 0) {
 				// In this case, the function is increasing on [nu_min, nu_max].
@@ -74,6 +80,10 @@ public:
 	// log(w(x)) = log(a). Roots are returned in increasing order.
 	std::pair<double,double> roots(double log_a) const
 	{
+		// Arguments for findroot
+		fntl::findroot_args args;
+		args.tol = _tol;
+
 		double x1;
 		double x2;
 		if (log_a < _log_min || std::isinf(log_a)) {
@@ -86,7 +96,7 @@ public:
 			return std::pair<double,double>(_nu_max, _nu_min);
 		}
 
-		const DirectSampling::dfd_t& f = [&](double x) -> double {
+		const fntl::dfd& f = [&](double x) -> double {
 			double out = R_NegInf;
 			if (x >= _nu_min && x <= _nu_max) {
 				out = _n * x/2 * log(x/2) - _n * lgamma(x/2) - _A * x - log_a;
@@ -97,22 +107,30 @@ public:
 		if (_shape == mode) {
 			// Here there will be two roots which aren't necessarily nu_min or nu_max
 			if (eval(_nu_min, true) < log_a) {
-				x1 = DirectSampling::find_root(_nu_min, _x_max, f, _tol);
+				// x1 = DirectSampling::find_root(_nu_min, _x_max, f, _tol);
+				const auto& out = fntl::findroot_bisect(f, _nu_min, _x_max, args);
+				x1 = out.root;
 			} else {
 				x1 = _nu_min;
 			}
 
 			if (eval(_nu_max, true) < log_a) {
-				x2 = DirectSampling::find_root(_x_max, _nu_max, f, _tol);
+				// x2 = DirectSampling::find_root(_x_max, _nu_max, f, _tol);
+				const auto& out = fntl::findroot_bisect(f, _x_max, _nu_max, args);
+				x2 = out.root;
 			} else {
 				x2 = _nu_max;
 			}
 		} else if (_shape == increasing) {
-			x1 = DirectSampling::find_root(_nu_min, _nu_max, f, _tol);
+			// x1 = DirectSampling::find_root(_nu_min, _nu_max, f, _tol);
+			const auto& out = fntl::findroot_bisect(f, _nu_min, _nu_max, args);
+			x1 = out.root;
 			x2 = _nu_max;
 		} else if (_shape == decreasing) {
 			x1 = _nu_min;
-			x2 = DirectSampling::find_root(_nu_min, _nu_max, f, _tol);
+			// x2 = DirectSampling::find_root(_nu_min, _nu_max, f, _tol);
+			const auto& out = fntl::findroot_bisect(f, _nu_min, _nu_max, args);
+			x2 = out.root;
 		} else {
 			Rcpp::stop("Unrecognized value of shape");
 		}

@@ -18,8 +18,12 @@ public:
 
 	void init()
 	{
+		// Arguments for findroot
+		fntl::findroot_args args;
+		args.tol = _tol;
+		
 		/* This function is used in root-finding */
-		const DirectSampling::dfd_t& grad = [&](double x) -> double {
+		const fntl::dfd& grad = [&](double x) -> double {
 			double out = 0;
 			if (x >= _x_lower && x <= _x_upper) {
 				out = _C - 0.5 * Rcpp::sum(_lambda / (1 - _lambda*x));
@@ -36,7 +40,8 @@ public:
 			// Recall that grad is a decreasing function.
 			// In this case, there is a max strictly between (x_lower, x_upper)
 			// The min occurs at one of the endpoints
-			_x_max = DirectSampling::find_root(_x_lower, _x_upper, grad, _tol);
+			const auto& out = fntl::findroot_bisect(grad, _x_lower, _x_upper, args);
+			_x_max = out.root;
 			_log_max = eval(_x_max, true);
 
 			double log_lower = eval(_x_lower, true);
@@ -81,6 +86,10 @@ public:
 	// log(w(x)) = log(a). Roots are returned in increasing order.
 	std::pair<double,double> roots(double log_a) const
 	{
+		// Arguments for findroot
+		fntl::findroot_args args;
+		args.tol = _tol;
+
 		double x1;
 		double x2;
 		if (log_a < _log_min || std::isinf(log_a)) {
@@ -98,7 +107,7 @@ public:
 		}
 
 		/* This function is used in root-finding */
-		const DirectSampling::dfd_t& f = [&](double x) -> double {
+		const fntl::dfd& f = [&](double x) -> double {
 			double out = R_NegInf;
 			if (x >= _x_lower && x <= _x_upper) {
 				out = _C*x + 0.5 * Rcpp::sum(Rcpp::log1p(-_lambda*x)) - log_a;
@@ -107,13 +116,15 @@ public:
 		};
 
 		if (f(_x_lower) < 0) {
-			x1 = DirectSampling::find_root(_x_lower, _x_max, f, _tol);
+			const auto& out = fntl::findroot_bisect(f, _x_lower, _x_max, args);
+			x1 = out.root;
 		} else {
 			x1 = _x_lower;
 		}
 
 		if (f(_x_upper) < 0) {
-			x2 = DirectSampling::find_root(_x_max, _x_upper, f, _tol);
+			const auto& out = fntl::findroot_bisect(f, _x_max, _x_upper, args);
+			x2 = out.root;
 		} else {
 			x2 = _x_upper;
 		}

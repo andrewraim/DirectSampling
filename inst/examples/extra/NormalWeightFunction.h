@@ -36,7 +36,8 @@ public:
 	}
 
 	// log_c is the maximum value of the function log[w(x)]
-	double log_c() const {
+	double log_c() const
+	{
 		return 0;
 	}
 

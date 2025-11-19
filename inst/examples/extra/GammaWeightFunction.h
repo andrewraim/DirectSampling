@@ -2,47 +2,14 @@
 #define GAMMA_WEIGHT_FUNCTION
 
 #include <Rcpp.h>
+#include "fntl.h"
 #include "WeightFunction.h"
-#include "find_root.h"
-
-/*
-* This class is used in root-finding
-*/
-class GammaRoot_pred
-{
-public:
-	GammaRoot_pred(double z, double alpha, double beta, double log_a)
-		: _z(z), _alpha(alpha), _beta(beta), _log_a(log_a)
-	{
-	}
-
-	double operator()(double x) const {
-		double out;
-		if (std::isinf(x) && x < 0) {
-			out = -std::numeric_limits<double>::infinity();
-		} else if (x >= _z) {
-			out = -std::numeric_limits<double>::infinity();
-		} else {
-			// out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta - _log_a;
-			out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta + log(x < _z) -
-				lgamma(_alpha) - _alpha * log(_beta) - _log_a;
-		}
-		// Rprintf("GammaRoot_pred(%g) = %g :: z = %g, sigma2 = %g, n = %d, d = %d, log_a = %g\n", x, out, _z, _sigma2, _n, _d, _log_a);
-		return out;
-	}
-
-private:
-	double _z;
-	double _alpha;
-	double _beta;
-	double _log_a;
-};
 
 class GammaWeightFunction : public WeightFunction
 {
 public:
 	GammaWeightFunction(double z, double alpha, double beta, double tol = 1e-6)
-		: WeightFunction(), _z(z), _alpha(alpha), _beta(beta), _tol(tol)
+	: WeightFunction(), _z(z), _alpha(alpha), _beta(beta), _tol(tol)
 	{
 	}
 
@@ -55,12 +22,10 @@ public:
 		} else if (x >= _z) {
 			out = -std::numeric_limits<double>::infinity();
 		} else {
-			// out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta;
 			out = (_alpha - 1) * std::log(_z-x) - (_z-x) / _beta + log(x < _z)-
 				lgamma(_alpha) - _alpha * std::log(_beta);
 		}
 
-		// Rprintf("GammaWeightFunction.eval(%g) = %g :: z = %g, sigma2 = %g, n = %d, d = %d\n", x, out, _z, _sigma2, _n, _d);
 		return log ? out : std::exp(out);
 	}
 
@@ -68,6 +33,10 @@ public:
 	// log(w(x)) = log(a). Roots are returned in increasing order.
 	std::pair<double,double> roots(double log_a) const
 	{
+		// Arguments for findroot
+		fntl::findroot_args args;
+		args.tol = _tol;
+		
         double x1;
         double x2;
 		double x_max = _z - _beta * (_alpha - 1);
@@ -95,9 +64,25 @@ public:
 				x2 = _z;
 			} else {
 				// Use numerical root-finding
-				GammaRoot_pred pred(_z, _alpha, _beta, log_a);
-				x1 = find_root(x_lo, x_max, pred, _tol);
-				x2 = find_root(x_max, _z, pred, _tol);
+				const fntl::dfd& pred = [&](double x) -> double {
+					double out;
+					if (std::isinf(x) && x < 0) {
+						out = -std::numeric_limits<double>::infinity();
+					} else if (x >= _z) {
+						out = -std::numeric_limits<double>::infinity();
+					} else {
+						out = (_alpha - 1) * log(_z-x) - (_z-x) / _beta + log(x < _z) -
+							lgamma(_alpha) - _alpha * log(_beta) - _log_a;
+					}
+
+					return out;
+				}
+
+				const auto& out1 = fntl::findroot_bisect(pred, x_lo, x_max, args);
+				x1 = out1.root;
+
+				const auto& out2 = fntl::findroot_bisect(pred, x_max, _z, args);
+				x2 = out2.root;
 			}
 		}
 		return std::pair<double,double>(x1, x2);
@@ -108,6 +93,7 @@ public:
 		double x_max = _z - _beta * (_alpha - 1);
 		return eval(x_max, true);
 	}
+
 private:
 	double _z;
 	double _alpha;
