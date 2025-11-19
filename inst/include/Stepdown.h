@@ -1,5 +1,5 @@
-#ifndef STEPDOWN_H
-#define STEPDOWN_H
+#ifndef DIRECT_SAMPLING_STEPDOWN_H
+#define DIRECT_SAMPLING_STEPDOWN_H
 
 #include <Rcpp.h>
 #include <math.h>
@@ -12,6 +12,7 @@
 #include "bisection.h"
 #include "find-interval.h"
 #include "Interval.h"
+#include "stepdown-args.h"
 
 namespace DirectSampling {
 
@@ -22,6 +23,9 @@ namespace DirectSampling {
 class Stepdown {
 public:
 	Stepdown(const WeightFunction& w, const BaseDistribution& g,
+		const stepdown_args& args = stepdown_args());
+
+	Stepdown(const WeightFunction& w, const BaseDistribution& g,
 		double tol, unsigned int N, const std::string& method,
 		double priority_weight);
 
@@ -31,13 +35,16 @@ public:
 	const Rcpp::NumericVector& get_log_h_vals() const;
 	const Rcpp::NumericVector& get_knot_order() const;
 
+	const WeightFunction& get_weight() const { return _w; }
+	const BaseDistribution& get_base() const { return _g; }
+
 	void add(double log_u);
 	double log_p(double log_u) const;
-	double density(double log_x, bool take_log, bool normalize) const;
+	double density(double log_x, bool log, bool normalize) const;
 	double cdf(double x) const;
-	double quantile(double p, bool take_log) const;
-	double draw_one(bool take_log) const;
-	Rcpp::NumericVector draw(unsigned int n, bool take_log) const;
+	double quantile(double p, bool log) const;
+	double draw(bool log) const;
+	Rcpp::NumericVector draw(unsigned int n, bool log) const;
 
 private:
 	void init_equal_steps(double log_L, double log_U, double log_prob_max);
@@ -56,46 +63,7 @@ private:
 	double _priority_weight;
 };
 
-/*
-* Geometric mean
-*/
-class StepdownMidpoint : public Functional2
-{
-public:
-	virtual double operator()(double log_x, double log_y) const
-	{
-		return 0.5 * (log_x + log_y);
-	}
-};
-
-class StepdownDistance : public Functional2
-{
-public:
-	virtual double operator()(double log_x, double log_y) const
-	{
-		return log_sub2_exp(log_y, log_x);
-	}
-};
-
-/*
-* A predicate which is used to locate log_L
-*/
-class EndpointPredicate : public Predicate
-{
-public:
-	EndpointPredicate(const Stepdown& step, double log_prob_max)
-		: _step(step), _log_prob_max(log_prob_max)
-	{
-	}
-	bool operator()(double log_u) const {
-		return _step.log_p(log_u) < _log_prob_max;
-	}
-private:
-	const Stepdown& _step;
-	double _log_prob_max;
-};
-
-void print(std::priority_queue<Interval> q)
+inline void print(std::priority_queue<Interval> q)
 {
 	while(!q.empty()) {
 		Interval el = q.top();
@@ -105,14 +73,28 @@ void print(std::priority_queue<Interval> q)
 }
 
 Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
+	const stepdown_args& args)
+: Stepdown(w, g, args.tol, args.N, args.method, args.priority_weight)
+{
+}
+
+Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	double tol, unsigned int N, const std::string& method, double priority_weight)
 	: _w(w), _g(g), _tol(tol), _N(N), _log_x_vals(), _log_h_vals(), _knot_order(),
 	  _cum_probs(), _priority_weight(priority_weight)
 {
 	double log_prob;
 	std::pair<double,double> endpoints;
-	StepdownMidpoint midpoint;
-	StepdownDistance dist;
+	
+	/* Geometric mean */
+	const midpoint_t& midpoint = [](double log_x, double log_y) -> double {
+		return 0.5 * (log_x + log_y);
+	};
+
+	/* Interval length on the log-scale */
+	const distance_t& dist = [](double log_x, double log_y) -> double {
+		return log_sub2_exp(log_y, log_x);
+	};
 
 	// First, make sure the widest possible A_u intersects with [x_lo, x_hi]. If it
 	// doesn't, the rest of the algorithm won't work, so bail out.
@@ -132,16 +114,18 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	}
 
 	// Do a bisection search to find log_L between log_L_lo and log_L_hi.
-	EndpointPredicate predL(*this, log_prob_max);
+	const predicate_t& predL = [&](double log_u) -> bool {
+		return this->log_p(log_u) < log_prob_max;
+	};
 	double log_delta1 = std::min(log_L_lo, log(tol));
 	double log_L = bisection(log_L_lo, log_L_hi, predL, midpoint, dist, log_delta1);
-	// Rprintf("log_L = %g\n", log_L);
 
 	// Do a bisection search to find U, the smallest point where P(A_U) = 0.
-	EndpointPredicate predU(*this, log(1e-10) + log_p(log_L));
+	const predicate_t& predU = [&](double log_u) -> bool {
+		return this->log_p(log_u) < log(1e-10) + log_p(log_L);
+	};
 	double log_delta2 = std::min(log_L, log(tol));
 	double log_U = bisection(log_L, 0, predU, midpoint, dist, log_delta2);
-	// Rprintf("log_U = %g\n", log_U);
 
 	// Now fill in points between L and U
 	if (method == "equal_steps") {
@@ -158,7 +142,7 @@ Stepdown::Stepdown(const WeightFunction& w, const BaseDistribution& g,
 	update();
 }
 
-void Stepdown::init_equal_steps(double log_L, double log_U, double log_prob_max)
+inline void Stepdown::init_equal_steps(double log_L, double log_U, double log_prob_max)
 {
 	unsigned int N = _N;
 	double L = exp(log_L);
@@ -182,20 +166,27 @@ void Stepdown::init_equal_steps(double log_L, double log_U, double log_prob_max)
 	_knot_order = Rcpp::seq_len(N+2);
 }
 
-void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max)
+inline void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max)
 {
 	unsigned int N = _N;
 	double pw = _priority_weight;
-	StepdownMidpoint midpoint;
+
+	/* Geometric mean */
+	const midpoint_t& midpoint = [](double log_x, double log_y) -> double {
+		return 0.5 * (log_x + log_y);
+	};
 
 	// This queue should be in max-heap order by area
 	std::priority_queue<Interval> q;
 	q.push(Interval(log_L, log_U, log_p(log_L), log_p(log_U), pw));
 
-	// Try to be efficient by preallocating log_x_vals and
-	// log_h_vals to the (maximum) size needed, then copying these temporary
-	// structures to _log_x_vals and _log_h_vals afterward. (It looks like
-	// Rcpp NumericVectors cannot have their allocation controlled in this way).
+	/*
+	* Try to be efficient by preallocating log_x_vals and
+	* log_h_vals to the (maximum) size needed, then copying these temporary
+	* structures to _log_x_vals and _log_h_vals afterward. (It looks like
+	* Rcpp NumericVectors cannot have their allocation controlled in this way).
+	*/
+
 	std::vector<double> log_x_vals;
 	std::vector<double> log_h_vals;
 	log_x_vals.reserve(N+2);
@@ -247,32 +238,32 @@ void Stepdown::init_small_rects(double log_L, double log_U, double log_prob_max)
 	_log_h_vals.sort(true);
 }
 
-const Rcpp::NumericVector& Stepdown::get_cum_probs() const
+inline const Rcpp::NumericVector& Stepdown::get_cum_probs() const
 {
 	return _cum_probs;
 }
 
-double Stepdown::get_norm_const() const
+inline double Stepdown::get_norm_const() const
 {
 	return _norm_const;
 }
 
-const Rcpp::NumericVector& Stepdown::get_log_x_vals() const
+inline const Rcpp::NumericVector& Stepdown::get_log_x_vals() const
 {
 	return _log_x_vals;
 }
 
-const Rcpp::NumericVector& Stepdown::get_log_h_vals() const
+inline const Rcpp::NumericVector& Stepdown::get_log_h_vals() const
 {
 	return _log_h_vals;
 }
 
-const Rcpp::NumericVector& Stepdown::get_knot_order() const
+inline const Rcpp::NumericVector& Stepdown::get_knot_order() const
 {
 	return _knot_order;
 }
 
-double Stepdown::quantile(double p, bool take_log) const
+inline double Stepdown::quantile(double p, bool log) const
 {
 	// Recall that _cum_probs is a sorted vector
 	// Use find_interval to locate the two cutpoints,
@@ -290,45 +281,41 @@ double Stepdown::quantile(double p, bool take_log) const
 	
 	// Do the following computation, but be careful to keep x values on
 	// the log-scale, since they may be extremely small.
-	// x1 + (x2 - x1) * (p[i] - cp1) / (cp2 - cp1)
-	double log_ratio = log(p - cp1) - log(cp2 - cp1);
+	double log_ratio = std::log(p - cp1) - std::log(cp2 - cp1);
 	double out = log_add2_exp(log_sub2_exp(log_x2, log_x1) + log_ratio, log_x1);
-	
-	// Rprintf("p = %g, j1 = %d, j2 = %d, cp1 = %g, cp2 = %g, log_x1 = %g, log_x2 = %g, log_ratio = %g, out = %g\n",
-	//	p, j1, j2, cp1, cp2, log_x1, log_x2, log_ratio, out);
 
-	if (take_log) { return out; } else { return exp(out); }
+	return log ? out : std::exp(out);
 }
 
-double Stepdown::draw_one(bool take_log) const
+inline double Stepdown::draw(bool log) const
 {
 	double u = R::runif(0, 1);
-	return quantile(u, take_log);
+	return quantile(u, log);
 }
 
-Rcpp::NumericVector Stepdown::draw(unsigned int n, bool take_log) const
+inline Rcpp::NumericVector Stepdown::draw(unsigned int n, bool log) const
 {
 	Rcpp::NumericVector out(n);
 	for (unsigned int i = 0; i < n; i++) {
-		out(i) = draw_one(take_log);
+		out(i) = draw(log);
 	}
 	return out;
 }
 
-double Stepdown::density(double log_x, bool take_log, bool normalize) const
+inline double Stepdown::density(double log_x, bool log, bool normalize) const
 {
 	// Get the idx such that log_h_vals[idx] <= log(x) < log_h_vals[idx+1]
 	unsigned int idx = find_interval(log_x, _log_x_vals);
-	double out = -INFINITY;
+	double out = R_NegInf;
 
 	if (idx < _N+2) {
 		out = _log_h_vals(idx);
 	}
 	if (normalize) { out -= _norm_const; }
-	if (take_log) { return out; } else { return exp(out); }
+	return log ? out : exp(out);
 }
 
-double Stepdown::cdf(double log_x) const
+inline double Stepdown::cdf(double log_x) const
 {
 	// Get the idx such that h_vals[idx] <= log(x) < h_vals[idx+1]	
 	unsigned int j1 = find_interval(log_x, _log_x_vals);
@@ -340,26 +327,19 @@ double Stepdown::cdf(double log_x) const
 	
 	// Do the following computation, but be careful to keep x values on
 	// the log-scale, since they may be extremely small.
-	// out[i] = cp1 + (x[i] - x1) / (x2 - x1) * (cp2 - cp1)
-	double log_ratio = log_sub2_exp(log_x, log_x1) - log_sub2_exp(log_x2, log_x1) + log(cp2 - cp1);
+	double log_ratio = log_sub2_exp(log_x, log_x1) - log_sub2_exp(log_x2, log_x1) + std::log(cp2 - cp1);
 	return exp(log_add2_exp(log(cp1), log_ratio));
 }
 
 // Note that pr_interval can be negative, even when x1 < x2, due to numerical
 // accuracy. In this case, we will have to avoid taking the log.
-double Stepdown::log_p(double log_u) const
+inline double Stepdown::log_p(double log_u) const
 {
 	const std::pair<double,double>& endpoints = _w.roots(_w.log_c() + log_u);
 	double log_pr = _g.pr_interval(endpoints.first, endpoints.second, true);
-	// Rprintf("log_u = %g, _w.log_c() = %g, log_a = %g, endpoints: (%g, %g), pr = %g\n",
-	// 	log_u, _w.log_c(), _w.log_c() + log_u, endpoints.first, endpoints.second, pr);
 
 	// Be careful - it looks like we can get log(0) = NaN in C++
-	if (isnan(log_pr)) {
-		return -INFINITY;
-	} else {
-		return log_pr;
-	}
+	return isnan(log_pr) ? R_NegInf : log_pr;
 }
 
 /*
@@ -367,7 +347,7 @@ double Stepdown::log_p(double log_u) const
 * inefficient for practical use. More sophisticated data structures would
 * prevent the need to reallocate things.
 */
-void Stepdown::add(double log_u)
+inline void Stepdown::add(double log_u)
 {
 	double log_h = log_p(log_u);
 
@@ -392,7 +372,7 @@ void Stepdown::add(double log_u)
 * based on current state of _log_x_vals and _log_h_vals. More sophisticated
 * data structures would would make it possible to not reallocate things.
 */
-void Stepdown::update()
+inline void Stepdown::update()
 {
 	unsigned int N = _N;
 
@@ -431,15 +411,6 @@ void Stepdown::update()
 		_norm_const = exp(log_normconst);
 		_cum_probs = Rcpp::exp(log_cum_probs);
 	#endif
-
-	// Rprintf("_log_x_vals:\n");
-	// Rcpp::print(_log_x_vals);
-	// Rprintf("_log_h_vals:\n");
-	// Rcpp::print(_log_h_vals);
-	// Rprintf("log_areas:\n");
-	// Rcpp::print(log_areas);
-	// Rprintf("log_cum_areas:\n");
-	// Rcpp::print(log_cum_areas);
 }
 
 }

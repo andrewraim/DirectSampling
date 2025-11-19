@@ -279,15 +279,15 @@ Stepdown$set("private", "setup", function(w, g, tol, N, method)
 {
 	if (private$midpoint_type == "geometric") {
 		# The geometric mean
-		midpoint = function(log_x, log_y, take_log = TRUE) {
+		midpoint = function(log_x, log_y, log = TRUE) {
 			out = 1/2 * (log_x + log_y)
-			ifelse(take_log, out, exp(out))
+			ifelse(log, out, exp(out))
 		}
 	} else if (private$midpoint_type == "arithmetic") {
 		# The arithmetic mean, computed on the log-scale
-		midpoint = function(log_x, log_y, take_log = TRUE) {
+		midpoint = function(log_x, log_y, log = TRUE) {
 			out = log(1/2) + log_y + log1p(exp(log_x - log_y))
-			ifelse(take_log, out, exp(out))
+			ifelse(log, out, exp(out))
 		}
 	} else {
 		stop("Unrecognized midpoint type")

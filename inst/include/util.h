@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef DIRECT_SAMPLING_UTIL_H
+#define DIRECT_SAMPLING_UTIL_H
 
 #include <Rcpp.h>
 
@@ -10,7 +10,7 @@ namespace DirectSampling {
 * own quick versions.
 */
 
-Rcpp::NumericVector concat(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y)
+inline Rcpp::NumericVector concat(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y)
 {
 	unsigned int m = x.size();
 	unsigned int n = y.size();
@@ -25,7 +25,7 @@ Rcpp::NumericVector concat(const Rcpp::NumericVector& x, const Rcpp::NumericVect
 	return z;
 }
 
-Rcpp::IntegerVector which(const Rcpp::LogicalVector& x)
+inline Rcpp::IntegerVector which(const Rcpp::LogicalVector& x)
 {
 	unsigned int n = x.size();
 	std::vector<unsigned int> idx;
@@ -40,7 +40,7 @@ Rcpp::IntegerVector which(const Rcpp::LogicalVector& x)
 	return out;
 }
 
-Rcpp::IntegerVector order(const Rcpp::NumericVector& x, bool decrease)
+inline Rcpp::IntegerVector order(const Rcpp::NumericVector& x, bool decrease)
 {
 	Rcpp::NumericVector sorted = clone(x).sort(decrease);
 	return Rcpp::match(sorted, x);
@@ -48,7 +48,7 @@ Rcpp::IntegerVector order(const Rcpp::NumericVector& x, bool decrease)
 
 // For some reason, Rcpp/Sugar cumsum does not compile for me... so define a
 // version here.
-Rcpp::NumericVector cumsum(const Rcpp::NumericVector& x)
+inline Rcpp::NumericVector cumsum(const Rcpp::NumericVector& x)
 {
 	double sum = 0;
 	unsigned int n = x.size();
@@ -59,6 +59,22 @@ Rcpp::NumericVector cumsum(const Rcpp::NumericVector& x)
 		out(i) = sum;
 	}
 	return out;
+}
+
+/*
+* Get timestamp for current time as character array.
+*/
+inline std::string timestamp(void)
+{
+	time_t timer;
+	char buffer[64];
+	struct tm* tm_info;
+
+	timer = time(NULL);
+	tm_info = localtime(&timer);
+
+	strftime(buffer, 64, "%Y-%m-%d %H:%M:%S", tm_info);
+	return buffer;
 }
 
 }

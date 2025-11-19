@@ -1,14 +1,14 @@
-#ifndef BISECTION_H
-#define BISECTION_H
+#ifndef DIRECT_SAMPLING_BISECTION_H
+#define DIRECT_SAMPLING_BISECTION_H
 
 #include <Rcpp.h>
 #include "functionals.h"
 
 namespace DirectSampling {
 
-double bisection(double x_lo, double x_hi,
-	const Predicate& f, const Functional2& mid,
-	const Functional2& dist, double tol)
+inline double bisection(double x_lo, double x_hi,
+	const predicate_t& f, const midpoint_t& mid,
+	const distance_t& dist, double tol)
 {
 	double x = mid(x_lo, x_hi);
 

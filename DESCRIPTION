@@ -1,18 +1,19 @@
 Package: DirectSampling
 Type: Package
 Title: Direct Sampling
-Version: 0.3.2
+Version: 0.4.0
 Author: Andrew Raim <andrew.raim@gmail.com>
 Maintainer: Andrew Raim <andrew.raim@gmail.com>
 URL: https://github.com/andrewraim/direct-sampling
-Description: Implementation of direct sampling as described in
+Description: Implementation of direct sampling as described in Raim (2023)
 	<10.1007/s11222-022-10188-x>.
 License: MIT + file LICENSE
 LazyLoad: yes
 Imports: 
+	fntl,
 	stats,
 	R6
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Encoding: UTF-8
 Suggests: 
     knitr,

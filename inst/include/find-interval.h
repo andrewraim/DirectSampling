@@ -1,35 +1,11 @@
-#ifndef FIND_INTERVAL_H
-#define FIND_INTERVAL_H
+#ifndef DIRECT_SAMPLING_FIND_INTERVAL_H
+#define DIRECT_SAMPLING_FIND_INTERVAL_H
 
 #include <Rcpp.h>
 #include "functionals.h"
 #include "bisection.h"
 
 namespace DirectSampling {
-
-class FloorMidpoint : public Functional2
-{
-public:
-	virtual double operator()(double x, double y) const
-	{
-		return floor((y + x) / 2);
-	}
-};
-
-class FindIntervalPredicate : public Predicate
-{
-public:
-	FindIntervalPredicate(const Rcpp::NumericVector& cutpoints, double x)
-		: _cutpoints(cutpoints), _x(x)
-	{
-	}
-	bool operator()(double idx) const {
-		return _cutpoints(int(idx)) >= _x;
-	}
-private:
-	const Rcpp::NumericVector& _cutpoints;
-	double _x;
-};
 
 //' Find Interval
 //' 
@@ -45,7 +21,7 @@ private:
 //'
 //' @export
 // [[Rcpp::export]]
-int find_interval(double x, const Rcpp::NumericVector& cutpoints)
+inline int find_interval(double x, const Rcpp::NumericVector& cutpoints)
 {
 	unsigned int N = cutpoints.size();
 	unsigned int k = N-1;
@@ -56,9 +32,19 @@ int find_interval(double x, const Rcpp::NumericVector& cutpoints)
 		return N;
 	}
 
-	FindIntervalPredicate pred(cutpoints, x);
-	FloorMidpoint mid;
-	IntervalLength dist;
+	const predicate_t& pred = [&](double idx) -> bool {
+		return cutpoints(int(idx)) >= x;
+	};
+
+	/* Midpoint with floor to get an integer */
+	const midpoint_t& mid = [](double x, double y) -> double {
+		return floor((y + x) / 2);
+	};
+	
+	const distance_t& dist = [](double x, double y) -> double {
+		return y - x;
+	};
+	
 	double out = bisection(0, k, pred, mid, dist, 1);
 	return int(out);
 }
