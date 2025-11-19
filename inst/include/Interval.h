@@ -1,5 +1,5 @@
-#ifndef INTERVAL_H
-#define INTERVAL_H
+#ifndef DIRECT_SAMPLING_INTERVAL_H
+#define DIRECT_SAMPLING_INTERVAL_H
 
 #include <Rcpp.h>
 #include "log-sum-exp.h"

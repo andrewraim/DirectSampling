@@ -13,8 +13,9 @@
 #include "WeightFunction.h"
 #include "Interval.h"
 #include "Stepdown.h"
-#include "direct-sampler-ar.h"
-#include "direct-sampler.h"
+#include "draw.h"
+#include "rejection.h"
+#include "rejection-args.h"
+#include "stepdown-args.h"
 
 #endif
-

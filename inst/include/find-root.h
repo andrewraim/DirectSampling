@@ -1,15 +1,23 @@
-#ifndef FIND_ROOT_H
-#define FIND_ROOT_H
+#ifndef DIRECT_SAMPLING_FIND_ROOT_H
+#define DIRECT_SAMPLING_FIND_ROOT_H
 
 #include <Rcpp.h>
 #include "bisection.h"
 
 namespace DirectSampling {
 
-double find_root(double x_lo, double x_hi, const Functional1& f, double tol)
+inline double find_root(double x_lo, double x_hi, const dfd_t& f, double tol)
 {
-	Midpoint mid;
-	IntervalLength dist;
+	/* Arithmetic mean */
+	const midpoint_t& mid = [](double x, double y) -> double {
+		return (y + x) / 2;
+	};
+
+	/* Interval length */
+	const distance_t& dist = [](double x, double y) -> double {
+		return y - x;
+	};
+
 	double x = mid(x_lo, x_hi);
 
 	while (dist(x_lo, x_hi) > tol && x > x_lo && x < x_hi) {

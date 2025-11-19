@@ -1,5 +1,5 @@
-#ifndef LOG_SUM_EXP_H
-#define LOG_SUM_EXP_H
+#ifndef DIRECT_SAMPLING_LOG_SUM_EXP_H
+#define DIRECT_SAMPLING_LOG_SUM_EXP_H
 
 #include <Rcpp.h>
 
@@ -19,12 +19,12 @@ namespace DirectSampling {
 *  https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Summation
 */
 
-double log_add2_exp(double x, double y)
+inline double log_add2_exp(double x, double y)
 {
 	return x + log1p(exp(y - x));
 }
 
-double log_sub2_exp(double x, double y)
+inline double log_sub2_exp(double x, double y)
 {
 	return x + log1p(-exp(y - x));
 }
